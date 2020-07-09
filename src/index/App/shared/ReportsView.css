@@ -10,6 +10,7 @@
 .navigation-tab-menu{
     position: absolute;
     left: -30px;
+    width: 115%;
 }
 #h2-title{
     text-transform: uppercase !important;

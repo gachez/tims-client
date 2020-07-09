@@ -30,7 +30,7 @@ class Dashboard extends React.Component {
         this.setState({
             isLoaded: true,
             active: 'home'
-        });
+        }); 
     }
 
     setPage = (page) => {
