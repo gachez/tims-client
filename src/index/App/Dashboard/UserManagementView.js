@@ -25,7 +25,7 @@ export default class UserManagement extends React.Component{
     }
 
     componentDidMount() {
-        axios.get('/api/v1/admin/get_users', {
+        axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_users', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -88,7 +88,7 @@ export default class UserManagement extends React.Component{
                 password: document.getElementsByName('password')[0].value   
             }
             try{
-                axios.post("/api/v1/register_user", user)
+                axios.post("https://a123ef.df.r.appspot.com/api/v1/register_user", user)
                 .then(res => {
                     console.log('succesfully created user ' + res)
                     alert('Succesfully added a new user');
@@ -118,7 +118,7 @@ export default class UserManagement extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`/api/v1/admin/edit_user/${id}`, saveEdits, {
+        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_user/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -137,7 +137,7 @@ export default class UserManagement extends React.Component{
 
     removeUser = async (id) => {
             try{
-                axios.delete("/api/v1/admin/delete_user/" + id,  {
+                axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_user/" + id,  {
                     headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                     }
@@ -153,7 +153,7 @@ export default class UserManagement extends React.Component{
 
     editUser = async (editId, edits) => {
         try{
-            axios.post("/api/v1/admin/edit_user/" + editId, edits, {   headers: {
+            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/edit_user/" + editId, edits, {   headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
             })

@@ -34,17 +34,17 @@ export default class TaskView extends React.Component{
         assigneeChosen: '',
         projectName: 'Project',
         assigneeName: 'Task Assignee',
-        getUsersRequest: axios.get("/api/v1/admin/assigned_tasks",  {
+        getUsersRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getTasksRequest: axios.get("/api/v1/admin/get_users",  {
+        getTasksRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_users",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getProjectsRequest: axios.get("/api/v1/admin/get_projects",  {
+        getProjectsRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
