@@ -23,12 +23,12 @@ class UserDashboard extends React.Component {
         borderActive: 'none',
         tasks: [],
         loggedInUSer: {},
-        getUsersRequest: axios.get("/api/v1/admin/assigned_tasks",  {
+        getUsersRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getTasksRequest: axios.get("/api/v1/admin/get_users",  {
+        getTasksRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_users",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
