@@ -1,1 +1,1 @@
-# tims-client
+# Information System Frontend (React)

@@ -1,0 +1,32 @@
+.LoginContainer {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.left-section{
+    position: absolute;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    background-color: #151b26;
+}
+
+.right-section{
+    position: absolute;
+    right: 0;
+    width: 50%;
+    height: 100vh;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.login-form{
+    margin: auto;
+    padding: 10rem;
+    border-radius: 10px ;
+    background-color: aliceblue;
+    box-shadow: 5px 5px 5px 5px rgba(0,0,0,0.4);
+}
+
