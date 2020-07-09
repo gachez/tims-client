@@ -125,16 +125,16 @@
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
     .cards{
-        width: 269px;
-        height: 169px;
+        width: 209px;
+        height: 109px;
     }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
     .cards{
-        width: 269px;
-        height: 169px;
+        width: 229px;
+        height: 109px;
     }
 }
 
