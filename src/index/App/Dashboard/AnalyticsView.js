@@ -16,7 +16,7 @@ export default class AnalyticsView extends React.Component{
     }
 
     componentDidMount() {
-        axios.get(`/api/v1/admin/get_projects/${ localStorage.getItem('id')}` ,  {
+        axios.get(`https://a123ef.df.r.appspot.com/api/v1/admin/get_projects/${ localStorage.getItem('id')}` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }

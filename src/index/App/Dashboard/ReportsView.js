@@ -53,7 +53,7 @@ export default class ReportsView extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("/api/v1/admin/get_reports", {
+        axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_reports", {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -64,7 +64,7 @@ export default class ReportsView extends React.Component{
               })
           }).catch(err => console.log(err));
 
-          axios.get('/api/v1/admin/get_industries',{
+          axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -74,7 +74,7 @@ export default class ReportsView extends React.Component{
               })
           })
 
-          axios.get('/api/v1/admin/get_users', {
+          axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_users', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -87,7 +87,7 @@ export default class ReportsView extends React.Component{
             console.log('error getting users' + err)
         })
 
-        axios.get('/api/v1/admin/get_projects', {
+        axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_projects', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -188,7 +188,7 @@ export default class ReportsView extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`/api/v1/admin/edit_record/${id}`, saveEdits, {
+        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -225,7 +225,7 @@ export default class ReportsView extends React.Component{
 
         console.log(savedReport)
         try{
-            axios.post("/api/v1/admin/add_record", savedReport, {
+            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", savedReport, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -247,7 +247,7 @@ export default class ReportsView extends React.Component{
 
     removeUser = async (id) => {
         try{
-            axios.delete("/api/v1/admin/delete_record/" + id,  {
+            axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -320,7 +320,7 @@ export default class ReportsView extends React.Component{
                             }>Import</Button>;
            
         const exportBtn =  <Button variant="primary" onClick={() => {
-            axios.post("/api/v1/export_excel", this.state.reports,{
+            axios.post("https://a123ef.df.r.appspot.com/api/v1/export_excel", this.state.reports,{
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -945,7 +945,7 @@ export default class ReportsView extends React.Component{
                             this.toggleIndstryModalDisplay();
                             }}>Cancel</Button>
                         <Button variant="primary" onClick={() => {
-                            axios.post("/api/v1/admin/add_industry", {
+                            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_industry", {
                                 industry: document.getElementsByClassName("industrysubsector")[0].value,
                                 subSector: document.getElementsByClassName("industrysubsector")[1].value
                             }, {

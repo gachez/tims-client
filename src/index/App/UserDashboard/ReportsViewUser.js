@@ -38,7 +38,7 @@ export default class ReportsViewUser extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("/api/v1/admin/get_reports",  {
+        axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_reports",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -50,7 +50,7 @@ export default class ReportsViewUser extends React.Component{
             });
           });
 
-          axios.get('/api/v1/admin/get_industries',{
+          axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -60,7 +60,7 @@ export default class ReportsViewUser extends React.Component{
               })
           })
 
-          axios.get("/api/v1/admin/get_projects",  {
+          axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -127,7 +127,7 @@ export default class ReportsViewUser extends React.Component{
  
     markComplete = (id) => {
         console.log('..marking')
-        axios.post(`/api/v1/admin/edit_record/${id}`, {
+        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {
             confirmed: true
         },{
             headers: {
@@ -169,7 +169,7 @@ export default class ReportsViewUser extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`/api/v1/user/edit_record/${id}`, saveEdits, {
+        axios.post(`https://a123ef.df.r.appspot.com/api/v1/user/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -225,7 +225,7 @@ export default class ReportsViewUser extends React.Component{
             }
         console.log(savedReport)
         try{
-            axios.post("/api/v1/user/add_record", savedReport, {
+            axios.post("https://a123ef.df.r.appspot.com/api/v1/user/add_record", savedReport, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -277,7 +277,7 @@ export default class ReportsViewUser extends React.Component{
 
     sendToAdmin = (data) => {
                       //post to admin reports database
-                      axios.post("/api/v1/admin/add_record", data, {
+                      axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", data, {
                         headers: {
                         'auth-token': `${localStorage.getItem('auth-token')}`
                         }
@@ -293,7 +293,7 @@ export default class ReportsViewUser extends React.Component{
     updateSubmitStatus = (id) => {
         console.log('updating status')
         //update submitted status to true
-        axios.post("/api/v1/user/edit_record/" + id, {
+        axios.post("https://a123ef.df.r.appspot.com/api/v1/user/edit_record/" + id, {
             submitted: true
         }, {
             headers: {
@@ -313,7 +313,7 @@ export default class ReportsViewUser extends React.Component{
         //merge to admin report db
         const sendThis = reportsToSubmit.map(report => {
               //post to admin reports database
-            axios.post("/api/v1/admin/add_record", {
+            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", {
                 companyName:  report.companyName, 
                 contactPerson: report.contactPerson,
                 position:   report.position,
@@ -350,7 +350,7 @@ export default class ReportsViewUser extends React.Component{
 
     removeReport = async (id) => {
         try{
-            axios.delete("/api/v1/user/delete_record/" + id,  {
+            axios.delete("https://a123ef.df.r.appspot.com/api/v1/user/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }

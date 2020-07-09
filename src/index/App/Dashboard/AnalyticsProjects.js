@@ -30,12 +30,12 @@ export default class AnalyticsProjects extends React.Component{
         assigneeID: '',
         assigneeChosen: '',
         assigneeName: 'User',
-        getUsersRequest: axios.get("/api/v1/admin/get_users",  {
+        getUsersRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_users",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getProjects: axios.get("/api/v1/admin/get_projects",  {
+        getProjects: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -78,7 +78,7 @@ export default class AnalyticsProjects extends React.Component{
     }
 
     deleteTask = (id) => {
-        axios.delete("/api/v1/admin/delete_task/" + id,{
+        axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_task/" + id,{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -151,7 +151,7 @@ export default class AnalyticsProjects extends React.Component{
                                         description:   document.getElementsByName("taskdetails")[0].value
                                     }
 
-                                    axios.post("/api/v1/admin/add_project", newProject, {
+                                    axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_project", newProject, {
                                         headers: {
                                         'auth-token': `${localStorage.getItem('auth-token')}`
                                         }
