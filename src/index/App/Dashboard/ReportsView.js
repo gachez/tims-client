@@ -966,7 +966,7 @@ export default class ReportsView extends React.Component{
 
                 <div className="container">
                     <h2 id="h2-title">Database</h2>
-                    <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
+                    <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px', width: '120%'}}>
                         <Nav.Item>
                             <Nav.Link href="#">View</Nav.Link>
                         </Nav.Item>

@@ -70,7 +70,7 @@ class Dashboard extends React.Component {
 
             return(
                 <Container className="Container" fluid={true} style={{ padding: 0, margin: 0}}>
-                    <Row style={{ padding: 0, margni: 0}}>
+                    <Row style={{ padding: 0, margin: 0}}>
                         <Col>
                         
                             <section className="sidebar">
