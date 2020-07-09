@@ -27,11 +27,26 @@ class Login extends React.Component {
         localStorage.clear()
     }
 
+    reloadPage = () => {
+
+        window.location.reload()
+    }
+
+
     authenticateUser = async () => {
         const user = {
             email: document.getElementsByName('email')[0].value,
             password:  document.getElementsByName('password')[0].value
         }
+
+        if(user.email.length < 1 || user.password.length < 1){
+            document.getElementsByName('email')[0].style.border = 'solid 1px red'
+            document.getElementsByName('password')[0].style.border = 'solid 1px red'
+            alert('Kindly fill all fields before logging in');
+            this.reloadPage();
+            return 0;
+        }
+
         try{
             axios.post("https://a123ef.df.r.appspot.com/api/v1/login_user", user)
             .then(res => {
@@ -76,7 +91,7 @@ class Login extends React.Component {
 
                     default: 
                         this.setState({
-                            loginClicked: true
+                            loginClicked: false
                         })
                 }
             })
