@@ -260,7 +260,8 @@ export default class ReportsViewUser extends React.Component{
                 mobile1:   fields[5].value,
                 mobile2:   fields[6].value,
                 website: fields[7].value,
-                industry: this.state.chosenIndustry,
+                industry: this.state.determinedIndustry,
+                subSector: this.state.chosenIndustry,
                 productDescription: fields[8].value,
                 country: fields[9].value,
                 collectionDate: new Date(),
@@ -532,6 +533,7 @@ export default class ReportsViewUser extends React.Component{
                                                         key={category.industry}
                                                         style={{width: '70%', margin: '15px' }}
                                                         variant="outline-secondary"
+                                                        onClick={() => {this.setState({ determinedIndustry: category.industry})}}
                                                         title={category.industry}
                                                         id="input-group-dropdown-3"
                                                         >
@@ -962,6 +964,7 @@ export default class ReportsViewUser extends React.Component{
                             <th>Mobile 2</th>
                             <th>Website</th>
                             <th>Industry</th>
+                            <th>Subsector</th>
                             <th>Product Description</th>
                             <th>Country</th>
                             <th>Date Updated</th>
@@ -1010,6 +1013,7 @@ export default class ReportsViewUser extends React.Component{
                                         <td>{this.state.editSave === 'none' ? user.mobile2 : this.returnEditFields(user.mobile2)}</td>
                                         <td>{this.state.editSave === 'none' ? user.website : this.returnEditFields(user.website)}</td>
                                         <td>{this.state.editSave === 'none' ? user.industry : this.returnEditFields(user.industry)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.subSector : this.returnEditFields(user.subSector)}</td>
                                         <td>{this.state.editSave === 'none' ? user.productDescription : this.returnEditFields(user.productDescription)}</td>
                                         <td>{this.state.editSave === 'none' ? user.country : this.returnEditFields(user.country)}</td>
                                         <td>{this.state.editSave === 'none' ? user.collectionDate : this.returnEditFields(user.collectionDate)}</td>

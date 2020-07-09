@@ -355,7 +355,7 @@ export default class UserManagement extends React.Component{
 
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control name="email" type="textbox" placeholder="Password" />
+                                <Form.Control name="email" type="textbox" placeholder="example@emaple.com" />
                             </Form.Group>
 
                             <Form.Group controlId="formBasicPassword">
