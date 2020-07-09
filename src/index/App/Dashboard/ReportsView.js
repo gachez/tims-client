@@ -320,7 +320,7 @@ export default class ReportsView extends React.Component{
                             }>Import</Button>;
            
         const exportBtn =  <Button variant="primary" onClick={() => {
-            axios.post("http://localhost:1332/api/v1/export_excel", this.state.reports,{
+            axios.post("/api/v1/export_excel", this.state.reports,{
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -647,7 +647,7 @@ export default class ReportsView extends React.Component{
                                         id="input-group-dropdown-12"
                                         >
                                             {
-                                                categories.map( category => {
+                                                categoriesAndIndustries.map( category => {
                                                     return(
                                                         <>
                                                         <DropdownButton
@@ -659,10 +659,29 @@ export default class ReportsView extends React.Component{
                                                         >
 
                                                         <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                            {
+                                                        {
+                                                                Array.isArray(category.subSector) ? 
                                                                 category.subSector.map( subsector => {
                                                                     return(
-                                                                      <Dropdown.Item key={subsector} >{subsector}</Dropdown.Item>
+                                                                      <Dropdown.Item key={subsector} 
+                                                                        onClick={() => {
+                                                                            this.setState({
+                                                                                chosenIndustry: subsector,
+                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                            })
+                                                                        }}
+                                                                      >{subsector}</Dropdown.Item>
+                                                        )
+                                                                }) :   category.subSector.split(",").map( subsector => {
+                                                                    return(
+                                                                      <Dropdown.Item key={subsector} 
+                                                                        onClick={() => {
+                                                                            this.setState({
+                                                                                chosenIndustry: subsector,
+                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                            })
+                                                                        }}
+                                                                      >{subsector}</Dropdown.Item>
                                                         )
                                                                 })
                                                             }
@@ -786,7 +805,7 @@ export default class ReportsView extends React.Component{
                                         id="input-group-dropdown-2"
                                         >
                                             {
-                                                categories.map( category => {
+                                                categoriesAndIndustries.map( category => {
                                                     return(
                                                         <>
                                                    <DropdownButton
@@ -801,14 +820,29 @@ export default class ReportsView extends React.Component{
                                                         <div 
                                                             style={{maxHeight: '350px', overflowY: 'scroll'}} 
                                                           >
-                                                            {
-                                                                category.subSector.map( (subsector,index) => {
+                                                              {
+                                                                Array.isArray(category.subSector) ? 
+                                                                category.subSector.map( subsector => {
                                                                     return(
-                                                                      <Dropdown.Item  key={subsector} className="subsectors"  onClick={() => {
-                                                                        this.setState({
-                                                                            industry: subsector
-                                                                        })
-                                                                }} >{subsector}</Dropdown.Item>
+                                                                      <Dropdown.Item key={subsector} 
+                                                                        onClick={() => {
+                                                                            this.setState({
+                                                                                chosenIndustry: subsector,
+                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                            })
+                                                                        }}
+                                                                      >{subsector}</Dropdown.Item>
+                                                        )
+                                                                }) :   category.subSector.split(",").map( subsector => {
+                                                                    return(
+                                                                      <Dropdown.Item key={subsector} 
+                                                                        onClick={() => {
+                                                                            this.setState({
+                                                                                chosenIndustry: subsector,
+                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                            })
+                                                                        }}
+                                                                      >{subsector}</Dropdown.Item>
                                                         )
                                                                 })
                                                             }
