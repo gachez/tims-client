@@ -215,7 +215,7 @@ export default class ReportsView extends React.Component{
             mobile2:   edits[7].value,
             website: edits[8].value,
             industry: this.state.determinedIndustry,
-            subSector: this.state.industry,
+            subSector: this.state.chosenIndustry,
             productDescription: document.getElementsByName("productdescription")[0].value,
             country: document.getElementsByName("country")[0].value,
             collectionDate: new Date().toUTCString(),
