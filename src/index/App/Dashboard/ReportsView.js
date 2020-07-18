@@ -54,6 +54,7 @@ export default class ReportsView extends React.Component{
         industryFilterClicked: 0,
         projectFilterClicked: 0,
         userFilterClicked: 0,
+        status: 'Status'
         
     }
 
@@ -66,7 +67,7 @@ export default class ReportsView extends React.Component{
               this.setState({
                   isLoaded: true,
                   reports: res.data,
-                  defaultReports: res.data
+                  defaultReports: res.data.reverse()
               })
               
           }).catch(err => console.log(err));
@@ -494,6 +495,10 @@ export default class ReportsView extends React.Component{
         const industriesDB = this.state.industries.map( industry => industry);
         const categoriesAndIndustries = [...categories, ...industriesDB];
         
+        const status = [
+            'confirmed',
+            'pending'
+        ]
         console.log(this.state.reports)
 
         return(
@@ -1072,7 +1077,34 @@ export default class ReportsView extends React.Component{
                 
                         <Nav.Item>
                             <Nav.Link style={{position: 'absolute', right: 0,top: 0, display: 'flex'}}>
-                                <span style={{ marginRight: '1.5rem' }}>Filter:</span>
+                                <span style={{ marginRight: '1rem' }}>Filter:</span>
+
+                                        {/* filter according to Confirmed*/}
+                                        <DropdownButton
+                                        style={{ marginRight: '1rem' }}
+                                        variant="outline-primary"
+                                        title={this.state.status}
+                                        id="input-group-dropdown-4"
+                                        >
+                                                    {
+                                                        status.map(stat => {
+                                                            return (
+                                                                <Dropdown.Item onClick={() => {
+                                                                    if(stat === 'confirmed'){
+                                                                        this.setState({
+                                                                            reports: this.state.reports.filter(report => report.confirmed)
+                                                                        });
+                                                                        return 0;
+                                                                    }
+                                                                    this.setState({
+                                                                        reports: this.state.reports.filter(report => !report.confirmed)
+                                                                    });
+                                                                }}>{stat}
+                                                             </Dropdown.Item>
+                                                            )
+                                                        })
+                                                    }   
+                                    </DropdownButton>
                                    {/* filter according to sector and subsector */}
                                     <DropdownButton
                                         style={{ marginRight: '1rem', width: '100%'}}

@@ -169,7 +169,7 @@ export default class ReportsViewUser extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`https://a123ef.df.r.appspot.com/api/v1/user/edit_record/${id}`, saveEdits, {
+        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -992,14 +992,7 @@ export default class ReportsViewUser extends React.Component{
                                         });
                                         this.toggleEditModalDisplay()
                                     }}/>
-                                    <img  key={user.password} src={trash} className="delete-icon" style={{marginLeft: '30px'}} onClick={() => {
-                                                    this.setState({
-                                                        editFieldID: user._id
-                                                    });
-                                                    this.toggleDeleteModal();
-                                                   }
-                                           
-                                        }/>
+                               
                                  
                                         <tr key={index} className="user-rows"  onClick={this.toggleIndividualEmailModalDisplay}>
                                         <td>{index}</td>
