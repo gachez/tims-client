@@ -53,7 +53,7 @@ export default class ReportsView extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_reports", {
+        axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_reports", {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -62,9 +62,10 @@ export default class ReportsView extends React.Component{
                   isLoaded: true,
                   reports: res.data
               })
+              
           }).catch(err => console.log(err));
 
-          axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_industries',{
+          axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -74,7 +75,7 @@ export default class ReportsView extends React.Component{
               })
           })
 
-          axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_users', {
+          axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_users', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -87,7 +88,7 @@ export default class ReportsView extends React.Component{
             console.log('error getting users' + err)
         })
 
-        axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_projects', {
+        axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_projects', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -201,7 +202,7 @@ export default class ReportsView extends React.Component{
        } catch(err) {console.log(err)}
     }
 
-    addReport = async () => {
+    getAddEntryFormValues = async () => {
         const edits = await Array.from(document.getElementById('add-form')).map(node => node);
 
         const savedReport = {
@@ -223,9 +224,15 @@ export default class ReportsView extends React.Component{
             submittedBy: 'admin'
         }
 
-        console.log(savedReport)
+        return savedReport;
+    }
+
+    addReport = async (savedReport) => {
+  
+        const toSave = await savedReport;
         try{
-            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", savedReport, {
+            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", toSave, {
+                'Content-Type': 'application/json;charset=UTF-8',
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -267,12 +274,41 @@ export default class ReportsView extends React.Component{
         window.location.reload()
     }
 
+
+    downloadExcel = () => {
+        console.log('function called');
+        this.setState({
+            exportbtnClicked: 1
+        })
+        axios.post('https://tims-client.df.r.appspot.com/api/v1/export_excel', this.state.reports,//your url
+           {  
+               headers: {
+                        'auth-token': `${localStorage.getItem('auth-token')}`
+                    },
+            responseType: 'blob', // important
+          }).then((response) => {
+             const url = window.URL.createObjectURL(new Blob([response.data]));
+             const link = document.createElement('a');
+             link.href = url;
+             link.setAttribute('download', 'reports.xlsx'); //or any other extension
+             document.body.appendChild(link);
+             link.click();
+             this.setState({
+                 exportbtnClicked: 0
+             })
+          }).catch((err) => {
+              console.log('oops: ' + err)
+          })
+    }
+
+  
+    
     handleChange = (e) => {
         const files = e.target.files;
         if (files && files[0]) this.setState({ file: files[0] });
       };
      
-      handleFile = () => {
+      handleFile = async () => {
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
@@ -288,9 +324,46 @@ export default class ReportsView extends React.Component{
           const data = XLSX.utils.sheet_to_json(ws);
           /* Update state */
       
-            this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
-                    console.log(this.state.data)
-              });
+            this.setState({ 
+                data: data, 
+                cols: make_cols(ws['!ref'])
+             },
+              () => {
+                  this.state.data.forEach( (imports,index) => {
+                     let dataObj = {    
+                        projectName: imports['Project Name'],
+                        companyName:  imports['Company Name'], 
+                        contactPerson: imports['Contact Person'],
+                        position:   imports['Position'],
+                        email1:    imports['Email 1'],
+                        email2:   imports['Email 2'],
+                        mobile1:   imports['Mobile 1'].toString(),
+                        mobile2:   imports['Mobile 2'],
+                        website: imports['Website'],
+                        industry: imports['Industry'],
+                        subSector: typeof imports['Subsector'] === "undefined" ? 'none' : imports['Subsector'],
+                        productDescription: imports['Product Description'],
+                        country: imports['Country'],
+                        confirmed: imports['Confirmed'] < 1 ? false : true,
+                        collectionDate: new Date().toUTCString(),
+                        collectionTime: new Date().toUTCString(),
+                        submittedBy: 'admin'
+                    };  
+
+                    axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        headers: {
+                            'auth-token': `${localStorage.getItem('auth-token')}`
+                        }
+                    }).then(res => {
+                        console.log('Succesfully added file record ' + res)
+                    }).catch(err => {
+                        console.log(err)
+                    });
+                });
+                alert('Succesfully imported file data');
+               
+            });
         };
      
         if (rABS) {
@@ -301,7 +374,6 @@ export default class ReportsView extends React.Component{
       }
 
     render() {
-        console.log(this.state.reports)
         if(this.state.isLoaded) {
         const importLoadingBtn =  <Button variant="primary" disabled>
                                         <Spinner
@@ -320,16 +392,16 @@ export default class ReportsView extends React.Component{
                             }>Import</Button>;
            
         const exportBtn =  <Button variant="primary" onClick={() => {
-            axios.post("https://a123ef.df.r.appspot.com/api/v1/export_excel", this.state.reports,{
-                headers: {
-                'auth-token': `${localStorage.getItem('auth-token')}`
-                }
-            }).then(res => {
-                console.log(res)
-                alert('Succesfully downloaded excel file');
-                this.setState({ exportbtnClicked: 1 })
-                this.toggleExportModalDisplay();
-            })
+            this.downloadExcel();
+            
+            // then(res => {
+
+                
+            //     console.log(res)
+            //     alert('Succesfully downloaded excel file');
+            //     this.setState({ exportbtnClicked: 1 })
+            //     this.toggleExportModalDisplay();
+            // })
         }
     
             
@@ -366,7 +438,7 @@ export default class ReportsView extends React.Component{
             this.setState({
                 addBtnClicked: 1
             })
-            this.addReport()
+            this.addReport(this.getAddEntryFormValues())
         }}>Add Entry</Button>;    
 
         const addLoadingBtn =  <Button variant="primary" disabled>
@@ -402,7 +474,7 @@ export default class ReportsView extends React.Component{
         const industriesDB = this.state.industries.map( industry => industry);
         const categoriesAndIndustries = [...categories, ...industriesDB];
         
-    
+        console.log(this.state.reports)
 
         return(
                 <>
@@ -945,7 +1017,7 @@ export default class ReportsView extends React.Component{
                             this.toggleIndstryModalDisplay();
                             }}>Cancel</Button>
                         <Button variant="primary" onClick={() => {
-                            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_industry", {
+                            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_industry", {
                                 industry: document.getElementsByClassName("industrysubsector")[0].value,
                                 subSector: document.getElementsByClassName("industrysubsector")[1].value
                             }, {

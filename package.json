@@ -12,6 +12,7 @@
     "chart.js": "^2.9.3",
     "convert-excel-to-json": "^1.7.0",
     "create-react-class": "^15.6.3",
+    "file-saver": "^2.0.2",
     "mdbreact": "^4.27.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",

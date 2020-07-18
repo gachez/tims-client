@@ -91,7 +91,7 @@ export default class TaskView extends React.Component{
     }
 
     deleteTask = (id) => {
-        axios.delete("/api/v1/admin/delete_task/" + id,{
+        axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_task/" + id,{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -285,7 +285,7 @@ export default class TaskView extends React.Component{
                                         dueDate: document.getElementsByName("date")[0].value
                                     }
 
-                                    axios.post("/api/v1/admin/create_task", newTask, {
+                                    axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/create_task", newTask, {
                                         headers: {
                                         'auth-token': `${localStorage.getItem('auth-token')}`
                                         }
