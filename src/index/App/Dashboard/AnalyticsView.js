@@ -12,7 +12,9 @@ var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 export default class AnalyticsView extends React.Component{
     state = {
         isLoaded: false,
-        project: []
+        project: [],
+        reports: [],
+        tasks: []
     }
 
     componentDidMount() {
@@ -28,11 +30,35 @@ export default class AnalyticsView extends React.Component{
             })
           }).catch(err => console.log(err));
     
+          axios.get(`https://a123ef.df.r.appspot.com/api/v1/admin/get_reports` ,  {
+            headers: {
+              'auth-token': `${localStorage.getItem('auth-token')}`
+            }
+          }).then(res => {
+
+            this.setState({
+                reports: res.data
+            })
+          }).catch(err => console.log(err));
+    
+          axios.get(`https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks` ,  {
+            headers: {
+              'auth-token': `${localStorage.getItem('auth-token')}`
+            }
+          }).then(res => {
+
+            this.setState({
+                tasks: res.data
+            })
+          }).catch(err => console.log(err));
+    
+          
+
           localStorage.setItem("page", "analytics")
         }
 
   
-
+      
     render() {
         const options = {
 			title: {
@@ -54,43 +80,38 @@ export default class AnalyticsView extends React.Component{
 			}
 			]
         }
-     
-        const usersCountArr = this.state.project.usersAssigned
-        
-const KPIs = [
-    {
-        title: "Users",
-        amount: 4
-    },
-    {
-        title: "Tasks Assigned",
-        amount: 30
-    },
-    {
-        title: "Tasks Submitted",
-        amount: 111
-    },
-    {
-        title: "Companies Recorded",
-        amount: 1000
-    },
-    {
-        title: "Confirmed",
-        amount: 330
-    },
-    {
-        title: "Pending",
-        amount: 100
-    },
-    {
-        title: "Reports Submitted",
-        amount: 20
-    }
-];
-
-
         if (this.state.isLoaded) {
-           console.log(this.state.project)
+           console.log(this.state.reports);
+           console.log(this.state.tasks);
+        
+          const tasksAssignedCount = this.state.tasks.filter(task => task.projectName === this.state.project.projectName);
+          const companiesRecorded = this.state.reports.filter(report => report.projectName === this.state.project.projectName);
+
+           const KPIs = [
+              
+               {
+                   title: "Tasks Assigned",
+                   amount: tasksAssignedCount.length
+               },
+               {
+                   title: "Tasks Completed",
+                   amount: tasksAssignedCount.filter(task => task.complete).length
+               },
+               {
+                   title: "Companies Recorded",
+                   amount: companiesRecorded.length
+               },
+               {
+                   title: "Confirmed",
+                   amount: companiesRecorded.filter(record => record.confirmed).length
+               },
+               {
+                   title: "Pending",
+                   amount: companiesRecorded.filter(record => !record.confirmed ).length
+               }
+           ];
+           
+           
             return (
                 <>
                 <div className="container">

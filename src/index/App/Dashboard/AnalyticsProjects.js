@@ -62,7 +62,7 @@ export default class AnalyticsProjects extends React.Component{
 
     
 
-
+ 
     toggleDeleteModal = () => {
         this.state.deleteModalDisplay === 'none' ? this.setState({deleteModalDisplay: 'block'}) : this.setState({deleteModalDisplay: 'none'})
     }
