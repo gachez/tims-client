@@ -49,7 +49,12 @@ export default class ReportsView extends React.Component{
         projectName: 'Project',
         categoryModal: 'none',
         industries: [],
-        determinedIndustry: ''
+        determinedIndustry: '',
+        defaultReports: [],
+        industryFilterClicked: 0,
+        projectFilterClicked: 0,
+        userFilterClicked: 0,
+        
     }
 
     componentDidMount() {
@@ -60,7 +65,8 @@ export default class ReportsView extends React.Component{
           }).then(res => {
               this.setState({
                   isLoaded: true,
-                  reports: res.data
+                  reports: res.data,
+                  defaultReports: res.data
               })
               
           }).catch(err => console.log(err));
@@ -373,6 +379,20 @@ export default class ReportsView extends React.Component{
         };
       }
 
+      resetToDefault = async() => {
+          if(this.state.chosenIndustry !== "Industry" || this.state.projectName !=="Project" || this.state.chosenUser !== "User" ){
+            this.setState({
+                chosenIndustry: 'Industry',
+                projectName: "Project",
+                chosenUser: "User",
+                reports: this.state.defaultReports
+            });
+            return 0;
+          }
+          this.setState({
+              reports: this.state.defaultReports
+          })
+      }
     render() {
         if(this.state.isLoaded) {
         const importLoadingBtn =  <Button variant="primary" disabled>
@@ -617,7 +637,7 @@ export default class ReportsView extends React.Component{
                                     <DropdownButton
                                         style={{ marginRight: '1rem' }}
                                         variant="outline-secondary"
-                                        title="Project"
+                                        title={this.state.projectName}
                                         id="input-group-dropdown-104"
                                         >
                                             {
@@ -625,6 +645,7 @@ export default class ReportsView extends React.Component{
                                                     return(
                                                         <Dropdown.Item key={project._id} onClick={() => {
                                                             this.setState({
+                                                                projectName: project.projectName,
                                                                 reports: this.state.reports.filter(report => report.projectName === project.projectName)
                                                             });
                                                         }}>{project.projectName}</Dropdown.Item>
@@ -1040,7 +1061,7 @@ export default class ReportsView extends React.Component{
                     <h2 id="h2-title">Database</h2>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item>
-                            <Nav.Link href="#">View</Nav.Link>
+                            <Nav.Link href="#" onClick={() => {this.resetToDefault()}}>View</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link onClick={this.toggleExportModalDisplay} eventKey="link-1">
@@ -1078,10 +1099,11 @@ export default class ReportsView extends React.Component{
                                                                     return(
                                                                       <Dropdown.Item key={subsector} 
                                                                         onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
+                                                                                this.setState({
+                                                                                    chosenIndustry: subsector,
+                                                                                    reports: this.state.reports.filter(report => report.subSector === subsector)
+                                                                                });
+                                                                          
                                                                         }}
                                                                       >{subsector}</Dropdown.Item>
                                                         )
@@ -1091,7 +1113,7 @@ export default class ReportsView extends React.Component{
                                                                         onClick={() => {
                                                                             this.setState({
                                                                                 chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                                reports: this.state.reports.filter(report => report.subSector === subsector)
                                                                             })
                                                                         }}
                                                                       >{subsector}</Dropdown.Item>
@@ -1183,7 +1205,7 @@ export default class ReportsView extends React.Component{
                     </Nav.Item>
                         </Nav>
                     <section className="section-container" > 
-                    <Table variant='dark' className="reports-table" style={{marginTop: '30px'}} striped bordered hover responsive >
+                    <Table variant='dark' className="reports-table" style={{marginTop: '30px', overflowY: 'scroll'}} striped bordered hover responsive >
                             <thead>
                                 <tr variant="light">
                                 <th>#</th>
