@@ -221,14 +221,14 @@ export default class ReportsView extends React.Component{
             const comments = await document.getElementById('comment-field').value;
 
             // added comments
-            axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, comments, {
+            axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {comments: comments}, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                   }
             }).then(res => {
                 alert("Succesfully added comment");     
                     console.log(res);
-                    this.toggleEditModalDisplay();
+                    this.toggleCommentModalDisplay();
                     this.reloadPage();
             }).catch(err => console.log(err))
     
@@ -283,6 +283,13 @@ export default class ReportsView extends React.Component{
             })
         } catch(err) {console.log('error' + err)}
 
+    }
+
+    fetchComments = (id) => {
+        let report = this.state.reports.filter( report => report._id === id);
+      
+
+        console.log(report.comments)
     }
 
     removeUser = async (id) => {
@@ -1044,19 +1051,19 @@ export default class ReportsView extends React.Component{
                     <Modal.Header >
                         <Modal.Title>Comments</Modal.Title>
                     </Modal.Header>
-                    <ul style={{marginTop: '1rem', display: 'none'}}>
-                        <li></li>
-                    </ul>
+                    {
+                        this.fetchComments(this.state.editFieldID)
+                    }
                     <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
                     <Form>
                         <Form.Group controlId="formComment">
-                            <Form.Control as="textarea" rows="4" placeholder="Add a comment..."/>
+                            <Form.Control as="textarea" rows="4" id="comment-field" placeholder="Add a comment..."/>
                         </Form.Group>
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.toggleCommentModalDisplay}>Cancel</Button>
-                        <Button variant="primary">Add comment</Button>
+                        <Button variant="primary" onClick={ () => {this.addComment(this.state.editFieldID)}}>Add comment</Button>
                     </Modal.Footer>
                     </Modal.Dialog>
                 </div>
@@ -1315,7 +1322,7 @@ export default class ReportsView extends React.Component{
                             </thead>
                             <tbody>
                             {
-                                this.state.reports.reverse().map((user,index) => {
+                                this.state.reports.map((user,index) => {
                                     return(<>
                                     <div
                                         key={user.password} 
@@ -1326,7 +1333,7 @@ export default class ReportsView extends React.Component{
                                                  width: 'fit-content',
                                                  height: 'fit-content'
                                                 }}>
-                                          <div style={{ display: typeof user.comment === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
+                                          <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
                                             <img   src={comment}   
                                                 style={{width: '20px', 
                                                         height: '20px'
