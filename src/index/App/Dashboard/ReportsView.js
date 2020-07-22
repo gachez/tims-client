@@ -285,13 +285,6 @@ export default class ReportsView extends React.Component{
 
     }
 
-    fetchComments = (id) => {
-        let report = this.state.reports.filter( report => report._id === id);
-      
-
-        console.log(report.comments)
-    }
-
     removeUser = async (id) => {
         try{
             axios.delete("https://tims-client.df.r.appspot.com/api/v1/admin/delete_record/" + id,  {
@@ -1051,9 +1044,16 @@ export default class ReportsView extends React.Component{
                     <Modal.Header >
                         <Modal.Title>Comments</Modal.Title>
                     </Modal.Header>
+                    <ul style={{marginTop: '1.25rem'}}>
                     {
-                        this.fetchComments(this.state.editFieldID)
+                        this.state.reports.filter( report => report._id === this.state.editFieldID ).map(report => {
+                            return(
+                                <li>{report.comments}</li>
+                            )
+                        } )
                     }
+                    </ul>
+                   
                     <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
                     <Form>
                         <Form.Group controlId="formComment">
@@ -1332,19 +1332,20 @@ export default class ReportsView extends React.Component{
                                                  left: '-105px',
                                                  width: 'fit-content',
                                                  height: 'fit-content'
-                                                }}>
+                                                }}
+                                        onClick={() => {
+                                            this.setState({
+                                                editFieldID: user._id,
+                                                editFieldIndex: index
+                                            });
+                                                    this.toggleCommentModalDisplay();
+                                                    }}        
+                                                >
                                           <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
                                             <img   src={comment}   
                                                 style={{width: '20px', 
                                                         height: '20px'
-                                                }}
-                                                    onClick={() => {
-                                                        this.setState({
-                                                            editFieldID: user._id,
-                                                            editFieldIndex: index
-                                                        });
-                                                        this.toggleCommentModalDisplay();
-                                                        }}/> 
+                                                }}/> 
 
                                     </div>
                                     
