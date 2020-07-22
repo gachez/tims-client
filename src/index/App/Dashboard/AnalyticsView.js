@@ -66,15 +66,15 @@ export default class AnalyticsView extends React.Component{
 			},
 			data: [
 			{
-				type: "column",
+                type: "column",
 				dataPoints: [
-					{ label: "Jan",  y: 10  },
-					{ label: "Feb", y: 15  },
-					{ label: "March", y: 25  },
-					{ label: "April",  y: 30  },
-                    { label: "May",  y: 28  },
-                    { label: "June",  y: 26  },
-                    { label: "July",  y: 60  }
+					{ label: "Mon",  y: 10  },
+					{ label: "Tue", y: 15  },
+					{ label: "Wed", y: 25  },
+					{ label: "Thur",  y: 30  },
+                    { label: "Fri",  y: 28  },
+                    { label: "Sat",  y: 26  },
+                    { label: "Sun",  y: 60  }
 
 				]
 			}
