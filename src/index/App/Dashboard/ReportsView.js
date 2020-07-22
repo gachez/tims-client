@@ -4,6 +4,7 @@ import {Spinner,Table, Nav, Dropdown, DropdownButton,Modal, Form, Button} from '
 import trash from './shared/trash.png';
 import edit from '../shared/edit.png';
 import tick from '../shared/tick.png';
+import comment from '../shared/chatbox.png';
 import excel from '../shared/excelicon.png';
 import axios from 'axios';
 import 'react-dropzone-uploader/dist/styles.css';
@@ -21,6 +22,7 @@ export default class ReportsView extends React.Component{
         editSave: 'none',
         users: [],
         isLoaded: false,
+        commentModal: 'none',
         emailModal: 'none',
         individualEmailModule: 'none',
         reports: [],
@@ -161,6 +163,10 @@ export default class ReportsView extends React.Component{
         this.state.deleteModalDisplay === 'none' ? this.setState({deleteModalDisplay: 'block'}) : this.setState({deleteModalDisplay: 'none'})
     }
 
+    toggleCommentModalDisplay = () => {
+        this.state.commentModal === 'none' ? this.setState({commentModal: 'block'}) : this.setState({commentModal: 'none'})
+    }
+
 
     getEditField = (id ) => {
         const field = this.state.reports.filter(report => report._id === id);
@@ -196,7 +202,7 @@ export default class ReportsView extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
+        axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -207,6 +213,26 @@ export default class ReportsView extends React.Component{
                 this.reloadPage();
         }).catch(err => console.log(err))
        } catch(err) {console.log(err)}
+    }
+
+    addComment = async (id) => {
+        try{
+
+            const comments = await document.getElementById('comment-field').value;
+
+            // added comments
+            axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, comments, {
+                headers: {
+                    'auth-token': `${localStorage.getItem('auth-token')}`
+                  }
+            }).then(res => {
+                alert("Succesfully added comment");     
+                    console.log(res);
+                    this.toggleEditModalDisplay();
+                    this.reloadPage();
+            }).catch(err => console.log(err))
+    
+        } catch(err) {console.log(err)}
     }
 
     getAddEntryFormValues = async () => {
@@ -238,7 +264,7 @@ export default class ReportsView extends React.Component{
   
         const toSave = await savedReport;
         try{
-            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", toSave, {
+            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", toSave, {
                 'Content-Type': 'application/json;charset=UTF-8',
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
@@ -261,7 +287,7 @@ export default class ReportsView extends React.Component{
 
     removeUser = async (id) => {
         try{
-            axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_record/" + id,  {
+            axios.delete("https://tims-client.df.r.appspot.com/api/v1/admin/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -357,7 +383,7 @@ export default class ReportsView extends React.Component{
                         submittedBy: 'admin'
                     };  
 
-                    axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
+                    axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
                         'Content-Type': 'application/json;charset=UTF-8',
                         headers: {
                             'auth-token': `${localStorage.getItem('auth-token')}`
@@ -1008,7 +1034,34 @@ export default class ReportsView extends React.Component{
                     </Modal.Dialog>
                 </div>
 
+                {/* add comment to report modal*/}
+                <div className="modal-bg" style={{
+                    display: this.state.commentModal
+                }}>
+                <Modal.Dialog scrollable={true}  className="modal-add-entry" style={{
+                    display: this.state.commentModal
+                }}>
+                    <Modal.Header >
+                        <Modal.Title>Comments</Modal.Title>
+                    </Modal.Header>
+                    <ul style={{marginTop: '1rem', display: 'none'}}>
+                        <li></li>
+                    </ul>
+                    <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
+                    <Form>
+                        <Form.Group controlId="formComment">
+                            <Form.Control as="textarea" rows="4" placeholder="Add a comment..."/>
+                        </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.toggleCommentModalDisplay}>Cancel</Button>
+                        <Button variant="primary">Add comment</Button>
+                    </Modal.Footer>
+                    </Modal.Dialog>
+                </div>
 
+                
                 {/* add a category modal */}
                 <div className="modal-bg" style={{
                     display: this.state.categoryModal
@@ -1264,7 +1317,30 @@ export default class ReportsView extends React.Component{
                             {
                                 this.state.reports.reverse().map((user,index) => {
                                     return(<>
-                                
+                                    <div
+                                        key={user.password} 
+                                        className="delete-icon" 
+                                        style={{ 
+                                                 position: 'absolute',
+                                                 left: '-105px',
+                                                 width: 'fit-content',
+                                                 height: 'fit-content'
+                                                }}>
+                                          <div style={{ display: typeof user.comment === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
+                                            <img   src={comment}   
+                                                style={{width: '20px', 
+                                                        height: '20px'
+                                                }}
+                                                    onClick={() => {
+                                                        this.setState({
+                                                            editFieldID: user._id,
+                                                            editFieldIndex: index
+                                                        });
+                                                        this.toggleCommentModalDisplay();
+                                                        }}/> 
+
+                                    </div>
+                                    
                                     <img  key={user.password} src={edit} style={{marginLeft: '-5px',}} className="delete-icon" 
                                         onClick={() => {
                                             this.setState({
