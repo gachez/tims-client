@@ -1315,7 +1315,6 @@ export default class ReportsView extends React.Component{
                                 <th>Country</th>
                                 <th>Project</th>
                                 <th>Confirmed</th>
-                                <th>Collection Date</th>
                                 <th>Collection Time</th>
                                 <th>Submitted by</th>
                                 </tr>
@@ -1380,7 +1379,6 @@ export default class ReportsView extends React.Component{
                                         <td>{ user.country }</td>
                                         <td>{ user.projectName }</td>
                                         <td style={{ color: 'yellow'}}>{ user.confirmed ? 'Confirmed' : 'Pending'}</td>
-                                        <td>{ user.collectionDate }</td>
                                         <td>{user.collectionTime}</td>
                                         <td>{ user.submittedBy}</td>
                                         </tr>
