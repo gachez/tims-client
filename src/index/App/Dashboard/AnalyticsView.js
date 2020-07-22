@@ -18,7 +18,7 @@ export default class AnalyticsView extends React.Component{
     }
 
     componentDidMount() {
-        axios.get(`https://a123ef.df.r.appspot.com/api/v1/admin/get_projects/${ localStorage.getItem('id')}` ,  {
+        axios.get(`https://tims-client.df.r.appspot.com/api/v1/admin/get_projects/${ localStorage.getItem('id')}` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -30,18 +30,18 @@ export default class AnalyticsView extends React.Component{
             })
           }).catch(err => console.log(err));
     
-          axios.get(`https://a123ef.df.r.appspot.com/api/v1/admin/get_reports` ,  {
+          axios.get(`https://tims-client.df.r.appspot.com/api/v1/admin/get_reports` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }).then(res => {
 
-            this.setState({
+            this.setState({ 
                 reports: res.data
             })
           }).catch(err => console.log(err));
     
-          axios.get(`https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks` ,  {
+          axios.get(`https://tims-client.df.r.appspot.com/api/v1/admin/assigned_tasks` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -118,6 +118,7 @@ export default class AnalyticsView extends React.Component{
     
                 <h2>Analytics ({this.state.project.projectName})</h2>
                 <br />
+                <h4>{typeof this.state.project.duration === "undefined" ? 'duration not specified' : this.state.project.duration}</h4>
                 <br />
                 <br />
                 <CardDeck >

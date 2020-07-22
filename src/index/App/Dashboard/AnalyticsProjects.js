@@ -30,12 +30,12 @@ export default class AnalyticsProjects extends React.Component{
         assigneeID: '',
         assigneeChosen: '',
         assigneeName: 'User',
-        getUsersRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_users",  {
+        getUsersRequest: axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_users",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getProjects: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_projects",  {
+        getProjects: axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -78,7 +78,7 @@ export default class AnalyticsProjects extends React.Component{
     }
 
     deleteTask = (id) => {
-        axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_task/" + id,{
+        axios.delete("https://tims-client.df.r.appspot.com/api/v1/admin/delete_task/" + id,{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -138,6 +138,11 @@ export default class AnalyticsProjects extends React.Component{
                                     <Form.Label>Description</Form.Label>
                                     <Form.Control name="taskdetails" as="textarea" rows="4" placeholder="write details of the project" />
                                 </Form.Group>
+
+                                <Form.Group controlId="formDuration">
+                                    <Form.Label>Project Duration</Form.Label>
+                                    <Form.Control name="projectduration" type="textbox" placeholder="e.g 12 Jun - 21 Jul" />
+                                </Form.Group>
         
                                 </Form>
                             </Modal.Body>
@@ -148,17 +153,18 @@ export default class AnalyticsProjects extends React.Component{
                                     console.log('assigning....');
                                     const newProject = {
                                         projectName: document.getElementsByName("projectname")[0].value,
-                                        description:   document.getElementsByName("taskdetails")[0].value
+                                        description:   document.getElementsByName("taskdetails")[0].value,
+                                        duration: document.getElementsByName("projectduration")[0].value
                                     }
 
-                                    axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_project", newProject, {
+                                    axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_project", newProject, {
                                         headers: {
                                         'auth-token': `${localStorage.getItem('auth-token')}`
                                         }
                                     })
                                     .then( res => {
                                         alert('Succesfully added new project');
-                                        this.setState({addBtnClicked: false});
+                                         this.setState({addBtnClicked: false});
                                         this.toggleModalDisplay();
                                     })
                                     .catch(console.error)
