@@ -52,7 +52,11 @@ export default class TaskView extends React.Component{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
-          })
+          }),
+          selectedFile: null,
+          file: {},
+          data: [],
+          cols: []
     }
 
     componentDidMount() {
@@ -119,7 +123,7 @@ export default class TaskView extends React.Component{
         if (files && files[0]) this.setState({ file: files[0] });
       };
      
-      handleFile = async () => {
+    handleFile = async (user,project) => {
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
@@ -142,7 +146,7 @@ export default class TaskView extends React.Component{
               () => {
                   this.state.data.forEach( (imports,index) => {
                      let dataObj = {    
-                        projectName: imports['Project Name'],
+                        projectName: project,
                         companyName:  imports['Company Name'], 
                         contactPerson: imports['Contact Person'],
                         position:   imports['Position'],
@@ -158,8 +162,8 @@ export default class TaskView extends React.Component{
                         confirmed: imports['Confirmed'] < 1 ? false : true,
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
-                        submittedBy: 'admin'
-                    };  
+                        submittedBy: user                 
+                      };  
 
                     axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
                         'Content-Type': 'application/json;charset=UTF-8',
@@ -172,7 +176,6 @@ export default class TaskView extends React.Component{
                         console.log(err)
                     });
                 });
-                alert('Succesfully imported file data');
                
             });
         };
@@ -201,10 +204,6 @@ export default class TaskView extends React.Component{
             </Popover>
           );
 
-         const importBtn =  <Button variant="primary" onClick={() => {
-            this.handleFile();
-            }}>Import</Button>;
-            
             return(
                 <>
 
@@ -347,12 +346,12 @@ export default class TaskView extends React.Component{
                                         onChange={this.handleChange} 
                                         />
                                 </Form.Group>
-                                <Form.Group controlId="formUsername">
+                                <Form.Group controlId="formTaskDescription">
                                     <Form.Label>Description</Form.Label>
                                     <Form.Control name="taskdetails" as="textarea" rows="4" placeholder="write task details" />
                                 </Form.Group>
         
-                                <Form.Group controlId="formUsername">
+                                <Form.Group controlId="formDueDate">
                                     <Form.Label>Due date</Form.Label>
                                     <Form.Control name="date" as="textarea" rows="4" placeholder="e.g DD/MM/YY" />
                                 </Form.Group>
@@ -362,8 +361,10 @@ export default class TaskView extends React.Component{
     
                               <Modal.Footer>
                                 <Button variant="secondary" onClick={this.toggleModalDisplay}>Close</Button>
-                                <Button variant="primary" onClick={() => {
+                                <Button variant="primary" onClick={async () => {
                                     console.log('assigning....');
+                                    await this.handleFile(this.state.assignee, this.state.projectName);
+
                                     const newTask = {
                                         projectName: this.state.projectName,
                                         userAssigned: this.state.assignee,
