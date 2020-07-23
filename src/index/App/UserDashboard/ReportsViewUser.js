@@ -1163,6 +1163,7 @@ export default class ReportsViewUser extends React.Component{
                                                  height: 'fit-content'
                                                 }}
                                         onClick={() => {
+                                            window.scrollTo(0, 0); 
                                             this.setState({
                                                 editFieldID: user._id,
                                                 editFieldIndex: index
@@ -1179,6 +1180,7 @@ export default class ReportsViewUser extends React.Component{
                                     </div>
 
                                      <img  key={user} src={tick} style={{marginLeft: '-35px'}} className="delete-icon" onClick={() => {
+                                          window.scrollTo(0, 0);
                                         this.setState({
                                             editFieldID: user._id
                                         });
@@ -1190,6 +1192,7 @@ export default class ReportsViewUser extends React.Component{
                                     }}/>
 
                                      <img  key={user.password} src={edit} style={{marginLeft: '-5px'}} className="delete-icon" onClick={() => {
+                                         window.scrollTo(0, 0);
                                         this.setState({
                                             editFieldID: user._id
                                         });

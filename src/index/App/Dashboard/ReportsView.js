@@ -1333,6 +1333,7 @@ export default class ReportsView extends React.Component{
                                                  height: 'fit-content'
                                                 }}
                                         onClick={() => {
+                                            window.scrollTo(0, 0);
                                             this.setState({
                                                 editFieldID: user._id,
                                                 editFieldIndex: index
@@ -1350,6 +1351,7 @@ export default class ReportsView extends React.Component{
                                     
                                     <img  key={user.password} src={edit} style={{marginLeft: '-5px',}} className="delete-icon" 
                                         onClick={() => {
+                                            window.scrollTo(0, 0);
                                             this.setState({
                                                 editFieldID: user._id,
                                                 editFieldIndex: index
@@ -1357,6 +1359,7 @@ export default class ReportsView extends React.Component{
                                             this.toggleEditModalDisplay()
                                             }}/> 
                                     <img  key={user.password} src={trash} style={{marginLeft: '30px'}} className="delete-icon" onClick={() => {
+                                        window.scrollTo(0, 0);
                                         this.setState({
                                             editFieldID: user._id
                                            
