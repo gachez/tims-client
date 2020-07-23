@@ -12,7 +12,11 @@ import {Nav,
          InputGroup, 
          DropdownButton, 
          Dropdown, 
-         FormControl} from 'react-bootstrap';
+         FormControl,
+         FormGroup} from 'react-bootstrap';
+import XLSX from 'xlsx';
+import { make_cols } from './MakeColumns';
+import { SheetJSFT } from './types';         
 import add from './TaskView/add.png';
 import trash from './shared/trash.png';
 import axios from 'axios';
@@ -109,6 +113,76 @@ export default class TaskView extends React.Component{
         return userName
     }
 
+     
+    handleChange = (e) => {
+        const files = e.target.files;
+        if (files && files[0]) this.setState({ file: files[0] });
+      };
+     
+      handleFile = async () => {
+        /* Boilerplate to set up FileReader */
+        const reader = new FileReader();
+        const rABS = !!reader.readAsBinaryString;
+     
+        reader.onload = (e) => {
+          /* Parse data */
+          const bstr = e.target.result;
+          const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array', bookVBA : true });
+          /* Get first worksheet */
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          /* Convert array of arrays */
+          const data = XLSX.utils.sheet_to_json(ws);
+          /* Update state */
+      
+            this.setState({ 
+                data: data, 
+                cols: make_cols(ws['!ref'])
+             },
+              () => {
+                  this.state.data.forEach( (imports,index) => {
+                     let dataObj = {    
+                        projectName: imports['Project Name'],
+                        companyName:  imports['Company Name'], 
+                        contactPerson: imports['Contact Person'],
+                        position:   imports['Position'],
+                        email1:    imports['Email 1'],
+                        email2:   imports['Email 2'],
+                        mobile1:   imports['Mobile 1'].toString(),
+                        mobile2:   imports['Mobile 2'],
+                        website: imports['Website'],
+                        industry: imports['Industry'],
+                        subSector: typeof imports['Subsector'] === "undefined" ? 'none' : imports['Subsector'],
+                        productDescription: imports['Product Description'],
+                        country: imports['Country'],
+                        confirmed: imports['Confirmed'] < 1 ? false : true,
+                        collectionDate: new Date().toUTCString(),
+                        collectionTime: new Date().toUTCString(),
+                        submittedBy: 'admin'
+                    };  
+
+                    axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
+                        'Content-Type': 'application/json;charset=UTF-8',
+                        headers: {
+                            'auth-token': `${localStorage.getItem('auth-token')}`
+                        }
+                    }).then(res => {
+                        console.log('Succesfully added file record ' + res)
+                    }).catch(err => {
+                        console.log(err)
+                    });
+                });
+                alert('Succesfully imported file data');
+               
+            });
+        };
+     
+        if (rABS) {
+          reader.readAsBinaryString(this.state.file);
+        } else {
+          reader.readAsArrayBuffer(this.state.file);
+        };
+      }
 
     
 
@@ -126,6 +200,11 @@ export default class TaskView extends React.Component{
               </Popover.Content>
             </Popover>
           );
+
+         const importBtn =  <Button variant="primary" onClick={() => {
+            this.handleFile();
+            }}>Import</Button>;
+            
             return(
                 <>
 
@@ -260,7 +339,14 @@ export default class TaskView extends React.Component{
                                     <FormControl aria-describedby="basic-addon1" />
                                 </InputGroup>
                                 </Form.Group>
-    
+                                <Form.Group controlId="formAttachData">
+                                    <Form.Label>Attach data: </Form.Label><br />
+                                    <input type="file"
+                                        id="avatar" name="avatar"
+                                        accept={SheetJSFT}
+                                        onChange={this.handleChange} 
+                                        />
+                                </Form.Group>
                                 <Form.Group controlId="formUsername">
                                     <Form.Label>Description</Form.Label>
                                     <Form.Control name="taskdetails" as="textarea" rows="4" placeholder="write task details" />
