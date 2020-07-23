@@ -128,7 +128,7 @@ export default class TaskView extends React.Component{
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
      
-        reader.onload = (e) => {
+        reader.onload = (e) => { 
           /* Parse data */
           const bstr = e.target.result;
           const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array', bookVBA : true });
@@ -145,6 +145,7 @@ export default class TaskView extends React.Component{
              },
               () => {
                   this.state.data.forEach( (imports,index) => {
+
                      let dataObj = {    
                         projectName: project,
                         companyName:  imports['Company Name'], 
@@ -162,7 +163,8 @@ export default class TaskView extends React.Component{
                         confirmed: imports['Confirmed'] < 1 ? false : true,
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
-                        submittedBy: user                 
+                        submittedBy: 'admin',
+                        assignedTo: user                  
                       };  
 
                     axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {

@@ -1190,7 +1190,9 @@ export default class ReportsView extends React.Component{
                                                                 category.subSector.map( subsector => {
                                                                     return(
                                                                       <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
+                                                                        onClick={ async () => {
+
+                                                                            const filteredData = 
                                                                                 this.setState({
                                                                                     chosenIndustry: subsector,
                                                                                     reports: this.state.reports.filter(report => report.subSector === subsector)

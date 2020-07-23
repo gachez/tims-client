@@ -115,7 +115,7 @@ module.exports.categories = [
                             Water Storage,
                             Waterproofing,
                             Window Hardware,
-                            Wood & Woodworking`.split(",")
+                            Wood & Woodworking`.split(`,`).map(word => word.trim())
     },
     {
         industry: 'FOOD & AGRICULTURE',
@@ -264,7 +264,7 @@ module.exports.categories = [
         Wire Mesh Products
         Workshop Tools and Equipment
         Wrapping, Sealing & Lamination Equipment
-        `.split("\n")
+        `.split("\n").map(word => word.trim())
     }
 ];
 
