@@ -952,7 +952,7 @@ export default class ReportsView extends React.Component{
                                                                         onClick={() => {
                                                                             this.setState({
                                                                                 chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                                reports: this.state.reports.forEach(word => word.subSector.trim()).filter(report => report.industry === subsector)
                                                                             })
                                                                         }}
                                                                       >{subsector}</Dropdown.Item>
@@ -963,7 +963,7 @@ export default class ReportsView extends React.Component{
                                                                         onClick={() => {
                                                                             this.setState({
                                                                                 chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
+                                                                                reports: this.state.reports.forEach(word => word.subSector.trim()).filter(report => report.industry === subsector)
                                                                             })
                                                                         }}
                                                                       >{subsector}</Dropdown.Item>
