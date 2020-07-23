@@ -34,11 +34,13 @@ export default class ReportsViewUser extends React.Component{
         individualEmailModule: 'none',
         importBtnClicked: false,
         determinedIndustry: '',
-        industries: []
+        industries: [],
+        chosenIndustry: 'Industry',
+        defaultReports: []
     }
 
     componentDidMount() {
-        axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_reports",  {
+        axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_reports",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -46,11 +48,12 @@ export default class ReportsViewUser extends React.Component{
 
             this.setState({
                 reports: res.data,
+                defaultReports: res.data,
                 isLoaded: true
             });
           });
 
-          axios.get('https://a123ef.df.r.appspot.com/api/v1/admin/get_industries',{
+          axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -60,7 +63,7 @@ export default class ReportsViewUser extends React.Component{
               })
           })
 
-          axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_projects",  {
+          axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -127,7 +130,7 @@ export default class ReportsViewUser extends React.Component{
  
     markComplete = (id) => {
         console.log('..marking')
-        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {
+        axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {
             confirmed: true
         },{
             headers: {
@@ -169,7 +172,7 @@ export default class ReportsViewUser extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`https://a123ef.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
+        axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -225,7 +228,7 @@ export default class ReportsViewUser extends React.Component{
             }
         console.log(savedReport)
         try{
-            axios.post("https://a123ef.df.r.appspot.com/api/v1/user/add_record", savedReport, {
+            axios.post("https://tims-client.df.r.appspot.com/api/v1/user/add_record", savedReport, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -277,7 +280,7 @@ export default class ReportsViewUser extends React.Component{
 
     sendToAdmin = (data) => {
                       //post to admin reports database
-                      axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", data, {
+                      axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", data, {
                         headers: {
                         'auth-token': `${localStorage.getItem('auth-token')}`
                         }
@@ -293,7 +296,7 @@ export default class ReportsViewUser extends React.Component{
     updateSubmitStatus = (id) => {
         console.log('updating status')
         //update submitted status to true
-        axios.post("https://a123ef.df.r.appspot.com/api/v1/user/edit_record/" + id, {
+        axios.post("https://tims-client.df.r.appspot.com/api/v1/user/edit_record/" + id, {
             submitted: true
         }, {
             headers: {
@@ -313,7 +316,7 @@ export default class ReportsViewUser extends React.Component{
         //merge to admin report db
         const sendThis = reportsToSubmit.map(report => {
               //post to admin reports database
-            axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/add_record", {
+            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", {
                 companyName:  report.companyName, 
                 contactPerson: report.contactPerson,
                 position:   report.position,
@@ -350,7 +353,7 @@ export default class ReportsViewUser extends React.Component{
 
     removeReport = async (id) => {
         try{
-            axios.delete("https://a123ef.df.r.appspot.com/api/v1/user/delete_record/" + id,  {
+            axios.delete("https://tims-client.df.r.appspot.com/api/v1/user/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -361,8 +364,23 @@ export default class ReportsViewUser extends React.Component{
                 this.toggleDeleteModal();
                 this.reloadPage();
             }).catch (err => { console.log(err)})
-    } catch (err) {console.log(err)}
-}
+        } catch (err) {console.log(err)}
+    }
+
+
+    resetToDefault = async() => {
+        if(this.state.chosenIndustry !== "Industry" || this.state.projectName !=="Project" ){
+          this.setState({
+              chosenIndustry: 'Industry',
+              projectName: "Project",
+              reports: this.state.defaultReports
+          });
+          return 0;
+        }
+        this.setState({
+            reports: this.state.defaultReports
+        })
+    }
 
   render() {
         if(this.state.isLoaded) {
@@ -930,7 +948,7 @@ export default class ReportsViewUser extends React.Component{
                 </div>
 
 
-                
+                 
                 <div className="container">
                     <h2 id="h2-title">Data</h2>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
@@ -943,8 +961,104 @@ export default class ReportsViewUser extends React.Component{
                            <Nav.Link eventKey="link-6" href="#">
                            Send bulk email                            
                                </Nav.Link> 
-   
                         </Nav.Item>
+
+                        <Nav.Item>
+                            <Nav.Link style={{ display: 'flex'}} >
+                                <span style={{ marginRight: '1rem' }}>Filter:</span>
+
+                                   {/* filter according to sector and subsector */}
+                                    <DropdownButton
+                                        style={{ marginRight: '1rem', width: '100%'}}
+                                        variant="outline-primary"
+                                        title={this.state.chosenIndustry}
+                                        id="input-group-dropdown-2"
+                                        >
+                                            {
+                                                categoriesAndIndustries.map( category => {
+                                                    return(
+                                                        <>
+                                                        <DropdownButton
+                                                        key={category.industry}
+                                                        style={{width: '70%', margin: '15px' }}
+                                                        variant="outline-secondary"
+                                                        title={category.industry}
+                                                        id="input-group-dropdown-3"
+                                                        >
+
+                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
+                                                            {
+                                                                Array.isArray(category.subSector) ? 
+                                                                category.subSector.map( subsector => {
+                                                                    return(
+                                                                      <Dropdown.Item key={subsector} 
+                                                                        onClick={() => {
+                                                                                this.setState({
+                                                                                    chosenIndustry: subsector,
+                                                                                    reports: this.state.reports.filter(report => report.subSector === subsector)
+                                                                                });
+                                                                          
+                                                                        }}
+                                                                      >{subsector}</Dropdown.Item>
+                                                        )
+                                                                }) :   category.subSector.split(",").map( subsector => {
+                                                                    return(
+                                                                      <Dropdown.Item key={subsector} 
+                                                                        onClick={() => {
+                                                                            this.setState({
+                                                                                chosenIndustry: subsector,
+                                                                                reports: this.state.reports.filter(report => report.subSector === subsector)
+                                                                            })
+                                                                        }}
+                                                                      >{subsector}</Dropdown.Item>
+                                                        )
+                                                                })
+                                                            }
+                                                                    </div>
+                                                    </DropdownButton>
+
+                                                    </>
+                                                    )
+                                                })
+                                            }
+                                    </DropdownButton>
+
+                                    {/* filter according to Project*/}
+                                    <DropdownButton
+                                        style={{ marginRight: '1rem' }}
+                                        variant="outline-primary"
+                                        title={this.state.projectName}
+                                        id="input-group-dropdown-4"
+                                        >
+                                            {
+                                                this.state.projects.map(project => {
+                                                    return(
+                                                        <Dropdown.Item key={project._id} onClick={() => {
+                                                            this.setState({
+                                                                reports: this.state.reports.filter(report => report.projectName === project.projectName),
+                                                                projectName: project.projectName
+                                                            });
+                                                        }}>{project.projectName}</Dropdown.Item>
+                                                    )
+                                                })
+                                            }
+
+                                    </DropdownButton>
+
+                                    <Button 
+                                        style={{
+                                            display: this.state.chosenIndustry === 'Industry' && this.state.projectName === 'Project' ? 'none' : 'block'
+                                        }}
+
+                                        onClick={() => {
+                                            this.resetToDefault();
+                                            }}>
+                                    Reset
+                                </Button>
+
+                            </Nav.Link>
+                        </Nav.Item>
+
 
                        
 
