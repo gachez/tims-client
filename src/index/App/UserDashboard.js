@@ -116,7 +116,7 @@ class UserDashboard extends React.Component {
                                         active: "reports"
                                     })
                                 }
-                            }>Reports</div>
+                            }>Data</div>
                      
                      <div style={userAvatar}>
                         <span><img src={avatar} width="24px" height="24px" alt="user avatar" style={{margin: '.25rem'}}/> {this.state.loggedInUSer[0]}</span>

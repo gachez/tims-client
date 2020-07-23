@@ -932,7 +932,7 @@ export default class ReportsViewUser extends React.Component{
 
                 
                 <div className="container">
-                    <h2 id="h2-title">Reports</h2>
+                    <h2 id="h2-title">Data</h2>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item onClick={this.toggleModalDisplay}>
                             <Nav.Link href="#">Add report</Nav.Link>
@@ -970,7 +970,7 @@ export default class ReportsViewUser extends React.Component{
                             <th>Date Updated</th>
                             <th>Confirmed</th>
                             </tr>
-                        </thead>
+                        </thead> 
                         <tbody>
                             {
                                 this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase()).map((user,index) => {
