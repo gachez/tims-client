@@ -9,6 +9,7 @@ import XLSX from 'xlsx';
 import { categories } from '../shared/lib/categories';
 import { make_cols } from '../Dashboard/MakeColumns';
 import { SheetJSFT } from '../Dashboard/types';
+import comment from '../shared/chatbox.png';
 
  
 
@@ -22,6 +23,7 @@ export default class ReportsViewUser extends React.Component{
         editReportModal: 'none',
         sendAdminModal: 'none',
         importFileModal: 'none',
+        commentModal: 'none',
         reports: [], 
         editFieldID: '',
         editBtnClicked: false,
@@ -120,6 +122,11 @@ export default class ReportsViewUser extends React.Component{
 
     toggleDeleteModal = () => {
         this.state.deleteModalDisplay === 'none' ? this.setState({deleteModalDisplay: 'block'}) : this.setState({deleteModalDisplay: 'none'})
+    }
+
+
+    toggleCommentModalDisplay = () => {
+        this.state.commentModal === 'none' ? this.setState({commentModal: 'block'}) : this.setState({commentModal: 'none'})
     }
 
     getEditField = (id ) => {
@@ -349,6 +356,27 @@ export default class ReportsViewUser extends React.Component{
             
         });
 
+    }
+
+    // add comment to report entry
+    addComment = async (id) => {
+        try{
+
+            const comments = await document.getElementById('comment-field').value;
+
+            // added comments
+            axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {comments: comments}, {
+                headers: {
+                    'auth-token': `${localStorage.getItem('auth-token')}`
+                  }
+            }).then(res => {
+                alert("Succesfully added comment");     
+                    console.log(res);
+                    this.toggleCommentModalDisplay();
+                    this.reloadPage();
+            }).catch(err => console.log(err))
+    
+        } catch(err) {console.log(err)}
     }
 
     removeReport = async (id) => {
@@ -913,6 +941,41 @@ export default class ReportsViewUser extends React.Component{
                     </Modal.Dialog>
                 </div>
 
+                {/* add comment to report modal*/}
+                <div className="modal-bg" style={{
+                    display: this.state.commentModal
+                }}>
+                <Modal.Dialog scrollable={true}  className="modal-add-entry" style={{
+                    display: this.state.commentModal
+                }}>
+                    <Modal.Header >
+                        <Modal.Title>Comments</Modal.Title>
+                    </Modal.Header>
+                    <ul style={{marginTop: '1.25rem'}}>
+                    {
+                        this.state.reports.filter( report => report._id === this.state.editFieldID ).map(report => {
+                            return(
+                                <li>{report.comments}</li>
+                            )
+                        } )
+                    }
+                    </ul>
+                   
+                    <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
+                    <Form>
+                        <Form.Group controlId="formComment">
+                            <Form.Control as="textarea" rows="4" id="comment-field" placeholder="Add a comment..."/>
+                        </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.toggleCommentModalDisplay}>Cancel</Button>
+                        <Button variant="primary" onClick={ () => {this.addComment(this.state.editFieldID)}}>Add comment</Button>
+                    </Modal.Footer>
+                    </Modal.Dialog>
+                </div>
+
+     
 
                 {/* import file modal */}
                 <div className="modal-bg" style={{
@@ -1088,7 +1151,33 @@ export default class ReportsViewUser extends React.Component{
                         <tbody>
                             {
                                 this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase()).map((user,index) => {
-                                    return(<>
+                                    return(
+                                    <>
+                                        <div
+                                        key={user.password} 
+                                        className="delete-icon" 
+                                        style={{ 
+                                                 position: 'absolute',
+                                                 left: '-135px',
+                                                 width: 'fit-content',
+                                                 height: 'fit-content'
+                                                }}
+                                        onClick={() => {
+                                            this.setState({
+                                                editFieldID: user._id,
+                                                editFieldIndex: index
+                                            });
+                                                    this.toggleCommentModalDisplay();
+                                                    }}        
+                                                >
+                                          <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
+                                            <img   src={comment}   
+                                                style={{width: '20px', 
+                                                        height: '20px'
+                                                }}/> 
+
+                                    </div>
+
                                      <img  key={user} src={tick} style={{marginLeft: '-35px'}} className="delete-icon" onClick={() => {
                                         this.setState({
                                             editFieldID: user._id
