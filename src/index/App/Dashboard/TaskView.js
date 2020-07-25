@@ -157,7 +157,7 @@ export default class TaskView extends React.Component{
                         mobile2:   imports['Mobile 2'],
                         website: imports['Website'],
                         industry: imports['Industry'],
-                        subSector: typeof imports['Subsector'] === "undefined" ? 'none' : imports['Subsector'],
+                        subSector: typeof imports['Subsector'] === "undefined" ? 'none' : imports['Subsector'].trim(),
                         productDescription: imports['Product Description'],
                         country: imports['Country'],
                         confirmed: imports['Confirmed'] < 1 ? false : true,
