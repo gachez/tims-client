@@ -14,34 +14,34 @@ body {
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {
   html,body{
-      transform: scale(.6);
+      transform: scale(.6) !important;
   }
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media only screen and (min-width: 600px) {
   html,body{
-    transform: scale(.65);
+    transform: scale(.65) !important;
 }
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
   html,body{
-    transform: scale(.75);
+    transform: scale(.75) !important;
 }
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
   html,body{
-    transform: scale(.9);
+    transform: scale(.9) !important;
 }
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
   html,body{
-    transform: scale(1);
+    transform: scale(1) !important;
 }
 }

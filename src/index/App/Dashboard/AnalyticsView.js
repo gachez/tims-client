@@ -140,11 +140,6 @@ export default class AnalyticsView extends React.Component{
                     </CardDeck>
                     <br />
                     <br />
-                    <br />
-                    <CanvasJSChart options = {options}
-				/* onRef={ref => this.chart = ref} */
-			/>
-        
      
                 </div>
                            </>
