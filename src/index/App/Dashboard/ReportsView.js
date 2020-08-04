@@ -34,6 +34,7 @@ export default class ReportsView extends React.Component{
         exportbtnClicked: 0,
         saveBtnClicked: 0,
         editBtnClicked: 0,
+        emailBtnClicked: 0,
         addBtnClicked: 0,
         deleteBtnClicked: false,
         editFieldID: '',
@@ -313,7 +314,7 @@ export default class ReportsView extends React.Component{
         this.setState({
             exportbtnClicked: 1
         })
-        axios.post('https://tims-client.df.r.appspot.com/api/v1/export_excel', this.state.reports,//your url
+        axios.post('https://tims-client.df.r.appspot.com/api/v1/export_excel', this.state.reports,
            {  
                headers: {
                         'auth-token': `${localStorage.getItem('auth-token')}`
@@ -703,7 +704,7 @@ export default class ReportsView extends React.Component{
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.toggleEmailModalDisplay}>Cancel</Button>
-                        <Button variant="primary">Send Email</Button>
+                        <Button variant="primary" onClick={() => {this.setState({ emailBtnClicked: 1 })}}>{this.state.emailBtnClicked < 0 ? 'Sending...' : 'Send email'}</Button>
                     </Modal.Footer>
                     </Modal.Dialog>
                 </div>

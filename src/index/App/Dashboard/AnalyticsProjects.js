@@ -1,6 +1,5 @@
 import React from 'react';
 import '../shared/TaskView.css';
-import done from './TaskView/done.png';
 import {Nav,
          Modal,
          Button, 
@@ -9,10 +8,7 @@ import {Nav,
          ListGroup, 
          Popover} from 'react-bootstrap';
 import add from './TaskView/add.png';
-import trash from './shared/trash.png';
 import axios from 'axios';
-import TaskUsers from './TaskView/TaskUsers';
-import open from '../shared/open-menu.png';
 import ProjectsList from './ProjectsList';
 
 
@@ -44,7 +40,6 @@ export default class AnalyticsProjects extends React.Component{
 
     componentDidMount() {
         this.state.getUsersRequest.then(res => {
-
             this.setState({
                 isLoaded: true,
                 Users: res.data

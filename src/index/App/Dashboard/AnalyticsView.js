@@ -139,8 +139,7 @@ export default class AnalyticsView extends React.Component{
                     }                
                     </CardDeck>
                     <br />
-                    <br />
-     
+                    <br />     
                 </div>
                            </>
             )

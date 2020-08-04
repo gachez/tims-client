@@ -87,7 +87,7 @@ export default class TaskViewUser extends React.Component{
                                                     markCompleteClicked: true
                                                 })
                                                 this.markComplete(this.state.taskAss)
-                                            }}>Mark Complete</Button>;
+                                            }}>{this.state.markCompleteClicked ? loader : 'Mark Complete'}</Button>;
 
             const tasksList = this.props.userTasks.filter(task => task.userAssigned === this.props.userLoggedIn);
             const completeTasks = tasksList.filter(task => task.complete)
