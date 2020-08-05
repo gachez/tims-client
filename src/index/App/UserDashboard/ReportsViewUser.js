@@ -1172,7 +1172,7 @@ export default class ReportsViewUser extends React.Component{
                                                     }}        
                                                 >
                                           <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
-                                            <img   src={comment}   
+                                          <img   src={comment}   
                                                 style={{width: '20px', 
                                                         height: '20px'
                                                 }}/> 

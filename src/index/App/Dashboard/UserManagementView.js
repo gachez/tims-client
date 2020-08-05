@@ -186,7 +186,12 @@ export default class UserManagement extends React.Component{
                                                 </Button> ;
 
 
-            const addBtn = <Button variant="primary" onClick={() => {this.addUser()}}>Add</Button>;
+            const addBtn = <Button variant="primary" onClick={() => {
+                this.addUser();
+                this.setState({
+                    addBtnClicked: true
+                })
+            }}>Add</Button>;
           
             const loadingAddBtn = <Button variant="primary" disabled>
                                                     <Spinner
@@ -305,7 +310,7 @@ export default class UserManagement extends React.Component{
                             this.state.users.map((user,index) => {
                                 return(
                                 <>
-                                 <img  key={user._id} src={edit} style={{marginLeft: '-15px'}} width="32px" height="32px" className="delete-icon" 
+                                 <img  key={index} src={edit} style={{marginLeft: '-15px'}} width="32px" height="32px" className="delete-icon" 
                                         onClick={() => {
                                             this.setState({
                                                 editFieldID: user._id,

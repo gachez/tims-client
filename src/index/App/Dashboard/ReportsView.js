@@ -37,6 +37,7 @@ export default class ReportsView extends React.Component{
         emailBtnClicked: 0,
         addBtnClicked: 0,
         deleteBtnClicked: false,
+        industryBtnClicked: false,
         editFieldID: '',
         editFieldIndex: 0,
         deleteModalDisplay: 'none',
@@ -250,7 +251,7 @@ export default class ReportsView extends React.Component{
             mobile2:   edits[7].value,
             website: edits[8].value,
             industry: this.state.determinedIndustry,
-            subSector: this.state.chosenIndustry.trim(),
+            subSector: this.state.chosenIndustry,
             productDescription: document.getElementsByName("productdescription")[0].value,
             country: document.getElementsByName("country")[0].value,
             collectionDate: new Date().toUTCString(),
@@ -328,8 +329,9 @@ export default class ReportsView extends React.Component{
              document.body.appendChild(link);
              link.click();
              this.setState({
-                 exportbtnClicked: 0
-             })
+                 exportbtnClicked: 0,
+             });
+             this.toggleExportModalDisplay();
           }).catch((err) => {
               console.log('oops: ' + err)
           })
@@ -390,7 +392,8 @@ export default class ReportsView extends React.Component{
                             'auth-token': `${localStorage.getItem('auth-token')}`
                         }
                     }).then(res => {
-                        console.log('Succesfully added file record ' + res)
+                        console.log('Succesfully added file record ' + res);
+                        this.reloadPage();
                     }).catch(err => {
                         console.log(err)
                     });
@@ -926,7 +929,7 @@ export default class ReportsView extends React.Component{
                             <DropdownButton
                                         style={{ marginRight: '1rem' }}
                                         variant="outline-secondary"
-                                        title={this.state.industry}
+                                        title={this.state.chosenIndustry}
                                         id="input-group-dropdown-2"
                                         >
                                             {
@@ -943,8 +946,7 @@ export default class ReportsView extends React.Component{
                                                         >
 
                                                         <div 
-                                                            style={{maxHeight: '350px', overflowY: 'scroll'}} 
-                                                          >
+                                                           style={{maxHeight: '350px', overflowY: 'scroll'}}>
                                                               {
                                                                 Array.isArray(category.subSector) ? 
                                                                 category.subSector.map( subsector => {
@@ -952,8 +954,7 @@ export default class ReportsView extends React.Component{
                                                                       <Dropdown.Item key={subsector} 
                                                                         onClick={() => {
                                                                             this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.forEach(word => word.subSector.trim()).filter(report => report.industry === subsector)
+                                                                                chosenIndustry: subsector
                                                                             })
                                                                         }}
                                                                       >{subsector}</Dropdown.Item>
@@ -963,8 +964,7 @@ export default class ReportsView extends React.Component{
                                                                       <Dropdown.Item key={subsector} 
                                                                         onClick={() => {
                                                                             this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.forEach(word => word.subSector.trim()).filter(report => report.industry === subsector)
+                                                                                chosenIndustry: subsector
                                                                             })
                                                                         }}
                                                                       >{subsector}</Dropdown.Item>
@@ -1070,7 +1070,7 @@ export default class ReportsView extends React.Component{
                 </div>
 
                 
-                {/* add a category modal */}
+                {/* add a industry modal */}
                 <div className="modal-bg" style={{
                     display: this.state.categoryModal
                 }}>
@@ -1104,6 +1104,9 @@ export default class ReportsView extends React.Component{
                             this.toggleIndstryModalDisplay();
                             }}>Cancel</Button>
                         <Button variant="primary" onClick={() => {
+                            this.setState({
+                                industryBtnClicked: true
+                            });
                             axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_industry", {
                                 industry: document.getElementsByClassName("industrysubsector")[0].value,
                                 subSector: document.getElementsByClassName("industrysubsector")[1].value
@@ -1115,7 +1118,7 @@ export default class ReportsView extends React.Component{
                                 alert("Succesfully added an Industry" + res);
                                 this.reloadPage();
                             }).catch(err => {console.log(err)})
-                        }}>Add</Button>
+                        }}>{this.state.industryBtnClicked ? 'Adding...' : 'Add'}</Button>
                     </Modal.Footer>
                     </Modal.Dialog>
                 </div>

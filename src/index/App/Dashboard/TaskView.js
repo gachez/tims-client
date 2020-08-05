@@ -34,6 +34,8 @@ export default class TaskView extends React.Component{
         Users: [],
         projects: [],
         assignee: [],
+        addBtnClicked: false,
+        deleteBtnClicked: false,
         assigneeID: '',
         assigneeChosen: '',
         projectName: 'Project',
@@ -104,7 +106,7 @@ export default class TaskView extends React.Component{
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }).then(res => {
-             alert(res);
+             alert('Deleted task succesfully');
              this.reloadPage()
 
           }).catch(err => console.log(err))
@@ -163,8 +165,7 @@ export default class TaskView extends React.Component{
                         confirmed: imports['Confirmed'] < 1 ? false : true,
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
-                        submittedBy: 'admin',
-                        assignedTo: user                  
+                        submittedBy: user                
                       };  
 
                     axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
@@ -196,16 +197,7 @@ export default class TaskView extends React.Component{
          const UserTasks = this.state.tasks.filter(task => {
             return task.userAssigned.toLowerCase() === this.state.assigneeChosen.toLowerCase()
           }); 
-         const popover = (
-            <Popover id="popover-basic">
-              <Popover.Title as="h3">Popover right</Popover.Title>
-              <Popover.Content>
-                And here's some <strong>amazing</strong> content. It's very engaging.
-                right?
-              </Popover.Content>
-            </Popover>
-          );
-
+     
             return(
                 <>
 
@@ -260,9 +252,7 @@ export default class TaskView extends React.Component{
                                                     >
                                         <p style={{width: '60%', textDecoration: `${task.complete ? 'line-through' : 'none' }`, color: `${task.complete ? 'green' : 'black' }`}}>
                                             {task.description}</p> 
-                                        <OverlayTrigger trigger="click" placement="top" overlay={popover}>
-                                            <img src={open} alt="trash" width="20px" height="20px" style={{position: 'absolute', right: '65px'}}/>
-                                          </OverlayTrigger>
+                                 
                                         <img src={trash} alt="trash" width="20px" height="20px" style={{position: 'absolute', right: '25px'}} onClick={this.toggleDeleteModal} /></ListGroup.Item>
                                         )
                                     })
@@ -364,6 +354,9 @@ export default class TaskView extends React.Component{
                               <Modal.Footer>
                                 <Button variant="secondary" onClick={this.toggleModalDisplay}>Close</Button>
                                 <Button variant="primary" onClick={async () => {
+                                    this.setState({
+                                        addBtnClicked: true
+                                    });
                                     console.log('assigning....');
                                     await this.handleFile(this.state.assignee, this.state.projectName);
 
@@ -387,11 +380,12 @@ export default class TaskView extends React.Component{
                                     })
                                     .catch(console.error)
                                   
-                                }}>Assign</Button>
+                                }}>{this.state.addBtnClicked ? 'Assigning...' : 'Assign'}</Button>
                             </Modal.Footer>
                             </Modal.Dialog>
                         </div>
     
+                        {/* delete task modal  */}
                         <div className="modal-bg" style={{
                             display: this.state.deleteModalDisplay
                                 }}>
@@ -410,9 +404,12 @@ export default class TaskView extends React.Component{
                             <Modal.Footer>
                                 <Button variant="secondary" onClick={this.toggleDeleteModal}>Cancel</Button>
                                 <Button variant="primary" onClick={() => {
-                                    this.deleteTask(this.state.assigneeID)
+                                    this.setState({
+                                        deleteBtnClicked: true
+                                    });
+                                    this.deleteTask(this.state.assigneeID);
                                     
-                                    }}>Delete</Button>
+                                }}>{!this.state.deleteBtnClicked ? 'Deleting...' : 'Delete'}</Button>
                             </Modal.Footer>
                             </Modal.Dialog>
                       
