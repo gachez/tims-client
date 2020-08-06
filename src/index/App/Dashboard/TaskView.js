@@ -7,8 +7,6 @@ import {Nav,
          Form, 
          Spinner , 
          ListGroup, 
-         Popover, 
-         OverlayTrigger,
          InputGroup, 
          DropdownButton, 
          Dropdown, 
@@ -125,7 +123,7 @@ export default class TaskView extends React.Component{
         if (files && files[0]) this.setState({ file: files[0] });
       };
      
-    handleFile = async (user,project) => {
+    handleFile = async (user,project) => {;
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
@@ -165,7 +163,8 @@ export default class TaskView extends React.Component{
                         confirmed: imports['Confirmed'] < 1 ? false : true,
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
-                        submittedBy: user                
+                        submittedBy: 'admin',
+                        assignedTo: user                
                       };  
 
                     axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
@@ -409,7 +408,7 @@ export default class TaskView extends React.Component{
                                     });
                                     this.deleteTask(this.state.assigneeID);
                                     
-                                }}>{!this.state.deleteBtnClicked ? 'Deleting...' : 'Delete'}</Button>
+                                }}>{this.state.deleteBtnClicked ? 'Deleting...' : 'Delete'}</Button>
                             </Modal.Footer>
                             </Modal.Dialog>
                       

@@ -408,6 +408,13 @@ export default class ReportsViewUser extends React.Component{
         this.setState({
             reports: this.state.defaultReports
         })
+    };
+
+    checkUndefined = (value) => {
+        if(typeof value === 'undefined'){
+            return 'none'
+        }
+        return value;
     }
 
   render() {
@@ -1150,7 +1157,7 @@ export default class ReportsViewUser extends React.Component{
                         </thead> 
                         <tbody>
                             {
-                                this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase()).map((user,index) => {
+                                this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase() || this.checkUndefined(report.assignedTo).toLowerCase() === this.props.userLoggedIn.toLowerCase()).map((user,index) => {
                                     return(
                                     <>
                                         <div
