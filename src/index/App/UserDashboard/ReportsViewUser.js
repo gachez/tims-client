@@ -205,13 +205,6 @@ export default class ReportsViewUser extends React.Component{
                              });
             const emptyFields = fields.filter(field => field.value.length < 1 );
             
-            if(emptyFields.length > 0){
-                document.getElementById('add-form-warning').textContent="Please fill all fields before submitting";
-                emptyFields.forEach( field => {
-                    field.style.border = "solid 1px red"
-                });
-             return;
-            }
             this.setState({
                 addBtnClicked: true
                  });
@@ -707,7 +700,7 @@ export default class ReportsViewUser extends React.Component{
                         </Form.Group>
 
                         <Form.Group controlId="email2">
-                            <Form.Label>Email 2</Form.Label>
+                            <Form.Label>Email 2(Optional)</Form.Label>
                             <Form.Control className="add-form-fields" type="textbox" placeholder="example@example.com"/>
                         </Form.Group>
 
@@ -717,7 +710,7 @@ export default class ReportsViewUser extends React.Component{
                         </Form.Group>
 
                          <Form.Group controlId="mobile2">
-                            <Form.Label>Mobile 2</Form.Label>
+                            <Form.Label>Mobile 2(Optional)</Form.Label>
                             <Form.Control className="add-form-fields" type="textbox" placeholder="0700000"/>
                         </Form.Group>                       
 
