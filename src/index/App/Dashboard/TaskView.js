@@ -408,7 +408,7 @@ export default class TaskView extends React.Component{
                                     });
                                     this.deleteTask(this.state.assigneeID);
                                     
-                                }}>{this.state.deleteBtnClicked ? 'Deleting...' : 'Delete'}</Button>
+                                }}>{!this.state.deleteBtnClicked ? 'Deleting...' : 'Delete'}</Button>
                             </Modal.Footer>
                             </Modal.Dialog>
                       

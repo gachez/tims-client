@@ -38,6 +38,7 @@ export default class ReportsView extends React.Component{
         addBtnClicked: 0,
         deleteBtnClicked: false,
         industryBtnClicked: false,
+        commentBtnClicked: false,
         editFieldID: '',
         editFieldIndex: 0,
         deleteModalDisplay: 'none',

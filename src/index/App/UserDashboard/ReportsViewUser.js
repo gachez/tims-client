@@ -19,7 +19,7 @@ export default class ReportsViewUser extends React.Component{
         modalDisplay: 'none',
         editSave: 'none',
         isLoaded: false,
-        emailModal: 'none',
+        emailModal: 'none', 
         editReportModal: 'none',
         sendAdminModal: 'none',
         importFileModal: 'none',
@@ -28,6 +28,7 @@ export default class ReportsViewUser extends React.Component{
         editFieldID: '',
         editBtnClicked: false,
         addBtnClicked: false,
+        addCommentBtnClicked: false,
         deleteModalDisplay: 'none',
         deleteBtnClicked: false,
         chosenIndustry: 'Industry',
@@ -977,7 +978,7 @@ export default class ReportsViewUser extends React.Component{
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={this.toggleCommentModalDisplay}>Cancel</Button>
-                        <Button variant="primary" onClick={ () => {this.addComment(this.state.editFieldID)}}>Add comment</Button>
+                        <Button variant="primary" onClick={ () => {this.addComment(this.state.editFieldID)}}>{this.state.addCommentBtnClicked ? 'loading...' : 'Comment'}</Button>
                     </Modal.Footer>
                     </Modal.Dialog>
                 </div>
