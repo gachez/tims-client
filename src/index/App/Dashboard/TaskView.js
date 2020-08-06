@@ -400,8 +400,8 @@ export default class TaskView extends React.Component{
                                     })
                                     .then( res => {
                                         alert('Succesfully assigned new task');
-                                        console.log(newTask)
-                     
+                                        console.log(newTask);
+                                        this.reloadPage();
 
                                     })
                                     .catch(console.error)
