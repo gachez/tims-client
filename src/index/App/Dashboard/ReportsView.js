@@ -984,7 +984,7 @@ export default class ReportsView extends React.Component{
 
                         <Form.Group controlId="productDescription">
                             <Form.Label>Product Description</Form.Label>
-                            <Form.Control name="productdescription" type="textbox" placeholder="e.g supplies"/>
+                            <Form.Control name="productdescription" type="textbox" placeholder="e.g spare parts"/>
                         </Form.Group>                       
 
                         <Form.Group controlId="country">

@@ -779,7 +779,7 @@ export default class ReportsViewUser extends React.Component{
 
                         <Form.Group controlId="productDescription">
                             <Form.Label>Product Description</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="e.g supplies"/>
+                            <Form.Control className="add-form-fields" type="textbox" placeholder="e.g spare parts"/>
                         </Form.Group>                       
 
                         <Form.Group controlId="country">
