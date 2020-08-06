@@ -28,6 +28,7 @@ export default class TaskView extends React.Component{
         isLoaded: false,
         deleteModalDisplay: 'none',
         tasksList: 'none',
+        reports: [],
         tasks: [],
         Users: [],
         projects: [],
@@ -70,7 +71,18 @@ export default class TaskView extends React.Component{
           })).catch(errors => {
             // react on errors.
             return errors
-          })
+          });
+
+          axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_reports", {
+            headers: {
+              'auth-token': `${localStorage.getItem('auth-token')}`
+            }
+          }).then(res => {
+              this.setState({
+                  reports: res.data
+              })
+              
+          }).catch(err => console.log(err));
 
           localStorage.setItem("page", "tasks");     
     }
@@ -123,7 +135,7 @@ export default class TaskView extends React.Component{
         if (files && files[0]) this.setState({ file: files[0] });
       };
      
-    handleFile = async (user,project) => {;
+    handleFile = async (user,project) => {
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
@@ -166,6 +178,9 @@ export default class TaskView extends React.Component{
                         submittedBy: 'admin',
                         assignedTo: user                
                       };  
+                      
+                     let similarReport = this.state.reports.filter(report => report.mobile1 === dataObj.mobile1).map(report => report._id); 
+                     console.log(similarReport[0]);
 
                     axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
                         'Content-Type': 'application/json;charset=UTF-8',
@@ -173,7 +188,19 @@ export default class TaskView extends React.Component{
                             'auth-token': `${localStorage.getItem('auth-token')}`
                         }
                     }).then(res => {
-                        console.log('Succesfully added file record ' + res)
+                        if(res.data === "Similar record already exists!"){
+                            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/" + similarReport[0], dataObj, {
+                                'Content-Type': 'application/json;charset=UTF-8',
+                                headers: {
+                                    'auth-token': `${localStorage.getItem('auth-token')}`
+                                }
+                            }).then(res => {
+                                console.log("Succesfully assigned data...")
+                            }).catch(err => console.log(err));
+                        return 0;
+                        }
+                     
+                        console.log('Succesfully added file record ' + res.data);
                     }).catch(err => {
                         console.log(err)
                     });
@@ -374,7 +401,7 @@ export default class TaskView extends React.Component{
                                     .then( res => {
                                         alert('Succesfully assigned new task');
                                         console.log(newTask)
-                                        this.reloadPage();
+                     
 
                                     })
                                     .catch(console.error)
