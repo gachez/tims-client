@@ -1,1 +1,1 @@
-# Information System Frontend (React)
+# ERP Frontend (React)
