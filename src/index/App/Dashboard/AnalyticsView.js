@@ -4,6 +4,7 @@ import './AnalyticsView/AnalyticsView.css';
 import CanvasJSReact from './AnalyticsView/canvasjs.react';
 import axios from 'axios';
 import {Spinner} from 'react-bootstrap';
+import _CONFIG from '../../../config/config';
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -18,7 +19,7 @@ export default class AnalyticsView extends React.Component{
     }
 
     componentDidMount() {
-        axios.get(`https://tims-client.df.r.appspot.com/api/v1/admin/get_projects/${ localStorage.getItem('id')}` ,  {
+        axios.get(`${_CONFIG.API_URI}/api/v1/admin/get_projects/${ localStorage.getItem('id')}` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -30,7 +31,7 @@ export default class AnalyticsView extends React.Component{
             })
           }).catch(err => console.log(err));
     
-          axios.get(`https://tims-client.df.r.appspot.com/api/v1/admin/get_reports` ,  {
+          axios.get(`${_CONFIG.API_URI}/api/v1/admin/get_reports` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -41,7 +42,7 @@ export default class AnalyticsView extends React.Component{
             })
           }).catch(err => console.log(err));
     
-          axios.get(`https://tims-client.df.r.appspot.com/api/v1/admin/assigned_tasks` ,  {
+          axios.get(`${_CONFIG.API_URI}/api/v1/admin/assigned_tasks` ,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }

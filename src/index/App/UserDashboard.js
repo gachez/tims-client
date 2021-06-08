@@ -7,6 +7,7 @@ import ReportsViewUser from './UserDashboard/ReportsViewUser';
 import { Col, Container, Row } from 'react-bootstrap';
 import axios from 'axios';
 import avatar from './shared/social-media-white.png';
+import _CONFIG from '../../config/config';
 
 const userAvatar = {
     position: 'absolute', 
@@ -23,12 +24,12 @@ class UserDashboard extends React.Component {
         borderActive: 'none',
         tasks: [],
         loggedInUSer: {},
-        getUsersRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks",  {
+        getUsersRequest: axios.get(_CONFIG.API_URI+"/api/v1/admin/assigned_tasks",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getTasksRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_users",  {
+        getTasksRequest: axios.get(_CONFIG.API_URI+"/api/v1/admin/get_users",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }

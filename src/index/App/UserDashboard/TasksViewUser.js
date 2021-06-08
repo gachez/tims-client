@@ -24,7 +24,7 @@ export default class TaskViewUser extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks",  {
+        axios.get("http://localhost:1332/api/v1/admin/assigned_tasks",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -48,7 +48,7 @@ export default class TaskViewUser extends React.Component{
     }
 
     markComplete = (id) => {
-        axios.post("https://a123ef.df.r.appspot.com/api/v1/update_task/" + id,{
+        axios.post("http://localhost:1332/api/v1/update_task/" + id,{
             complete: true
         }, {
             headers: {

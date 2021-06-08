@@ -3,7 +3,6 @@ import '../shared/ReportsView.css';
 import {Spinner,Table, Nav, Dropdown, DropdownButton,Modal, Form, Button} from 'react-bootstrap';
 import trash from './shared/trash.png';
 import edit from '../shared/edit.png';
-import tick from '../shared/tick.png';
 import comment from '../shared/chatbox.png';
 import excel from '../shared/excelicon.png';
 import axios from 'axios';
@@ -12,7 +11,8 @@ import {categories} from '../shared/lib/categories';
 import XLSX from 'xlsx';
 import { make_cols } from './MakeColumns';
 import { SheetJSFT } from './types';
-import { addCategory } from '../shared/lib/categories';
+import DropdownItem from 'react-bootstrap/DropdownItem';
+import _CONFIG from '../../../config/config';
 
 
 
@@ -64,7 +64,7 @@ export default class ReportsView extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_reports", {
+        axios.get(_CONFIG.API_URI+"/api/v1/admin/get_reports", {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -77,7 +77,7 @@ export default class ReportsView extends React.Component{
               
           }).catch(err => console.log(err));
 
-          axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_industries',{
+          axios.get(_CONFIG.API_URI+'/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -87,7 +87,7 @@ export default class ReportsView extends React.Component{
               })
           })
 
-          axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_users', {
+          axios.get(_CONFIG.API_URI+'/api/v1/admin/get_users', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -100,7 +100,7 @@ export default class ReportsView extends React.Component{
             console.log('error getting users' + err)
         })
 
-        axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_projects', {
+        axios.get(_CONFIG.API_URI+'/api/v1/admin/get_projects', {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -172,14 +172,10 @@ export default class ReportsView extends React.Component{
 
 
     getEditField = (id ) => {
-        const field = this.state.reports.filter(report => report._id === id);
-
-        return field;
-
+        return this.state.reports.filter(report => report._id === id);
     }
 
     saveEditedFied = async (id) => {
-        console.log('saving...')
         this.setState({
             editBtnClicked: 1
         })
@@ -204,8 +200,7 @@ export default class ReportsView extends React.Component{
             submittedBy: 'admin'
         }
 
-        // console.log(saveEdits)
-        axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
+        axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -224,7 +219,7 @@ export default class ReportsView extends React.Component{
             const comments = await document.getElementById('comment-field').value;
 
             // added comments
-            axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {comments: comments}, {
+            axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, {comments: comments}, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                   }
@@ -241,15 +236,15 @@ export default class ReportsView extends React.Component{
     getAddEntryFormValues = async () => {
         const edits = await Array.from(document.getElementById('add-form')).map(node => node);
 
-        const savedReport = {
+        return {
             projectName: this.state.projectName,
-            companyName:  edits[1].value, 
+            companyName: edits[1].value, 
             contactPerson: edits[2].value,
-            position:   edits[3].value,
-            email1:    edits[4].value,
-            email2:   edits[5].value,
-            mobile1:   edits[6].value,
-            mobile2:   edits[7].value,
+            position: edits[3].value,
+            email1: edits[4].value,
+            email2: edits[5].value,
+            mobile1: edits[6].value,
+            mobile2: edits[7].value,
             website: edits[8].value,
             industry: this.state.determinedIndustry,
             subSector: this.state.chosenIndustry,
@@ -259,15 +254,13 @@ export default class ReportsView extends React.Component{
             collectionTime: new Date().toUTCString(),
             submittedBy: 'admin'
         }
-
-        return savedReport;
     }
 
     addReport = async (savedReport) => {
   
         const toSave = await savedReport;
         try{
-            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", toSave, {
+            axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", toSave, {
                 'Content-Type': 'application/json;charset=UTF-8',
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
@@ -290,7 +283,7 @@ export default class ReportsView extends React.Component{
 
     removeUser = async (id) => {
         try{
-            axios.delete("https://tims-client.df.r.appspot.com/api/v1/admin/delete_record/" + id,  {
+            axios.delete(_CONFIG.API_URI+"/api/v1/admin/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -316,7 +309,7 @@ export default class ReportsView extends React.Component{
         this.setState({
             exportbtnClicked: 1
         })
-        axios.post('https://tims-client.df.r.appspot.com/api/v1/export_excel', this.state.reports,
+        axios.post(_CONFIG.API_URI+"/api/v1/export_excel", this.state.reports,
            {  
                headers: {
                         'auth-token': `${localStorage.getItem('auth-token')}`
@@ -387,7 +380,7 @@ export default class ReportsView extends React.Component{
                         submittedBy: 'admin'
                     };  
 
-                    axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
+                    axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", dataObj, {
                         'Content-Type': 'application/json;charset=UTF-8',
                         headers: {
                             'auth-token': `${localStorage.getItem('auth-token')}`
@@ -530,7 +523,6 @@ export default class ReportsView extends React.Component{
             'confirmed',
             'pending'
         ]
-        console.log(this.state.reports)
 
         return(
                 <>
@@ -544,7 +536,7 @@ export default class ReportsView extends React.Component{
                         display: this.state.deleteModalDisplay
                             }}>
                         <Modal.Header >
-                            <Modal.Title>Delete User?</Modal.Title>
+                            <Modal.Title>Delete Record?</Modal.Title>
                         </Modal.Header>
     
                         <Modal.Body>
@@ -651,16 +643,6 @@ export default class ReportsView extends React.Component{
                                                         title={category.industry}
                                                         id="input-group-dropdown-102"
                                                         >
-
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                            {
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-                                                                    </div>
                                                     </DropdownButton>
 
                                                     </>
@@ -776,49 +758,16 @@ export default class ReportsView extends React.Component{
                                         id="input-group-dropdown-12"
                                         >
                                             {
-                                                categoriesAndIndustries.map( category => {
+                                                categories.map(industry => {
                                                     return(
-                                                        <>
-                                                        <DropdownButton
-                                                        key={category.industry}
-                                                        style={{width: '70%', margin: '15px'}}
-                                                        variant="outline-secondary"
-                                                        title={category.industry}
-                                                        id="input-group-dropdown-14"
-                                                        >
-
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                        {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-                                                                    </div>
-                                                    </DropdownButton>
-
-                                                    </>
-                                                    )
+                                                        <Dropdown.Item key={industry.industry} 
+                                                          onClick={() => {
+                                                              this.setState({
+                                                                  chosenIndustry: industry.industry
+                                                              })
+                                                          }}
+                                                        >{industry.industry}</Dropdown.Item>
+                                          )
                                                 })
                                             }
 
@@ -934,48 +883,15 @@ export default class ReportsView extends React.Component{
                                         id="input-group-dropdown-2"
                                         >
                                             {
-                                                categoriesAndIndustries.map( category => {
+                                                categoriesAndIndustries.map(industry => {
                                                     return(
-                                                        <>
-                                                   <DropdownButton
-                                                        key={category.industry}
-                                                        style={{width: '70%', margin: '15px'}}
-                                                        variant="outline-secondary"
-                                                        title={category.industry}
-                                                        onClick={() => {this.setState({ determinedIndustry: category.industry})}}
-                                                        id="input-group-dropdown-31"
-                                                        >
-
-                                                        <div 
-                                                           style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                              {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-                                                                    </div>
-                                                    </DropdownButton>
-
-                                                    </>
+                                                        <Dropdown.Item key={industry.industry} 
+                                                          onClick={() => {
+                                                              this.setState({
+                                                                  chosenIndustry: industry.industry
+                                                              })
+                                                          }}
+                                                        >{industry.industry}</Dropdown.Item>
                                                     )
                                                 })
                                             }
@@ -1090,13 +1006,7 @@ export default class ReportsView extends React.Component{
                             
                                 <Form.Group controlId="formIndustryName">
                                     <Form.Label>Industry</Form.Label>
-                                    <Form.Control className="industrysubsector" type="textbox" placeholder="e.g BUILDING AND CONSTRUCTION"/>
-                                </Form.Group>
-
-                                <Form.Group controlId="formSubsectorName">
-                                    <Form.Label>Subsector</Form.Label>
-                                    <Form.Control className="industrysubsector" type="textbox" placeholder="e.g Automation"/>
-                                    <small style={{color: 'green'}}>Kindly separate subsectors with a comma ","</small>
+                                    <Form.Control className="industrysubsector" type="textbox" placeholder="e.g BANKING"/>
                                 </Form.Group>
                         </Form>
                     </Modal.Body>
@@ -1108,9 +1018,8 @@ export default class ReportsView extends React.Component{
                             this.setState({
                                 industryBtnClicked: true
                             });
-                            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_industry", {
-                                industry: document.getElementsByClassName("industrysubsector")[0].value,
-                                subSector: document.getElementsByClassName("industrysubsector")[1].value
+                            axios.post(_CONFIG.API_URI+"/api/v1/admin/add_industry", {
+                                industry: document.getElementsByClassName("industrysubsector")[0].value
                             }, {
                                 headers: {
                                     'auth-token': `${localStorage.getItem('auth-token')}`
@@ -1181,46 +1090,17 @@ export default class ReportsView extends React.Component{
                                                 categoriesAndIndustries.map( category => {
                                                     return(
                                                         <>
-                                                        <DropdownButton
+                                                        <Dropdown.Item
                                                         key={category.industry}
-                                                        style={{width: '70%', margin: '15px' }}
-                                                        variant="outline-secondary"
-                                                        title={category.industry}
+                                                        onClick={() => {
+                                                            this.setState({
+                                                                chosenIndustry: category.industry
+                                                            })
+                                                        }}
                                                         id="input-group-dropdown-3"
                                                         >
-
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                            {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={ async () => {
-
-                                                                            const filteredData = 
-                                                                                this.setState({
-                                                                                    chosenIndustry: subsector,
-                                                                                    reports: this.state.reports.filter(report => report.subSector === subsector)
-                                                                                });
-                                                                          
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.subSector === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-                                                                    </div>
-                                                    </DropdownButton>
+                                                            {category.industry}
+                                                    </Dropdown.Item>
 
                                                     </>
                                                     )

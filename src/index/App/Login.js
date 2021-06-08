@@ -4,6 +4,7 @@ import './Login/Login.css';
 import hero from './Login/data_processing.png';
 import {Link} from 'react-router-dom';
 import axios from 'axios';
+import _CONFIG from '../../config/config';
 
    
 class Login extends React.Component {
@@ -48,7 +49,7 @@ class Login extends React.Component {
         }
 
         try{
-            axios.post("https://a123ef.df.r.appspot.com/api/v1/login_user", user)
+            axios.post(_CONFIG.API_URI+"/api/v1/login_user", user)
             .then(res => {
                 console.log('loggin in...')
                 switch(res.data) {

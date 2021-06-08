@@ -43,7 +43,7 @@ export default class ReportsViewUser extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_reports",  {
+        axios.get("http://localhost:1332/api/v1/admin/get_reports",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -56,7 +56,7 @@ export default class ReportsViewUser extends React.Component{
             });
           });
 
-          axios.get('https://tims-client.df.r.appspot.com/api/v1/admin/get_industries',{
+          axios.get('http://localhost:1332/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -66,7 +66,7 @@ export default class ReportsViewUser extends React.Component{
               })
           })
 
-          axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_projects",  {
+          axios.get("http://localhost:1332/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -138,7 +138,7 @@ export default class ReportsViewUser extends React.Component{
  
     markComplete = (id) => {
         console.log('..marking')
-        axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {
+        axios.post(`http://localhost:1332/api/v1/admin/edit_record/${id}`, {
             confirmed: true
         },{
             headers: {
@@ -180,7 +180,7 @@ export default class ReportsViewUser extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, saveEdits, {
+        axios.post(`http://localhost:1332/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -229,7 +229,7 @@ export default class ReportsViewUser extends React.Component{
             }
         console.log(savedReport)
         try{
-            axios.post("https://tims-client.df.r.appspot.com/api/v1/user/add_record", savedReport, {
+            axios.post("http://localhost:1332/api/v1/user/add_record", savedReport, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -273,15 +273,29 @@ export default class ReportsViewUser extends React.Component{
                 submittedBy: this.props.userLoggedIn,
                 projectName: this.state.projectName
             }
-
-            this.sendToAdmin(savedReport);
-
+            axios.post("http://localhost:1332/api/v1/admin/add_record", savedReport, {
+                'Content-Type': 'application/json;charset=UTF-8',
+                headers: {
+                    'auth-token': `${localStorage.getItem('auth-token')}`
+                }
+            }).then(res => {
+                alert('succesfully added ' + res)
+                this.setState({
+                    addBtnClicked: 0,
+                });
+                this.toggleAddModalDisplay();
+                this.reloadPage();
+            }).catch(err => {
+                console.log(err)
+                document.getElementById('warning').value = err
+            
+            })
         } catch(err) {console.log(err)}
     }
 
     sendToAdmin = (data) => {
                       //post to admin reports database
-                      axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", data, {
+                      axios.post("http://localhost:1332/api/v1/admin/add_record", data, {
                         headers: {
                         'auth-token': `${localStorage.getItem('auth-token')}`
                         }
@@ -297,7 +311,7 @@ export default class ReportsViewUser extends React.Component{
     updateSubmitStatus = (id) => {
         console.log('updating status')
         //update submitted status to true
-        axios.post("https://tims-client.df.r.appspot.com/api/v1/user/edit_record/" + id, {
+        axios.post("http://localhost:1332/api/v1/user/edit_record/" + id, {
             submitted: true
         }, {
             headers: {
@@ -317,7 +331,7 @@ export default class ReportsViewUser extends React.Component{
         //merge to admin report db
         const sendThis = reportsToSubmit.map(report => {
               //post to admin reports database
-            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", {
+            axios.post("http://localhost:1332/api/v1/admin/add_record", {
                 companyName:  report.companyName, 
                 contactPerson: report.contactPerson,
                 position:   report.position,
@@ -359,7 +373,7 @@ export default class ReportsViewUser extends React.Component{
             const comments = await document.getElementById('comment-field').value;
 
             // added comments
-            axios.post(`https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/${id}`, {comments: comments}, {
+            axios.post(`http://localhost:1332/api/v1/admin/edit_record/${id}`, {comments: comments}, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                   }
@@ -375,7 +389,7 @@ export default class ReportsViewUser extends React.Component{
 
     removeReport = async (id) => {
         try{
-            axios.delete("https://tims-client.df.r.appspot.com/api/v1/user/delete_record/" + id,  {
+            axios.delete("http://localhost:1332/api/v1/user/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -585,36 +599,7 @@ export default class ReportsViewUser extends React.Component{
                                                         id="input-group-dropdown-3"
                                                         >
 
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                        {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-
-                                                                    </div>
-                                                    </DropdownButton>
+                                                       </DropdownButton>
                                                     </>
                                                     )}
                                                 )}
@@ -732,7 +717,7 @@ export default class ReportsViewUser extends React.Component{
                                                 categoriesAndIndustries.map( category => {
                                                     return(
                                                         <>
-                                                        <DropdownButton
+                                                        <Dropdown.Item
                                                         key={category.industry}
                                                         style={{width: '70%', margin: '15px' }}
                                                         variant="outline-secondary"
@@ -740,37 +725,9 @@ export default class ReportsViewUser extends React.Component{
                                                         title={category.industry}
                                                         id="input-group-dropdown-31"
                                                         >
-
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                        {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-
-                                                                    </div>
-                                                    </DropdownButton>
+                                                            {category.industry}
+                                                     
+                                                    </Dropdown.Item>
                                                     </>
                                                     )}
                                                 )}
@@ -834,35 +791,6 @@ export default class ReportsViewUser extends React.Component{
                                                         id="input-group-dropdown-102"
                                                         >
 
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                        {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.industry === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-
-                                                                    </div>
                                                     </DropdownButton>
 
                                                     </>
@@ -1042,44 +970,20 @@ export default class ReportsViewUser extends React.Component{
                                                 categoriesAndIndustries.map( category => {
                                                     return(
                                                         <>
-                                                        <DropdownButton
+                                                        <Dropdown.Item
                                                         key={category.industry}
                                                         style={{width: '70%', margin: '15px' }}
                                                         variant="outline-secondary"
                                                         title={category.industry}
                                                         id="input-group-dropdown-3"
+                                                        onClick={() => {
+                                                            this.setState({
+                                                                chosenIndustry: category.industry
+                                                            })
+                                                        }}
                                                         >
-
-                                                        <div style={{maxHeight: '350px', overflowY: 'scroll'}}>
-                                                            {
-                                                                Array.isArray(category.subSector) ? 
-                                                                category.subSector.map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                                this.setState({
-                                                                                    chosenIndustry: subsector,
-                                                                                    reports: this.state.reports.filter(report => report.subSector === subsector)
-                                                                                });
-                                                                          
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                }) :   category.subSector.split(",").map( subsector => {
-                                                                    return(
-                                                                      <Dropdown.Item key={subsector} 
-                                                                        onClick={() => {
-                                                                            this.setState({
-                                                                                chosenIndustry: subsector,
-                                                                                reports: this.state.reports.filter(report => report.subSector === subsector)
-                                                                            })
-                                                                        }}
-                                                                      >{subsector}</Dropdown.Item>
-                                                        )
-                                                                })
-                                                            }
-                                                                    </div>
-                                                    </DropdownButton>
+                                                            {category.industry}
+                                                    </Dropdown.Item>
 
                                                     </>
                                                     )
@@ -1151,7 +1055,7 @@ export default class ReportsViewUser extends React.Component{
                         </thead> 
                         <tbody>
                             {
-                                this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase() || this.checkUndefined(report.assignedTo).toLowerCase() === this.props.userLoggedIn.toLowerCase()).map((user,index) => {
+                                this.state.reports.filter(report => report.submittedBy === this.props.userLoggedIn || this.checkUndefined(report.assignedTo) === this.props.userLoggedIn).map((user,index) => {
                                     return(
                                     <>
                                         <div

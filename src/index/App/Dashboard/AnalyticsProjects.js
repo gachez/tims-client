@@ -10,6 +10,7 @@ import {Nav,
 import add from './TaskView/add.png';
 import axios from 'axios';
 import ProjectsList from './ProjectsList';
+import _CONFIG from '../../../config/config';
 
 
 export default class AnalyticsProjects extends React.Component{
@@ -26,12 +27,12 @@ export default class AnalyticsProjects extends React.Component{
         assigneeID: '',
         assigneeChosen: '',
         assigneeName: 'User',
-        getUsersRequest: axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_users",  {
+        getUsersRequest: axios.get(`${_CONFIG.API_URI}/api/v1/admin/get_users`,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getProjects: axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_projects",  {
+        getProjects: axios.get(`${_CONFIG.API_URI}/api/v1/admin/get_projects`,  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -73,7 +74,7 @@ export default class AnalyticsProjects extends React.Component{
     }
 
     deleteTask = (id) => {
-        axios.delete("https://tims-client.df.r.appspot.com/api/v1/admin/delete_task/" + id,{
+        axios.delete(_CONFIG.API_URI+"/api/v1/admin/delete_task/" + id,{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -152,7 +153,7 @@ export default class AnalyticsProjects extends React.Component{
                                         duration: document.getElementsByName("projectduration")[0].value
                                     }
 
-                                    axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_project", newProject, {
+                                    axios.post(_CONFIG.API_URI+"/api/v1/admin/add_project", newProject, {
                                         headers: {
                                         'auth-token': `${localStorage.getItem('auth-token')}`
                                         }

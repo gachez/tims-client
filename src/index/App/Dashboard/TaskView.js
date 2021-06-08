@@ -1,6 +1,5 @@
 import React from 'react';
 import '../shared/TaskView.css';
-import done from './TaskView/done.png';
 import {Nav,
          Modal,
          Button, 
@@ -14,12 +13,12 @@ import {Nav,
          FormGroup} from 'react-bootstrap';
 import XLSX from 'xlsx';
 import { make_cols } from './MakeColumns';
-import { SheetJSFT } from './types';         
 import add from './TaskView/add.png';
 import trash from './shared/trash.png';
 import axios from 'axios';
 import TaskUsers from './TaskView/TaskUsers';
 import open from '../shared/open-menu.png';
+import _CONFIG from '../../../config/config';
 
 
 export default class TaskView extends React.Component{
@@ -39,17 +38,17 @@ export default class TaskView extends React.Component{
         assigneeChosen: '',
         projectName: 'Project',
         assigneeName: 'Task Assignee',
-        getUsersRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/assigned_tasks",  {
+        getUsersRequest: axios.get(_CONFIG.API_URI+"/api/v1/admin/assigned_tasks",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getTasksRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_users",  {
+        getTasksRequest: axios.get(_CONFIG.API_URI+"/api/v1/admin/get_users",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
           }),
-        getProjectsRequest: axios.get("https://a123ef.df.r.appspot.com/api/v1/admin/get_projects",  {
+        getProjectsRequest: axios.get(_CONFIG.API_URI+"/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -73,7 +72,7 @@ export default class TaskView extends React.Component{
             return errors
           });
 
-          axios.get("https://tims-client.df.r.appspot.com/api/v1/admin/get_reports", {
+          axios.get(_CONFIG.API_URI+"/api/v1/admin/get_reports", {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -111,7 +110,7 @@ export default class TaskView extends React.Component{
     }
 
     deleteTask = (id) => {
-        axios.delete("https://a123ef.df.r.appspot.com/api/v1/admin/delete_task/" + id,{
+        axios.delete(_CONFIG.API_URI+"/api/v1/admin/delete_task/" + id,{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -182,14 +181,14 @@ export default class TaskView extends React.Component{
                      let similarReport = this.state.reports.filter(report => report.mobile1 === dataObj.mobile1).map(report => report._id); 
                      console.log(similarReport[0]);
 
-                    axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/add_record", dataObj, {
+                    axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", dataObj, {
                         'Content-Type': 'application/json;charset=UTF-8',
                         headers: {
                             'auth-token': `${localStorage.getItem('auth-token')}`
                         }
                     }).then(res => {
                         if(res.data === "Similar record already exists!"){
-                            axios.post("https://tims-client.df.r.appspot.com/api/v1/admin/edit_record/" + similarReport[0], dataObj, {
+                            axios.post(_CONFIG.API_URI+"/api/v1/admin/edit_record/" + similarReport[0], dataObj, {
                                 'Content-Type': 'application/json;charset=UTF-8',
                                 headers: {
                                     'auth-token': `${localStorage.getItem('auth-token')}`
@@ -213,7 +212,7 @@ export default class TaskView extends React.Component{
           reader.readAsBinaryString(this.state.file);
         } else {
           reader.readAsArrayBuffer(this.state.file);
-        };
+        }
       }
 
     
@@ -223,10 +222,9 @@ export default class TaskView extends React.Component{
          const UserTasks = this.state.tasks.filter(task => {
             return task.userAssigned.toLowerCase() === this.state.assigneeChosen.toLowerCase()
           }); 
-     
+          
             return(
                 <>
-
                     {/* user tasks modal */}
                     <div className="modal-bg" style={{
                             display: this.state.tasksList
@@ -356,14 +354,7 @@ export default class TaskView extends React.Component{
                                     <FormControl aria-describedby="basic-addon1" />
                                 </InputGroup>
                                 </Form.Group>
-                                <Form.Group controlId="formAttachData">
-                                    <Form.Label>Attach data: </Form.Label><br />
-                                    <input type="file"
-                                        id="avatar" name="avatar"
-                                        accept={SheetJSFT}
-                                        onChange={this.handleChange} 
-                                        />
-                                </Form.Group>
+
                                 <Form.Group controlId="formTaskDescription">
                                     <Form.Label>Description</Form.Label>
                                     <Form.Control name="taskdetails" as="textarea" rows="4" placeholder="write task details" />
@@ -371,7 +362,7 @@ export default class TaskView extends React.Component{
         
                                 <Form.Group controlId="formDueDate">
                                     <Form.Label>Due date</Form.Label>
-                                    <Form.Control name="date" as="textarea" rows="4" placeholder="e.g DD/MM/YY" />
+                                    <input type="date" name="date" />
                                 </Form.Group>
         
                                 </Form>
@@ -383,8 +374,7 @@ export default class TaskView extends React.Component{
                                     this.setState({
                                         addBtnClicked: true
                                     });
-                                    console.log('assigning....');
-                                    await this.handleFile(this.state.assignee, this.state.projectName);
+                                    // await this.handleFile(this.state.assignee, this.state.projectName);
 
                                     const newTask = {
                                         projectName: this.state.projectName,
@@ -393,7 +383,7 @@ export default class TaskView extends React.Component{
                                         dueDate: document.getElementsByName("date")[0].value
                                     }
 
-                                    axios.post("https://a123ef.df.r.appspot.com/api/v1/admin/create_task", newTask, {
+                                    axios.post(_CONFIG.API_URI+"/api/v1/admin/create_task", newTask, {
                                         headers: {
                                         'auth-token': `${localStorage.getItem('auth-token')}`
                                         }
@@ -459,13 +449,9 @@ export default class TaskView extends React.Component{
                 }}>
                  <TaskUsers getID={this.getUserID} openTasks={open} toggleMod={this.toggleListsDisplay} taskUsers={this.state.Users} />
                  </ListGroup>
-                </section>
-    
-            
-                      
-                    
-                 </div>
-                </>
+                </section>        
+                </div>
+            </>
             )
         }
         return (
