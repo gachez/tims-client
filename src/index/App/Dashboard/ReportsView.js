@@ -9,10 +9,9 @@ import axios from 'axios';
 import 'react-dropzone-uploader/dist/styles.css';
 import {categories} from '../shared/lib/categories';
 import XLSX from 'xlsx';
-import { make_cols } from './MakeColumns';
 import { SheetJSFT } from './types';
-import DropdownItem from 'react-bootstrap/DropdownItem';
 import _CONFIG from '../../../config/config';
+import { trimLower } from '../shared/lib/util';
 
 
 
@@ -179,25 +178,17 @@ export default class ReportsView extends React.Component{
         this.setState({
             editBtnClicked: 1
         })
-       try{
-
-        const edits = await Array.from(document.getElementById('edit-form')).map(node => node)
-       
+       try{       
         const saveEdits = {
-            companyName:  edits[0].value.length < 1 ? edits[0].getAttribute('placeholder') : edits[0].value, 
-            contactPerson: edits[1].value.length < 1 ? edits[1].getAttribute('placeholder') : edits[1].value,
-            position:   edits[2].value.length < 1 ? edits[2].getAttribute('placeholder') : edits[2].value,
-            email1:    edits[3].value.length < 1 ? edits[3].getAttribute('placeholder') : edits[3].value,
-            email2:   edits[4].value.length < 1 ? edits[4].getAttribute('placeholder') : edits[4].value,
-            mobile1:   edits[5].value.length < 1 ? edits[5].getAttribute('placeholder') : edits[5].value,
-            mobile2:   edits[6].value.length < 1 ? edits[6].getAttribute('placeholder'): edits[6].value,
-            website: edits[7].value.length < 1 ? edits[7].getAttribute('placeholder') : edits[7].value,
-            industry: edits[8].value.length < 1 ? edits[8].getAttribute('placeholder') : edits[8].value,
-            productDescription: edits[9].value.length < 1 ? edits[9].getAttribute('placeholder') : edits[9].value,
-            country: edits[10].value.length < 1 ? edits[10].getAttribute('placeholder') : edits[10].value,
-            collectionDate: new Date(),
-            collectionTime: new Date(),
-            submittedBy: 'admin'
+            organisation: document.getElementById('organisation').value.length < 1 ? document.getElementById('organisation').getAttribute('placeholder') : document.getElementById('organisation').value, 
+            website: document.getElementById('website').value.length < 1 ? document.getElementById('website').getAttribute('placeholder') : document.getElementById('website').value,
+            contacts: document.getElementById('contacts').value.length < 1 ? document.getElementById('organisation').getAttribute('placeholder') : document.getElementById('organisation').value,
+            contactPerson: document.getElementById('contactPerson').value.length < 1 ? document.getElementById('contactPerson').getAttribute('placeholder') : document.getElementById('contactPerson').value,
+            telephone: document.getElementById('telephone').value.length < 1 ? document.getElementById('telephone').getAttribute('placeholder') : document.getElementById('telephone').value,
+            designation: document.getElementById('designation').value.length < 1 ? document.getElementById('designation').getAttribute('placeholder') : document.getElementById('designation').value,
+            emailAddress: document.getElementById('emailAddress').value.length < 1 ? document.getElementById('emailAddress').getAttribute('placeholder'): document.getElementById('emailAddress').value,
+            physicalLocation: document.getElementById('physicalLocation').value.length < 1 ? document.getElementById('physicalLocation').getAttribute('placeholder') : document.getElementById('physicalLocation').value,
+            industry: trimLower(this.state.chosenIndustry) === trimLower('Industry') ? document.getElementsByName('industryEdit')[0].getAttribute('title') : this.state.chosenIndustry
         }
 
         axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, saveEdits, {
@@ -215,9 +206,7 @@ export default class ReportsView extends React.Component{
 
     addComment = async (id) => {
         try{
-
             const comments = await document.getElementById('comment-field').value;
-
             // added comments
             axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, {comments: comments}, {
                 headers: {
@@ -420,6 +409,7 @@ export default class ReportsView extends React.Component{
               reports: this.state.defaultReports
           })
       }
+
     render() {
         if(this.state.isLoaded) {
         const importLoadingBtn =  <Button variant="primary" disabled>
@@ -705,61 +695,62 @@ export default class ReportsView extends React.Component{
                         display: this.state.editReportModal
                     }}>
                         <Modal.Header >
-                            <Modal.Title>Edit Field</Modal.Title>
+                          <Modal.Title>Edit Field</Modal.Title>
                         </Modal.Header>
 
                         <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
                         <Form id="edit-form">
-                            <Form.Group controlId="formCompanyName">
-                                <Form.Label>Company Name</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.companyName)} />
+                            <Form.Group controlId="formOrganisation">
+                                <Form.Label>Organisation</Form.Label>
+                                <Form.Control id="organisation" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.organization)} />
+                            </Form.Group>
+
+                            <Form.Group controlId="formWebsite">
+                                <Form.Label>Website</Form.Label>
+                                <Form.Control id="website" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.website)} />
+                            </Form.Group>
+
+                            <Form.Group controlId="formContacts">
+                                <Form.Label>Contacts</Form.Label>
+                                <Form.Control id="contacts" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.contacts)} />
                             </Form.Group>
 
                             <Form.Group controlId="formContactPerson">
                                 <Form.Label>Contact Person</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.contactPerson)} />
+                                <Form.Control id="contactPerson" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.contactPerson)} />
                             </Form.Group>
 
-                            <Form.Group controlId="formPosition">
-                                <Form.Label>Position</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.position)} />
+                            <Form.Group controlId="formTelephone">
+                                <Form.Label>Contact Telephone</Form.Label>
+                                <Form.Control id="telephone" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.telephone)} />
                             </Form.Group>
 
-                            <Form.Group controlId="email1">
-                                <Form.Label>Email 1</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.email1)} />
+                            <Form.Group controlId="formDesignation">
+                                <Form.Label>Designation</Form.Label>
+                                <Form.Control id="designation" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.designation)} />
                             </Form.Group>
 
-                            <Form.Group controlId="email2">
-                                <Form.Label>Email 2</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.email2)} />
-                            </Form.Group>
-
-                            <Form.Group controlId="mobile1">
-                                <Form.Label>Mobile 1</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.mobile1)} />
-                            </Form.Group>
-
-                            <Form.Group controlId="mobile2">
-                                <Form.Label>Mobile 2</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.mobile2)}/>
+                            <Form.Group controlId="formEmailAddress">
+                                <Form.Label>Email Address</Form.Label>
+                                <Form.Control id="emailAddress" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.emailAddress)}/>
                             </Form.Group>                       
 
-                            <Form.Group controlId="website">
-                                <Form.Label>Website</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.website)}/>
+                            <Form.Group controlId="formPhysicalLocation">
+                                <Form.Label>Physical Location</Form.Label>
+                                <Form.Control id="physicalLocation" type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.physicalLocation)}/>
                             </Form.Group>                       
 
-                            <Form.Group controlId="industry">
+                            <Form.Group controlId="formIndustry">
                                 <Form.Label>Industry</Form.Label>
                                 <DropdownButton
                                         style={{ marginRight: '1rem' }}
                                         variant="outline-secondary"
-                                        title="Industry"
+                                        title={trimLower(this.state.chosenIndustry) === trimLower('industry') ? this.getEditField(this.state.editFieldID).map(field => field.industry) : this.state.chosenIndustry}
                                         id="input-group-dropdown-12"
+                                        name="industryEdit"
                                         >
                                             {
-                                                categories.map(industry => {
+                                                categoriesAndIndustries.map(industry => {
                                                     return(
                                                         <Dropdown.Item key={industry.industry} 
                                                           onClick={() => {
@@ -774,18 +765,6 @@ export default class ReportsView extends React.Component{
 
                                     </DropdownButton>
                                 </Form.Group>                       
-
-                            <Form.Group controlId="productDescription">
-                                <Form.Label>Product Description</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.productDescription)}/>
-                            </Form.Group>                       
-
-                            <Form.Group controlId="country">
-                                <Form.Label>Country</Form.Label>
-                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.country)}/>
-                            </Form.Group>                       
-
-
                             </Form>
                         </Modal.Body>
                         <Modal.Footer>
