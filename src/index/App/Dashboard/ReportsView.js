@@ -305,7 +305,6 @@ export default class ReportsView extends React.Component{
 
 
     downloadExcel = () => {
-        console.log('function called');
         this.setState({
             exportbtnClicked: 1
         })
@@ -319,7 +318,7 @@ export default class ReportsView extends React.Component{
              const url = window.URL.createObjectURL(new Blob([response.data]));
              const link = document.createElement('a');
              link.href = url;
-             link.setAttribute('download', 'reports.xlsx'); //or any other extension
+             link.setAttribute('download', 'database.xlsx'); //or any other extension
              document.body.appendChild(link);
              link.click();
              this.setState({
@@ -355,44 +354,54 @@ export default class ReportsView extends React.Component{
           /* Update state */
       
             this.setState({ 
-                data: data, 
-                cols: make_cols(ws['!ref'])
+                data: data
              },
               () => {
+                var dataArr = []
+                console.log(this.state.data.length)
                   this.state.data.forEach( (imports,index) => {
                      let dataObj = {    
-                        projectName: imports['Project Name'],
-                        companyName:  imports['Company Name'], 
-                        contactPerson: imports['Contact Person'],
-                        position:   imports['Position'],
-                        email1:    imports['Email 1'],
-                        email2:   imports['Email 2'],
-                        mobile1:   imports['Mobile 1'].toString(),
-                        mobile2:   imports['Mobile 2'],
-                        website: imports['Website'],
-                        industry: imports['Industry'],
-                        subSector: typeof imports['Subsector'] === "undefined" ? 'none' : imports['Subsector'].trim(),
-                        productDescription: imports['Product Description'],
-                        country: imports['Country'],
-                        confirmed: imports['Confirmed'] < 1 ? false : true,
+                        organization: imports['ORGANISATION'],
+                        website: imports['WEBSITE '], 
+                        contacts: imports['CONTACTS'],
+                        contactPerson: imports['CONTACT PERSON'],
+                        telephone: imports['TELEPHONE'],
+                        designation: imports['DESIGNATION'],
+                        emailAddress: imports['EMAIL ADDRESS'],
+                        physicalLocation: imports[' Physical Location'],
+                        industry: !imports['INDUSTRY'] ? wsname : imports['INDUSTRY'],
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
                         submittedBy: 'admin'
-                    };  
-
-                    axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", dataObj, {
-                        'Content-Type': 'application/json;charset=UTF-8',
-                        headers: {
-                            'auth-token': `${localStorage.getItem('auth-token')}`
-                        }
-                    }).then(res => {
-                        console.log('Succesfully added file record ' + res);
-                        this.reloadPage();
-                    }).catch(err => {
-                        console.log(err)
-                    });
+                    }; 
+                    dataArr.push(dataObj)
                 });
+                console.log(dataArr)
+                for(let dataOb of dataArr){
+                    try{
+                        fetch(_CONFIG.API_URI+"/api/v1/admin/add_record", {
+                            method: 'POST', 
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'auth-token': `${localStorage.getItem('auth-token')}`
+                            },
+                            body: JSON.stringify(dataOb),
+                            })
+                            .then(response => response.json())
+                            .then(dat => {
+                            console.log('Success uploaded record:', dat);
+                            })
+                            .catch((error) => {
+                            console.error('Error:', error);
+                            });
+                    } catch(err) {
+                        console.log(err)
+                        break
+                    }
+                    
+                }
                 alert('Succesfully imported file data');
+                this.reloadPage()
                
             });
         };
@@ -401,7 +410,7 @@ export default class ReportsView extends React.Component{
           reader.readAsBinaryString(this.state.file);
         } else {
           reader.readAsArrayBuffer(this.state.file);
-        };
+        }
       }
 
       resetToDefault = async() => {
@@ -526,7 +535,6 @@ export default class ReportsView extends React.Component{
 
         return(
                 <>
-
                 {/* delete modal */}
                 <div className="modal-bg" style={{
                         display: this.state.deleteModalDisplay
@@ -1037,7 +1045,7 @@ export default class ReportsView extends React.Component{
 
 
                 <div className="container">
-                    <h2 id="h2-title">Database</h2>
+                    <h2 id="h2-title">Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item>
                             <Nav.Link href="#" onClick={() => {this.resetToDefault()}}>View</Nav.Link>
@@ -1184,24 +1192,21 @@ export default class ReportsView extends React.Component{
                     </Nav.Item>
                         </Nav>
                     <section className="section-container" > 
-                    <Table variant='dark' className="reports-table" style={{marginTop: '30px', overflowY: 'scroll'}} striped bordered hover responsive >
+                    <Table variant='dark' className="reports-table table-responsive" style={{marginTop: '30px', overflowY: 'scroll'}} striped bordered hover responsive >
                             <thead>
                                 <tr variant="light">
                                 <th>#</th>
-                                <th>Company Name</th>
-                                <th>Contact Person</th>
-                                <th>Position</th>
-                                <th>Email 1</th>
-                                <th>Email 2</th>
-                                <th>Mobile 1</th>
-                                <th>Mobile 2</th>
-                                <th>Website</th>
                                 <th>Industry</th>
-                                <th>Subsector</th>
-                                <th>Product Description</th>
-                                <th>Country</th>
+                                <th>Organization</th>
+                                <th>Website</th>
+                                <th>Contacts</th>
+                                <th>Contact person</th>
+                                <th>Telephone</th>
+                                <th>Designation</th>
+                                <th>Email address</th>
+                                <th>Physical location</th>
                                 <th>Project</th>
-                                <th>Confirmed</th>
+                                <th>Status</th>
                                 <th>Collection Time</th>
                                 <th>Submitted by</th>
                                 </tr>
@@ -1211,7 +1216,7 @@ export default class ReportsView extends React.Component{
                                 this.state.reports.map((user,index) => {
                                     return(<>
                                     <div
-                                        key={user.password} 
+                                        key={user.organization} 
                                         className="delete-icon" 
                                         style={{ 
                                                  position: 'absolute',
@@ -1233,7 +1238,6 @@ export default class ReportsView extends React.Component{
                                                 style={{width: '20px', 
                                                         height: '20px'
                                                 }}/> 
-
                                     </div>
                                     
                                     <img  key={user.password} src={edit} style={{marginLeft: '-5px',}} className="delete-icon" 
@@ -1254,21 +1258,18 @@ export default class ReportsView extends React.Component{
                                         this.toggleDeleteModal();
                                     }}/>
                                         <tr key={index} className="user-rows" onClick={this.toggleIndividualEmailModalDisplay}>
-                                        <td>{index}</td>
-                                        <td> {user.companyName }</td>
-                                        <td>{user.contactPerson }</td>
-                                        <td> {user.position}</td>
-                                        <td>{user.email1}</td>
-                                        <td>{user.email2}</td>
-                                        <td>{user.mobile1}</td>
-                                        <td>{user.mobile2}</td>
-                                        <td>{user.website}</td>
-                                        <td>{ user.industry }</td>
-                                        <td>{ user.subSector }</td>
-                                        <td>{ user.productDescription }</td>
-                                        <td>{ user.country }</td>
+                                        <td>{index+1}</td>
+                                        <td> {user.industry }</td>
+                                        <td>{user.organization }</td>
+                                        <td> {user.website}</td>
+                                        <td>{user.contacts}</td>
+                                        <td>{user.contactPerson}</td>
+                                        <td>{user.telephone}</td>
+                                        <td>{user.designation}</td>
+                                        <td>{user.emailAddress}</td>
+                                        <td>{ user.physicalLocation }</td>
                                         <td>{ user.projectName }</td>
-                                        <td style={{ color: 'yellow'}}>{ user.confirmed ? 'Confirmed' : 'Pending'}</td>
+                                        <td style={{ color: 'yellow'}}>{ user.status ? 'Confirmed' : 'Pending'}</td>
                                         <td>{user.collectionTime}</td>
                                         <td>{ user.submittedBy}</td>
                                         </tr>

@@ -1,0 +1,1 @@
+export const trimLower = str => str.replace(/\s/g, "").toLowerCase()
