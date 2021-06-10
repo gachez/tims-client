@@ -234,30 +234,23 @@ export default class ReportsView extends React.Component{
     }
 
     getAddEntryFormValues = async () => {
-        const edits = await Array.from(document.getElementById('add-form')).map(node => node);
-
         return {
-            projectName: this.state.projectName,
-            companyName: edits[1].value, 
-            contactPerson: edits[2].value,
-            position: edits[3].value,
-            email1: edits[4].value,
-            email2: edits[5].value,
-            mobile1: edits[6].value,
-            mobile2: edits[7].value,
-            website: edits[8].value,
-            industry: this.state.determinedIndustry,
-            subSector: this.state.chosenIndustry,
-            productDescription: document.getElementsByName("productdescription")[0].value,
-            country: document.getElementsByName("country")[0].value,
-            collectionDate: new Date().toUTCString(),
-            collectionTime: new Date().toUTCString(),
-            submittedBy: 'admin'
-        }
+                projectName: this.state.projectName,
+                organization: document.getElementsByName('organisation')[0].value, 
+                website: document.getElementsByName('website')[0].value,
+                contacts: document.getElementsByName('contacts')[0].value,
+                contactPerson: document.getElementsByName('contactPerson')[0].value,
+                telephone: document.getElementsByName('telephone')[0].value,
+                designation: document.getElementsByName('designation')[0].value,
+                emailAddress: document.getElementsByName('emailAddress')[0].value,
+                physicalLocation: document.getElementsByName('physicalLocation')[0].value,
+                industry: this.state.chosenIndustry,
+                comments: document.getElementsByName('comments')[0].value,
+                submittedBy: 'admin'
+            }
     }
 
     addReport = async (savedReport) => {
-  
         const toSave = await savedReport;
         try{
             axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", toSave, {
@@ -812,7 +805,7 @@ export default class ReportsView extends React.Component{
                     display: this.state.addModalDisplay
                 }}>
                     <Modal.Header >
-                        <Modal.Title>Report Entry</Modal.Title>
+                        <Modal.Title>Record Entry</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
@@ -825,6 +818,7 @@ export default class ReportsView extends React.Component{
                                         variant="outline-secondary"
                                         title={this.state.projectName}
                                         id="input-group-dropdown-7"
+                                        name="project"
                                         >
                                             {
                                                 this.state.projects.map( (project, index) => {
@@ -842,44 +836,44 @@ export default class ReportsView extends React.Component{
 
                                     </DropdownButton> 
                         </Form.Group>                       
-                        <Form.Group controlId="formCompanyName">
-                            <Form.Label>Company Name</Form.Label>
-                            <Form.Control name="company" type="textbox" placeholder="Enter name" />
+                        <Form.Group controlId="formOrganization">
+                            <Form.Label>Organisation</Form.Label>
+                            <Form.Control name="organisation" type="textbox" placeholder="Enter organisation" />
+                        </Form.Group>
+
+                        <Form.Group controlId="formWebsite">
+                            <Form.Label>Website</Form.Label>
+                            <Form.Control name="website" type="textbox" placeholder="Enter website"/>
+                        </Form.Group>
+
+                        <Form.Group controlId="formContacts">
+                            <Form.Label>Contacts</Form.Label>
+                            <Form.Control name="contacts" type="textbox" placeholder="07000000"/>
                         </Form.Group>
 
                         <Form.Group controlId="formContactPerson">
                             <Form.Label>Contact Person</Form.Label>
-                            <Form.Control type="textbox" placeholder="Contact Person"/>
+                            <Form.Control name="contactPerson" type="textbox" placeholder="e.g Jane Doe"/>
                         </Form.Group>
 
-                        <Form.Group controlId="formPosition">
-                            <Form.Label>Position</Form.Label>
-                            <Form.Control type="textbox" placeholder="Position"/>
+                        <Form.Group controlId="telephone">
+                            <Form.Label>Contact Telephone</Form.Label>
+                            <Form.Control name="telephone" type="textbox" placeholder="07000000"/>
                         </Form.Group>
 
-                        <Form.Group controlId="email1">
-                            <Form.Label>Email 1</Form.Label>
-                            <Form.Control type="textbox" placeholder="example@example.com"/>
+                        <Form.Group controlId="designation">
+                            <Form.Label>Designation</Form.Label>
+                            <Form.Control name="designation" type="textbox" placeholder="e.g CEO"/>
                         </Form.Group>
 
-                        <Form.Group controlId="email2">
-                            <Form.Label>Email 2</Form.Label>
-                            <Form.Control type="textbox" placeholder="example@example.com"/>
-                        </Form.Group>
-
-                        <Form.Group controlId="mobile1">
-                            <Form.Label>Mobile 1</Form.Label>
-                            <Form.Control type="textbox" placeholder="07000000"/>
-                        </Form.Group>
-
-                         <Form.Group controlId="mobile2">
-                            <Form.Label>Mobile 2</Form.Label>
-                            <Form.Control type="textbox" placeholder="0700000"/>
+                         <Form.Group controlId="emailAddress">
+                            <Form.Label>Email Address</Form.Label>
+                            <Form.Control name="emailAddress" type="email" placeholder="example@example.com"/>
                         </Form.Group>                       
 
-                        <Form.Group controlId="website">
-                            <Form.Label>Website</Form.Label>
-                            <Form.Control type="textbox" placeholder="www.example.com"/>
+                        <Form.Group controlId="physicalLocation">
+                            <Form.Label>Physical Location</Form.Label>
+                            <Form.Control name="physicalLocation" type="textbox" placeholder="Enter location"/>
                         </Form.Group>                       
 
                         <Form.Group controlId="industry">
@@ -889,6 +883,7 @@ export default class ReportsView extends React.Component{
                                         variant="outline-secondary"
                                         title={this.state.chosenIndustry}
                                         id="input-group-dropdown-2"
+                                        name="industry"
                                         >
                                             {
                                                 categoriesAndIndustries.map(industry => {
@@ -905,20 +900,13 @@ export default class ReportsView extends React.Component{
                                             }
 
                                     </DropdownButton>
+                        </Form.Group>                                        
+
+                        <Form.Group controlId="comments">
+                            <Form.Label>Comments</Form.Label>
+                            <Form.Control name="comments" type="textbox" placeholder="Enter comments"/>
                         </Form.Group>                       
-
-                        <Form.Group controlId="productDescription">
-                            <Form.Label>Product Description</Form.Label>
-                            <Form.Control name="productdescription" type="textbox" placeholder="e.g spare parts"/>
-                        </Form.Group>                       
-
-                        <Form.Group controlId="country">
-                            <Form.Label>Country</Form.Label>
-                            <Form.Control name="country" type="textbox" placeholder="e.g Kenya"/>
-                        </Form.Group>                       
-
-
-                        </Form>
+                      </Form>
                     </Modal.Body>
                     <small id="warning" style={{color: 'red', margin: '18px'}}></small>
                     <br/>
