@@ -1,20 +1,16 @@
 import React from 'react';
 import '../shared/ReportsView.css';
 import {Spinner,Table, Nav, Modal, Form, Button, Dropdown, DropdownButton} from 'react-bootstrap';
-import trash from '../Dashboard/shared/trash.png';
 import tick from '../shared/tick.png';
 import axios from 'axios';
 import edit from '../shared/edit.png';
-import XLSX from 'xlsx';
 import { categories } from '../shared/lib/categories';
-import { make_cols } from '../Dashboard/MakeColumns';
 import { SheetJSFT } from '../Dashboard/types';
 import comment from '../shared/chatbox.png';
+import _CONFIG from '../../../config/config';
 
- 
 
 export default class ReportsViewUser extends React.Component{
-
     state = {
         modalDisplay: 'none',
         editSave: 'none',
@@ -43,7 +39,7 @@ export default class ReportsViewUser extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("http://localhost:1332/api/v1/admin/get_reports",  {
+        axios.get(_CONFIG.API_URI+"/api/v1/admin/get_reports",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -56,7 +52,7 @@ export default class ReportsViewUser extends React.Component{
             });
           });
 
-          axios.get('http://localhost:1332/api/v1/admin/get_industries',{
+          axios.get(_CONFIG.API_URI+'/api/v1/admin/get_industries',{
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -66,7 +62,7 @@ export default class ReportsViewUser extends React.Component{
               })
           })
 
-          axios.get("http://localhost:1332/api/v1/admin/get_projects",  {
+          axios.get(_CONFIG.API_URI+"/api/v1/admin/get_projects",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -131,14 +127,12 @@ export default class ReportsViewUser extends React.Component{
     }
 
     getEditField = (id ) => {
-        const field = this.state.reports.filter(report => report._id === id);
-        return field;
-
+        return this.state.reports.filter(report => report._id === id)
     }
  
     markComplete = (id) => {
         console.log('..marking')
-        axios.post(`http://localhost:1332/api/v1/admin/edit_record/${id}`, {
+        axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, {
             confirmed: true
         },{
             headers: {
@@ -180,7 +174,7 @@ export default class ReportsViewUser extends React.Component{
         }
 
         // console.log(saveEdits)
-        axios.post(`http://localhost:1332/api/v1/admin/edit_record/${id}`, saveEdits, {
+        axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, saveEdits, {
             headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
               }
@@ -210,18 +204,15 @@ export default class ReportsViewUser extends React.Component{
                  });
                
             const savedReport = {
-                companyName:  fields[0].value, 
-                contactPerson: fields[1].value,
-                position:   fields[2].value,
-                email1:    fields[3].value,
-                email2:   fields[4].value,
-                mobile1:   fields[5].value,
-                mobile2:   fields[6].value,
-                website: fields[7].value,
+                organization:  fields[0].value, 
+                website: fields[1].value,
+                contacts:   fields[2].value,
+                contactPerson:    fields[3].value,
+                telephone:   fields[4].value,
+                designation:   fields[5].value,
+                emailAddress:   fields[6].value,
+                physicalLocation: fields[7].value,
                 industry: this.state.determinedIndustry,
-                subSector: this.state.chosenIndustry,
-                productDescription: fields[8].value,
-                country: fields[9].value,
                 collectionDate: new Date(),
                 collectionTime: new Date(),
                 submittedBy: this.props.userLoggedIn,
@@ -229,7 +220,7 @@ export default class ReportsViewUser extends React.Component{
             }
         console.log(savedReport)
         try{
-            axios.post("http://localhost:1332/api/v1/user/add_record", savedReport, {
+            axios.post(_CONFIG.API_URI+"/api/v1/user/add_record", savedReport, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -249,31 +240,25 @@ export default class ReportsViewUser extends React.Component{
     }
 
     addRecordAndSendToAdmin = async () => {
-
         this.addReport();
-        const fields = Array.from(document.getElementsByClassName('add-form-fields')).map(field => {
-            return field
-        });
+    
         try{
             const savedReport = {
-                companyName:  fields[0].value, 
-                contactPerson: fields[1].value,
-                position:   fields[2].value,
-                email1:    fields[3].value,
-                email2:   fields[4].value,
-                mobile1:   fields[5].value,
-                mobile2:   fields[6].value,
-                website: fields[7].value,
+                organization:  document.getElementById('add-organisation').value, 
+                website: document.getElementById('add-website').value,
+                contacts: document.getElementById('add-contacts').value,
+                contactPerson: document.getElementById('add-contact-person').value,
+                telephone: document.getElementById('add-telephone').value,
+                designation:   document.getElementById('add-designation').value,
+                emailAddress:   document.getElementById('add-email-address').value,
+                physicalLocation: document.getElementById('add-physical-location').value,
                 industry: this.state.determinedIndustry,
-                subSector: this.state.chosenIndustry,
-                productDescription: fields[8].value,
-                country: fields[9].value,
                 collectionDate: new Date(),
                 collectionTime: new Date(),
                 submittedBy: this.props.userLoggedIn,
                 projectName: this.state.projectName
             }
-            axios.post("http://localhost:1332/api/v1/admin/add_record", savedReport, {
+            axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", savedReport, {
                 'Content-Type': 'application/json;charset=UTF-8',
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
@@ -295,7 +280,7 @@ export default class ReportsViewUser extends React.Component{
 
     sendToAdmin = (data) => {
                       //post to admin reports database
-                      axios.post("http://localhost:1332/api/v1/admin/add_record", data, {
+                      axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", data, {
                         headers: {
                         'auth-token': `${localStorage.getItem('auth-token')}`
                         }
@@ -311,7 +296,7 @@ export default class ReportsViewUser extends React.Component{
     updateSubmitStatus = (id) => {
         console.log('updating status')
         //update submitted status to true
-        axios.post("http://localhost:1332/api/v1/user/edit_record/" + id, {
+        axios.post(_CONFIG.API_URI+"/api/v1/user/edit_record/" + id, {
             submitted: true
         }, {
             headers: {
@@ -331,24 +316,19 @@ export default class ReportsViewUser extends React.Component{
         //merge to admin report db
         const sendThis = reportsToSubmit.map(report => {
               //post to admin reports database
-            axios.post("http://localhost:1332/api/v1/admin/add_record", {
-                companyName:  report.companyName, 
-                contactPerson: report.contactPerson,
-                position:   report.position,
-                email1:   report.email1,
-                email2:   report.email2,
-                mobile1:   report.mobile1,
-                mobile2:   report.mobile2,
+            axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", {
+                organization:  report.organization, 
                 website: report.website,
+                contacts:   report.contacts,
+                contactPerson:   report.contactPerson,
+                telephone:   report.telephone,
+                designation:   report.designation,
+                emailAddress:   report.emailAddress,
+                physicalLocation: report.physicalLocation,
                 industry: report.industry,
-                subSector: !report.subSector ? "N/A" : report.subSector,
-                productDescription: report.productDescription,
-                country: report.country,
                 collectionDate: new Date(),
                 collectionTime: new Date(),
-                submittedBy: this.props.userLoggedIn,
-                confirmed: report.confirmed,
-                event: report.projectName
+                submittedBy: this.props.userLoggedIn
             }, {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
@@ -373,13 +353,12 @@ export default class ReportsViewUser extends React.Component{
             const comments = await document.getElementById('comment-field').value;
 
             // added comments
-            axios.post(`http://localhost:1332/api/v1/admin/edit_record/${id}`, {comments: comments}, {
+            axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, {comments: comments}, {
                 headers: {
                     'auth-token': `${localStorage.getItem('auth-token')}`
                   }
             }).then(res => {
-                alert("Succesfully added comment");     
-                    console.log(res);
+                alert("Comment added");     
                     this.toggleCommentModalDisplay();
                     this.reloadPage();
             }).catch(err => console.log(err))
@@ -389,7 +368,7 @@ export default class ReportsViewUser extends React.Component{
 
     removeReport = async (id) => {
         try{
-            axios.delete("http://localhost:1332/api/v1/user/delete_record/" + id,  {
+            axios.delete(_CONFIG.API_URI+"/api/v1/user/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
@@ -456,7 +435,7 @@ export default class ReportsViewUser extends React.Component{
             Importing...
         </Button>;
 
-            const importBtn =  <Button variant="primary" onClick={() => {
+            const importBtn = <Button variant="primary" onClick={() => {
             this.handleFile()
             this.setState({ importBtnClicked: 1 })}
             }>Import</Button>;
@@ -492,7 +471,6 @@ export default class ReportsViewUser extends React.Component{
                                             Deleting...
                                         </Button> ;
 
-            const userReports = this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase());
             const industriesDB = this.state.industries.map( industry => industry);
             const categoriesAndIndustries = [...categories, ...industriesDB];
             
@@ -640,7 +618,7 @@ export default class ReportsViewUser extends React.Component{
 
                     <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
                     <Form id="add-form">
-                    <Form.Group controlId="projectName">
+                    <Form.Group controlId="formAddProject">
                             <Form.Label>Project Name</Form.Label>
                             <DropdownButton
                                         style={{ marginRight: '1rem' }}
@@ -664,47 +642,47 @@ export default class ReportsViewUser extends React.Component{
 
                                     </DropdownButton> 
                         </Form.Group>  
-                        <Form.Group controlId="formCompanyName">
-                            <Form.Label>Company Name</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="Enter name" />
+                        <Form.Group controlId="formAddOrganisation">
+                            <Form.Label>Organisation</Form.Label>
+                            <Form.Control id="add-organisation" className="add-form-fields" type="textbox" placeholder="Enter organisation" />
                         </Form.Group>
 
-                        <Form.Group controlId="formContactPerson">
-                            <Form.Label>Contact Person</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="Contact Person"/>
-                        </Form.Group>
-
-                        <Form.Group controlId="formPosition">
-                            <Form.Label>Position</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="Position"/>
-                        </Form.Group>
-
-                        <Form.Group controlId="email1">
-                            <Form.Label>Email 1</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="example@example.com"/>
-                        </Form.Group>
-
-                        <Form.Group controlId="email2">
-                            <Form.Label>Email 2(Optional)</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="example@example.com"/>
-                        </Form.Group>
-
-                        <Form.Group controlId="mobile1">
-                            <Form.Label>Mobile 1</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="07000000"/>
-                        </Form.Group>
-
-                         <Form.Group controlId="mobile2">
-                            <Form.Label>Mobile 2(Optional)</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="0700000"/>
-                        </Form.Group>                       
-
-                        <Form.Group controlId="website">
+                        <Form.Group controlId="formAddWebsite">
                             <Form.Label>Website</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="www.example.com"/>
+                            <Form.Control id="add-website" className="add-form-fields" type="textbox" placeholder="Website" />
+                        </Form.Group>
+
+                        <Form.Group controlId="formAddContacts">
+                            <Form.Label>Contacts</Form.Label>
+                            <Form.Control id="add-contacts" className="add-form-fields" type="textbox" placeholder="07000000"/>
+                        </Form.Group>
+
+                        <Form.Group controlId="formAddContactPerson">
+                            <Form.Label>Contact Person</Form.Label>
+                            <Form.Control id="add-contact-person" className="add-form-fields" type="textbox" placeholder="Enter name"/>
+                        </Form.Group>
+
+                        <Form.Group controlId="formAddTelephone">
+                            <Form.Label>Telephone</Form.Label>
+                            <Form.Control id="add-telephone" className="add-form-fields" type="textbox" placeholder="0712345678"/>
+                        </Form.Group>
+
+                        <Form.Group controlId="formAddDesignation">
+                            <Form.Label>Designation</Form.Label>
+                            <Form.Control id="add-designation" className="add-form-fields" type="textbox" placeholder="e.g CEO"/>
+                        </Form.Group>
+
+                         <Form.Group controlId="formAddEmail">
+                            <Form.Label>Email Address</Form.Label>
+                            <Form.Control id="add-email-address" className="add-form-fields" type="email" placeholder="example@example.com"/>
                         </Form.Group>                       
 
-                        <Form.Group controlId="industry">
+                        <Form.Group controlId="formAddPhysicalLocation">
+                            <Form.Label>PhysicalLocation</Form.Label>
+                            <Form.Control id="add-physical-location" className="add-form-fields" type="textbox" placeholder="Enter location"/>
+                        </Form.Group>                       
+
+                        <Form.Group controlId="formAddIndustry">
                             <Form.Label>Industry</Form.Label>
                                    {/* filter according to sector and subsector */}
                                     <DropdownButton
@@ -722,7 +700,6 @@ export default class ReportsViewUser extends React.Component{
                                                         style={{width: '70%', margin: '15px' }}
                                                         variant="outline-secondary"
                                                         onClick={() => {this.setState({ determinedIndustry: category.industry})}}
-                                                        title={category.industry}
                                                         id="input-group-dropdown-31"
                                                         >
                                                             {category.industry}
@@ -732,19 +709,8 @@ export default class ReportsViewUser extends React.Component{
                                                     )}
                                                 )}
                                                 </DropdownButton>                   
-
                         </Form.Group>                       
-
-                        <Form.Group controlId="productDescription">
-                            <Form.Label>Product Description</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="e.g spare parts"/>
-                        </Form.Group>                       
-
-                        <Form.Group controlId="country">
-                            <Form.Label>Country</Form.Label>
-                            <Form.Control className="add-form-fields" type="textbox" placeholder="e.g Kenya"/>
-                        </Form.Group> 
-                        </Form>
+                      </Form>
                     </Modal.Body>
                     <small style={{color: 'red', margin: '15px'}} id="add-form-warning"></small>
                     <br/>
@@ -945,7 +911,7 @@ export default class ReportsViewUser extends React.Component{
                     <h2 id="h2-title">Data</h2>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item onClick={this.toggleModalDisplay}>
-                            <Nav.Link href="#">Add report</Nav.Link>
+                            <Nav.Link href="#">Add entry</Nav.Link>
                         </Nav.Item>
 
                        
@@ -1035,22 +1001,19 @@ export default class ReportsViewUser extends React.Component{
                     <Table variant='dark' className="reports-table" style={{marginTop: '30px'}} striped bordered hover responsive>
                         <thead>
                             <tr>
-                            <th>#</th>
-                            <th>Project Name</th>
-                            <th>Company Name</th>
-                            <th>Contact Person</th>
-                            <th>Position</th>
-                            <th>Email 1</th>
-                            <th>Email 2</th>
-                            <th>Mobile 1</th>
-                            <th>Mobile 2</th>
-                            <th>Website</th>
-                            <th>Industry</th>
-                            <th>Subsector</th>
-                            <th>Product Description</th>
-                            <th>Country</th>
-                            <th>Date Updated</th>
-                            <th>Confirmed</th>
+                                <th>#</th>
+                                <th>Organisation</th>
+                                <th>Website</th>
+                                <th>Contacts</th>
+                                <th>Contact Person</th>
+                                <th>Telephone</th>
+                                <th>Designation</th>
+                                <th>Email Address</th>
+                                <th>Physical Location</th>
+                                <th>Industry</th>
+                                <th>Project</th>
+                                <th>Date Updated</th>
+                                <th>Confirmed</th>
                             </tr>
                         </thead> 
                         <tbody>
@@ -1103,23 +1066,18 @@ export default class ReportsViewUser extends React.Component{
                                         });
                                         this.toggleEditModalDisplay()
                                     }}/>
-                               
-                                 
                                         <tr key={index} className="user-rows"  onClick={this.toggleIndividualEmailModalDisplay}>
-                                        <td>{index}</td>
-                                        <td>{this.state.editSave === 'none' ? user.projectName : this.returnEditFields(user.projectName)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.companyName : this.returnEditFields(user.companyName)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.contactPerson : this.returnEditFields(user.contactPerson)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.position : this.returnEditFields(user.position)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.email1 : this.returnEditFields(user.email1)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.email2 : this.returnEditFields(user.email2)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.mobile1 : this.returnEditFields(user.mobile1)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.mobile2 : this.returnEditFields(user.mobile2)}</td>
+                                        <td>{index+1}</td>
+                                        <td>{this.state.editSave === 'none' ? user.organization : this.returnEditFields(user.organization)}</td>
                                         <td>{this.state.editSave === 'none' ? user.website : this.returnEditFields(user.website)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.contacts : this.returnEditFields(user.contacts)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.contactPerson : this.returnEditFields(user.contactPerson)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.telephone : this.returnEditFields(user.telephone)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.designation : this.returnEditFields(user.designation)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.emailAddress : this.returnEditFields(user.emailAddress)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.physicalLocation : this.returnEditFields(user.physicalLocation)}</td>
                                         <td>{this.state.editSave === 'none' ? user.industry : this.returnEditFields(user.industry)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.subSector : this.returnEditFields(user.subSector)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.productDescription : this.returnEditFields(user.productDescription)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.country : this.returnEditFields(user.country)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.project : this.returnEditFields(user.project)}</td>
                                         <td>{this.state.editSave === 'none' ? user.collectionDate : this.returnEditFields(user.collectionDate)}</td>
                                         <td>{ user.confirmed ? 'Confirmed' : 'Pending'}</td>
                                         </tr>
