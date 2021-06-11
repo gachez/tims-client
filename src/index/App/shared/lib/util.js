@@ -1,1 +1,3 @@
-export const trimLower = str => str.replace(/\s/g, "").toLowerCase()
+export const trimLower = str => {
+   return !str ? 'no string provided' : str.replace(/\s/g, "").toLowerCase()
+}
