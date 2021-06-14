@@ -13,7 +13,8 @@ import { SheetJSFT } from './types';
 import _CONFIG from '../../../config/config';
 import { trimLower } from '../shared/lib/util';
 import DetailsModal from '../components/DetailsModal';
-
+import search from '../../../assets/search.png';
+import Search from '../components/Search';
 
 
 export default class ReportsView extends React.Component{
@@ -1121,7 +1122,10 @@ export default class ReportsView extends React.Component{
 
 
                 <div className="container">
-                    <h2 id="h2-title">Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
+                    <div style={{width: '100%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>
+                        <h2 style={{fontWeight: 'bold'}} >Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
+                        <Search />
+                    </div>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item>
                             <Nav.Link href="#" onClick={() => {this.resetToDefault()}}>{this.state.viewBtn}</Nav.Link>
