@@ -12,6 +12,7 @@ import XLSX from 'xlsx';
 import { SheetJSFT } from './types';
 import _CONFIG from '../../../config/config';
 import { trimLower } from '../shared/lib/util';
+import DetailsModal from '../components/DetailsModal';
 
 
 
@@ -44,6 +45,7 @@ export default class ReportsView extends React.Component{
         chosenUser: 'User',
         chosenIndustry: 'Industry',
         selectedFile: null,
+        chosenProject: 'Project',
         file: {},
         data: [],
         cols: [],
@@ -58,7 +60,24 @@ export default class ReportsView extends React.Component{
         industryFilterClicked: 0,
         projectFilterClicked: 0,
         userFilterClicked: 0,
-        status: 'Status'
+        status: 'Status',
+        viewBtn: 'View',
+        show: false,
+        userDetails: {
+            industry: '',
+            organisation: '',
+            website: '',
+            contacts: '',
+            contactPerson: '',
+            telephone: '',
+            designation: '',
+            emailAddress: '',
+            physicalLocation: '',
+            projectName: '',
+            status: false,
+            collectionTime: '',
+            submittedBy: ''
+        }
         
     }
 
@@ -115,7 +134,38 @@ export default class ReportsView extends React.Component{
         localStorage.setItem("page", "database");  
     }
 
-    
+    handleDetailModal = ({industry,
+    organisation,
+    website,
+    contacts,
+    contactPerson,
+    telephone,
+    designation,
+    emailAddress,
+    physicalLocation,
+    projectName,
+    status,
+    collectionTime,
+    submittedBy}) => {
+        this.setState({
+            show: this.state.show ? false : true,
+            userDetails: {
+                industry: industry,
+                organisation: organisation,
+                website: website,
+                contacts: contacts,
+                contactPerson: contactPerson,
+                telephone: telephone,
+                designation: designation,
+                emailAddress: emailAddress,
+                physicalLocation: physicalLocation,
+                projectName: projectName,
+                status: status,
+                collectionTime: collectionTime,
+                submittedBy: submittedBy    
+            }
+        })
+    }
 
     onEditClick = () => {
         this.setState({
@@ -188,7 +238,8 @@ export default class ReportsView extends React.Component{
             designation: document.getElementById('designation').value.length < 1 ? document.getElementById('designation').getAttribute('placeholder') : document.getElementById('designation').value,
             emailAddress: document.getElementById('emailAddress').value.length < 1 ? document.getElementById('emailAddress').getAttribute('placeholder'): document.getElementById('emailAddress').value,
             physicalLocation: document.getElementById('physicalLocation').value.length < 1 ? document.getElementById('physicalLocation').getAttribute('placeholder') : document.getElementById('physicalLocation').value,
-            industry: trimLower(this.state.chosenIndustry) === trimLower('Industry') ? document.getElementsByName('industryEdit')[0].getAttribute('title') : this.state.chosenIndustry
+            industry: trimLower(this.state.chosenIndustry) === trimLower('Industry') ? document.getElementsByName('industryEdit')[0].getAttribute('title') : this.state.chosenIndustry,
+            projectName: trimLower(this.state.chosenProject) === trimLower('Project') ? document.getElementsByName('editproject')[0].getAttribute('title') : this.state.chosenProject
         }
 
         axios.post(`${_CONFIG.API_URI}/api/v1/admin/edit_record/${id}`, saveEdits, {
@@ -409,12 +460,20 @@ export default class ReportsView extends React.Component{
                 chosenIndustry: 'Industry',
                 projectName: "Project",
                 chosenUser: "User",
+                viewBtn: "View",
                 reports: this.state.defaultReports
             });
             return 0;
           }
           this.setState({
               reports: this.state.defaultReports
+          })
+      }
+
+      handleClose = () => {
+          const {show} = this.state 
+          this.setState({
+              show: show ? false : true
           })
       }
 
@@ -526,6 +585,23 @@ export default class ReportsView extends React.Component{
 
         return(
                 <>
+                {/* details modal */}
+                <DetailsModal
+                    show={this.state.show} 
+                    handleClose={this.handleClose} 
+                    industry = {this.state.userDetails.industry}
+                    organisation = {this.state.userDetails.organisation}
+                    website={this.state.userDetails.website}
+                    contacts={this.state.userDetails.contacts}
+                    contactPerson= {this.state.userDetails.contactPerson}
+                    telephone = {this.state.userDetails.telephone}
+                    designation= {this.state.userDetails.designation}
+                    emailAddress= {this.state.userDetails.emailAddress}
+                    physicalLocation= {this.state.userDetails.physicalLocation}
+                    projectName= {this.state.userDetails.projectName}
+                    status= {this.state.userDetails.status}
+                    collectionTime={this.state.userDetails.collectionTime}
+                    submittedBy= {this.state.userDetails.submittedBy} />
                 {/* delete modal */}
                 <div className="modal-bg" style={{
                         display: this.state.deleteModalDisplay
@@ -772,7 +848,32 @@ export default class ReportsView extends React.Component{
                                             }
 
                                     </DropdownButton>
-                                </Form.Group>                       
+                                </Form.Group>   
+                                <Form.Group controlId="formEditProject">
+                                <Form.Label>Project</Form.Label>
+                                <DropdownButton
+                                            style={{ marginRight: '1rem' }}
+                                            variant="outline-secondary"
+                                            title={trimLower(this.state.chosenProject) === trimLower('Project') ? this.getEditField(this.state.editFieldID).map(field => field.projectName) : this.state.chosenProject}
+                                            id="input-group-dropdown-7"
+                                            name="editproject"
+                                            >
+                                                {
+                                                    this.state.projects.map( (project, index) => {
+                                                        return(
+                                                        <Dropdown.Item  key={project._id} className="projects-item" onClick={() => {
+                                                            this.setState({
+                                                                chosenProject: project.projectName
+                                                            })
+                                                        }}>
+                                                            {project.projectName}
+                                                        </Dropdown.Item>
+                                                    )
+                                                })
+                                            }
+
+                                        </DropdownButton> 
+                            </Form.Group>                    
                             </Form>
                         </Modal.Body>
                         <Modal.Footer>
@@ -1023,7 +1124,7 @@ export default class ReportsView extends React.Component{
                     <h2 id="h2-title">Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item>
-                            <Nav.Link href="#" onClick={() => {this.resetToDefault()}}>View</Nav.Link>
+                            <Nav.Link href="#" onClick={() => {this.resetToDefault()}}>{this.state.viewBtn}</Nav.Link>
                         </Nav.Item>
                         <Nav.Item>
                             <Nav.Link onClick={this.toggleExportModalDisplay} eventKey="link-1">
@@ -1077,6 +1178,7 @@ export default class ReportsView extends React.Component{
                                                         key={category.industry}
                                                         onClick={() => {this.resetFirst(() => {
                                                             this.setState({
+                                                                viewBtn: 'Reset',
                                                                 chosenIndustry: category.industry,
                                                                 reports: this.state.reports.filter(report => trimLower(report.industry) === trimLower(category.industry))
                                                             })
@@ -1104,6 +1206,7 @@ export default class ReportsView extends React.Component{
                                                     return(
                                                         <Dropdown.Item key={project._id} onClick={() => {
                                                             this.resetFirst(this.setState({
+                                                                viewBtn: 'Reset',
                                                                 reports: this.state.reports.filter(report => trimLower(report.projectName) === trimLower(project))
                                                             }))
                                                         }}>{project.projectName}</Dropdown.Item>
@@ -1124,6 +1227,7 @@ export default class ReportsView extends React.Component{
                                                     return(
                                                         <Dropdown.Item key={user._id} onClick={() => {
                                                             this.setState({
+                                                                viewBtn:'Reset',
                                                                 chosenUser: user.fullname,
                                                                 reports: this.state.reports.filter( report => report.submittedBy.toLowerCase() === user.username.toLowerCase())
                                                             })
@@ -1230,10 +1334,24 @@ export default class ReportsView extends React.Component{
                                         this.setState({
                                             editFieldID: user._id
                                            
-                                        });
+                                     });
                                         this.toggleDeleteModal();
                                     }}/>
-                                        <tr key={index} className="user-rows" onClick={this.toggleIndividualEmailModalDisplay}>
+                                        <tr key={index} className="user-rows" onClick={() => {this.handleDetailModal({
+                                            organisation: user.organization,
+                                            industry: user.industry,
+                                            website: user.website,
+                                            contacts: user.contacts,
+                                            contactPerson: user.contactPerson,
+                                            telephone: user.telephone,
+                                            designation: user.designation,
+                                            emailAddress: user.emailAddress,
+                                            physicalLocation: user.physicalLocation,
+                                            projectName: user.projectName,
+                                            status: user.status,
+                                            collectionTime: user.collectionTime,
+                                            submittedBy: user.submittedBy
+                                        })}}>
                                         <td>{index+1}</td>
                                         <td> {user.industry }</td>
                                         <td>{user.organization }</td>
