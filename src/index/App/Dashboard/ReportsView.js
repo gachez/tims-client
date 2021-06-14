@@ -1046,7 +1046,7 @@ export default class ReportsView extends React.Component{
                                                     {
                                                         status.map(stat => {
                                                             return (
-                                                                <Dropdown.Item onClick={() => {this.resetFirst(() => {
+                                                                <Dropdown.Item onClick={() => {
                                                                     if(stat === 'confirmed'){
                                                                         this.setState({
                                                                             reports: this.state.reports.filter(report => report.confirmed)
@@ -1056,7 +1056,7 @@ export default class ReportsView extends React.Component{
                                                                     this.setState({
                                                                         reports: this.state.reports.filter(report => !report.confirmed)
                                                                     });
-                                                                })}}>{stat}
+                                                                }}>{stat}
                                                              </Dropdown.Item>
                                                             )
                                                         })
@@ -1080,7 +1080,7 @@ export default class ReportsView extends React.Component{
                                                                 chosenIndustry: category.industry,
                                                                 reports: this.state.reports.filter(report => trimLower(report.industry) === trimLower(category.industry))
                                                             })
-                                                        }) }}
+                                                        })}}
                                                         id="input-group-dropdown-3"
                                                         >
                                                             {category.industry}
@@ -1096,17 +1096,16 @@ export default class ReportsView extends React.Component{
                                     <DropdownButton
                                         style={{ marginRight: '1rem' }}
                                         variant="outline-primary"
-                                        title={this.state.projectName}
+                                        title="Project"
                                         id="input-group-dropdown-4"
                                         >
                                             {
                                                 this.state.projects.map(project => {
                                                     return(
                                                         <Dropdown.Item key={project._id} onClick={() => {
-                                                            this.resetFirst(() => {this.setState({
-                                                                projectName: project.projectName,
-                                                                reports: this.state.reports.filter(report => trimLower(report.projectName) === trimLower(project.projectName))
-                                                            })})
+                                                            this.resetFirst(this.setState({
+                                                                reports: this.state.reports.filter(report => trimLower(report.projectName) === trimLower(project))
+                                                            }))
                                                         }}>{project.projectName}</Dropdown.Item>
                                                     )
                                                 })
@@ -1124,11 +1123,9 @@ export default class ReportsView extends React.Component{
                                                 this.state.users.map( user => {
                                                     return(
                                                         <Dropdown.Item key={user._id} onClick={() => {
-                                                            this.resetFirst(() => {
-                                                                this.setState({
-                                                                    chosenUser: user.fullname,
-                                                                    reports: this.state.reports.filter( report => trimLower(report.submittedBy) === trimLower(user.username))
-                                                                })
+                                                            this.setState({
+                                                                chosenUser: user.fullname,
+                                                                reports: this.state.reports.filter( report => report.submittedBy.toLowerCase() === user.username.toLowerCase())
                                                             })
                                                         }}>{user.fullname}</Dropdown.Item>
                                                     )
