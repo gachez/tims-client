@@ -9,7 +9,7 @@ import { SheetJSFT } from '../Dashboard/types';
 import comment from '../shared/chatbox.png';
 import _CONFIG from '../../../config/config';
 import { trimLower } from '../shared/lib/util';
-
+import Search from '../components/Search';
 
 export default class ReportsViewUser extends React.Component{
     state = {
@@ -46,7 +46,7 @@ export default class ReportsViewUser extends React.Component{
           }).then(res => {
 
             this.setState({
-                reports: res.data,
+                reports: res.data.filter(report => report.submittedBy === this.props.userLoggedIn || this.checkUndefined(report.assignedTo) === this.props.userLoggedIn),
                 defaultReports: res.data,
                 isLoaded: true
             });
@@ -148,7 +148,6 @@ export default class ReportsViewUser extends React.Component{
     }  
 
     saveEditedFied = async (id) => {
-        console.log('saving...')
         this.setState({
             editBtnClicked: 1
         })
@@ -187,17 +186,8 @@ export default class ReportsViewUser extends React.Component{
     }
 
     addReport = async () => {
-                      
-            const edits = Array.from(document.getElementById('add-form')).map(node => node);
-            const fields = Array.from(document.getElementsByClassName('add-form-fields')).map(field => {
-                                 return field
-                             });
-            const emptyFields = fields.filter(field => field.value.length < 1 );
-            
-            this.setState({
-                addBtnClicked: true
-                 });
-               
+            const fields = Array.from(document.getElementsByClassName('add-form-fields')).map(field => field);
+            this.setState({addBtnClicked: true});
             const savedReport = {
                 organization:  fields[0].value, 
                 website: fields[1].value,
@@ -213,7 +203,6 @@ export default class ReportsViewUser extends React.Component{
                 submittedBy: this.props.userLoggedIn,
                 projectName: this.state.projectName
             }
-        console.log(savedReport)
         try{
             axios.post(_CONFIG.API_URI+"/api/v1/user/add_record", savedReport, {
                 headers: {
@@ -889,7 +878,10 @@ export default class ReportsViewUser extends React.Component{
                 </div>
 
                 <div className="container">
-                    <h2 id="h2-title">Data</h2>
+                <div style={{width: '100%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>
+                        <h2 style={{fontWeight: 'bold'}} >Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
+                        <Search handleInput={this.handleSearch} searchInput={this.state.searchInput} handleSearchInput={this.handleSearchInput} />
+                    </div>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item onClick={this.toggleModalDisplay}>
                             <Nav.Link href="#">Add entry</Nav.Link>
