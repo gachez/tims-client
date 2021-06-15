@@ -1357,7 +1357,9 @@ export default class ReportsView extends React.Component{
                                      });
                                         this.toggleDeleteModal();
                                     }}/>
-                                        <tr key={index} className="user-rows" onClick={() => {this.handleDetailModal({
+                                        <tr key={index} className="user-rows" onClick={() => {
+                                            window.scrollTo(0, 0)
+                                            this.handleDetailModal({
                                             organisation: user.organization,
                                             industry: user.industry,
                                             website: user.website,
