@@ -8,8 +8,11 @@ import { categories } from '../shared/lib/categories';
 import { SheetJSFT } from '../Dashboard/types';
 import comment from '../shared/chatbox.png';
 import _CONFIG from '../../../config/config';
-import { trimLower } from '../shared/lib/util';
+import { trimLower, compareStrings } from '../shared/lib/util';
 import Search from '../components/Search';
+import DetailsModal from '../components/DetailsModal';
+import XLSX from 'xlsx';
+import excel from '../shared/excelicon.png';
 
 export default class ReportsViewUser extends React.Component{
     state = {
@@ -21,7 +24,10 @@ export default class ReportsViewUser extends React.Component{
         sendAdminModal: 'none',
         importFileModal: 'none',
         commentModal: 'none',
-        reports: [], 
+        reports: [],
+        file: {},
+        data: [],
+        cols: [], 
         editFieldID: '',
         editBtnClicked: false,
         addBtnClicked: false,
@@ -32,10 +38,26 @@ export default class ReportsViewUser extends React.Component{
         projectName: 'Project',
         projects: [],
         individualEmailModule: 'none',
-        importBtnClicked: false,
+        importBtnClicked: 0,
         determinedIndustry: 'Industry',
         industries: [],
-        defaultReports: []
+        defaultReports: [],
+        searchState: 'Search',
+        userDetails: {
+            industry: '',
+            organisation: '',
+            website: '',
+            contacts: '',
+            contactPerson: '',
+            telephone: '',
+            designation: '',
+            emailAddress: '',
+            physicalLocation: '',
+            projectName: '',
+            status: false,
+            collectionTime: '',
+            submittedBy: ''
+        }
     }
 
     componentDidMount() {
@@ -47,7 +69,7 @@ export default class ReportsViewUser extends React.Component{
 
             this.setState({
                 reports: res.data.filter(report => report.submittedBy === this.props.userLoggedIn || this.checkUndefined(report.assignedTo) === this.props.userLoggedIn),
-                defaultReports: res.data,
+                defaultReports: res.data.filter(report => report.submittedBy === this.props.userLoggedIn || this.checkUndefined(report.assignedTo) === this.props.userLoggedIn),
                 isLoaded: true
             });
           });
@@ -366,12 +388,93 @@ export default class ReportsViewUser extends React.Component{
         } catch (err) {console.log(err)}
     }
 
+    handleChange = (e) => {
+        const files = e.target.files;
+        if (files && files[0]) this.setState({ file: files[0] });
+      };
+     
+
+    handleFile = async () => {
+        /* Boilerplate to set up FileReader */
+        const reader = new FileReader();
+        const rABS = !!reader.readAsBinaryString;
+     
+        reader.onload = (e) => {
+          /* Parse data */
+          const bstr = e.target.result;
+          const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array', bookVBA : true });
+          /* Get first worksheet */
+          const wsname = wb.SheetNames[0];
+          const ws = wb.Sheets[wsname];
+          /* Convert array of arrays */
+          const data = XLSX.utils.sheet_to_json(ws);
+          /* Update state */
+      
+            this.setState({ 
+                data: data
+             },
+              () => {
+                var dataArr = []
+                console.log(this.state.data)
+                  this.state.data.forEach( (imports,index) => {
+                     let dataObj = {    
+                        organization: imports['ORGANISATION'] || imports['Organisation'],
+                        website: imports['WEBSITE '] || imports['Website'], 
+                        contacts: imports['CONTACTS'] || imports['Contacts'],
+                        contactPerson: imports['CONTACT PERSON'] || imports['Contact Person'],
+                        telephone: imports['TELEPHONE'] || imports['Telephone'],
+                        designation: imports['DESIGNATION']|| imports['Desgination'],
+                        emailAddress: imports['EMAIL ADDRESS'] || imports['Email'] || imports['Email Address'],
+                        physicalLocation: imports['PHYSICAL LOCATION'] || imports['Physical Location'],
+                        industry: !imports['INDUSTRY'] ? wsname : imports['INDUSTRY'] || imports['Industry'],
+                        collectionDate: new Date().toUTCString(),
+                        collectionTime: new Date().toUTCString(),
+                        submittedBy: this.props.userLoggedIn
+                    }; 
+                    dataArr.push(dataObj)
+                });
+                console.log(dataArr)
+                for(let dataOb of dataArr){
+                    try{
+                        fetch(_CONFIG.API_URI+"/api/v1/admin/add_record", {
+                            method: 'POST', 
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'auth-token': `${localStorage.getItem('auth-token')}`
+                            },
+                            body: JSON.stringify(dataOb),
+                            })
+                            .then(response => response.json())
+                            .then(dat => {
+                            console.log('Success uploaded record:', dat);
+                            })
+                            .catch((error) => {
+                            console.error('Error:', error);
+                            });
+                    } catch(err) {
+                        console.log(err)
+                        break
+                    }
+                    
+                }
+                alert('Succesfully imported file data');
+                this.reloadPage()
+            });
+        };
+     
+        if (rABS) {
+          reader.readAsBinaryString(this.state.file);
+        } else {
+          reader.readAsArrayBuffer(this.state.file);
+        }
+      }
 
     resetToDefault = async() => {
-        if(this.state.chosenIndustry !== "Industry" || this.state.projectName !=="Project" ){
+        if(this.state.chosenIndustry !== "Industry" || this.state.projectName !=="Project" || this.state.searchState !== "Search"){
           this.setState({
               chosenIndustry: 'Industry',
               projectName: "Project",
+              searchState: "Search",
               reports: this.state.defaultReports
           });
           return 0;
@@ -388,9 +491,64 @@ export default class ReportsViewUser extends React.Component{
         return value;
     }
 
+    handleDetailModal = ({industry,
+        organisation,
+        website,
+        contacts,
+        contactPerson,
+        telephone,
+        designation,
+        emailAddress,
+        physicalLocation,
+        projectName,
+        status,
+        collectionTime,
+        submittedBy}) => {
+            this.setState({
+                show: this.state.show ? false : true,
+                userDetails: {
+                    industry: industry,
+                    organisation: organisation,
+                    website: website,
+                    contacts: contacts,
+                    contactPerson: contactPerson,
+                    telephone: telephone,
+                    designation: designation,
+                    emailAddress: emailAddress,
+                    physicalLocation: physicalLocation,
+                    projectName: projectName,
+                    status: status,
+                    collectionTime: collectionTime,
+                    submittedBy: submittedBy    
+                }
+            })
+        }
+
+
+        handleClose = () => {
+            const {show} = this.state 
+            this.setState({
+                show: show ? false : true
+            })
+        }
+  
+        handleSearch = (value) => {
+          this.setState({
+              searchInput: value
+          })
+        }
+  
+        handleSearchInput = (category, input) => {
+          this.setState({
+              viewBtn: 'Reset',
+              searchState: 'searching',
+              reports: this.state.reports.filter(report => trimLower(report.organization).includes(trimLower(input)) || compareStrings(report.contactPerson, input) || compareStrings(report.designation, input))
+          })
+        }
+  
+
   render() {
-        if(this.state.isLoaded) {
-            console.log(this.state.reports);
+        if(this.state.isLoaded) {  
             const saveLoadingBtn =  <Button variant="primary" disabled>
                                         <Spinner
                                             as="span"
@@ -419,14 +577,14 @@ export default class ReportsViewUser extends React.Component{
             Importing...
         </Button>;
 
-            const importBtn = <Button variant="primary" onClick={() => {
+        const importBtn = <Button variant="primary" onClick={() => {
             this.handleFile()
             this.setState({ importBtnClicked: 1 })}
             }>Import</Button>;
 
-            const addBtn = <Button variant="primary" onClick={this.addRecordAndSendToAdmin}>Add Entry</Button>;
+        const addBtn = <Button variant="primary" onClick={this.addRecordAndSendToAdmin}>Add Entry</Button>;
                             
-            const addLoadingBtn = <Button variant="primary" disabled>
+        const addLoadingBtn = <Button variant="primary" disabled>
                                         <Spinner
                                             as="span"
                                             animation="grow"
@@ -437,14 +595,14 @@ export default class ReportsViewUser extends React.Component{
                                         Adding...
                                         </Button>;
             
-            const deleteBtn = <Button variant="primary" onClick={() => {
+        const deleteBtn = <Button variant="primary" onClick={() => {
                                     this.setState({
                                         deleteBtnClicked: true
                                     })
                                     this.removeReport(this.state.editFieldID)
                                 }}>Delete</Button>;
 
-            const loadingDeleteBtn = <Button variant="primary" disabled>
+        const loadingDeleteBtn = <Button variant="primary" disabled>
                                             <Spinner
                                                 as="span"
                                                 animation="grow"
@@ -462,7 +620,24 @@ export default class ReportsViewUser extends React.Component{
 
             return(
               <>
-            
+             {/* details modal */}
+             <DetailsModal
+                    show={this.state.show} 
+                    handleClose={this.handleClose} 
+                    industry = {this.state.userDetails.industry}
+                    organisation = {this.state.userDetails.organisation}
+                    website={this.state.userDetails.website}
+                    contacts={this.state.userDetails.contacts}
+                    contactPerson= {this.state.userDetails.contactPerson}
+                    telephone = {this.state.userDetails.telephone}
+                    designation= {this.state.userDetails.designation}
+                    emailAddress= {this.state.userDetails.emailAddress}
+                    physicalLocation= {this.state.userDetails.physicalLocation}
+                    projectName= {this.state.userDetails.projectName}
+                    status= {this.state.userDetails.status}
+                    collectionTime={this.state.userDetails.collectionTime}
+                    submittedBy= {this.state.userDetails.submittedBy} />
+
               {/* delete modal */}
                 <div className="modal-bg" style={{
                         display: this.state.deleteModalDisplay
@@ -883,6 +1058,13 @@ export default class ReportsViewUser extends React.Component{
                         <Search handleInput={this.handleSearch} searchInput={this.state.searchInput} handleSearchInput={this.handleSearchInput} />
                     </div>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
+                    <Nav.Link href="#action"  onClick={
+                            () => {
+                                this.toggleImportModalDisplay()
+                            }}>
+                            Import file
+                            <img src={excel} alt="add" style={{width: '1.5rem', height: '1.5rem', borderRadius: '50%',marginLeft: '5px'}}/>
+                    </Nav.Link>
                         <Nav.Item onClick={this.toggleModalDisplay}>
                             <Nav.Link href="#">Add entry</Nav.Link>
                         </Nav.Item>
@@ -917,7 +1099,8 @@ export default class ReportsViewUser extends React.Component{
                                                         id="input-group-dropdown-3"
                                                         onClick={() => {
                                                             this.setState({
-                                                                chosenIndustry: category.industry
+                                                                chosenIndustry: category.industry,
+                                                                reports: this.state.reports.filter(report => report.industry === category.industry)
                                                             })
                                                         }}
                                                         >
@@ -954,7 +1137,7 @@ export default class ReportsViewUser extends React.Component{
 
                                     <Button 
                                         style={{
-                                            display: this.state.chosenIndustry === 'Industry' && this.state.projectName === 'Project' ? 'none' : 'block'
+                                            display: this.state.chosenIndustry === 'Industry' && this.state.projectName === 'Project' && this.state.searchState === 'Search' ? 'none' : 'block'
                                         }}
 
                                         onClick={() => {
@@ -991,7 +1174,7 @@ export default class ReportsViewUser extends React.Component{
                         </thead> 
                         <tbody>
                             {
-                                this.state.reports.filter(report => report.submittedBy === this.props.userLoggedIn || this.checkUndefined(report.assignedTo) === this.props.userLoggedIn).map((user,index) => {
+                                this.state.reports.map((user,index) => {
                                     return(
                                     <>
                                         <div
@@ -1039,7 +1222,23 @@ export default class ReportsViewUser extends React.Component{
                                         });
                                         this.toggleEditModalDisplay()
                                     }}/>
-                                        <tr key={index} className="user-rows"  onClick={this.toggleIndividualEmailModalDisplay}>
+                                        <tr key={index} className="user-rows"  onClick={() => {
+                                            window.scrollTo(0, 0)
+                                            this.handleDetailModal({
+                                            organisation: user.organization,
+                                            industry: user.industry,
+                                            website: user.website,
+                                            contacts: user.contacts,
+                                            contactPerson: user.contactPerson,
+                                            telephone: user.telephone,
+                                            designation: user.designation,
+                                            emailAddress: user.emailAddress,
+                                            physicalLocation: user.physicalLocation,
+                                            projectName: user.projectName,
+                                            status: user.status,
+                                            collectionTime: user.collectionTime,
+                                            submittedBy: user.submittedBy
+                                        })}}>
                                         <td>{index+1}</td>
                                         <td>{this.state.editSave === 'none' ? user.organization : this.returnEditFields(user.organization)}</td>
                                         <td>{this.state.editSave === 'none' ? user.website : this.returnEditFields(user.website)}</td>

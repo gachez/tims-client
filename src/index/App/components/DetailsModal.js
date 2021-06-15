@@ -15,7 +15,7 @@ import calendar from '../../../assets/calendar.png';
 const detailCard = {
   display: 'grid',
   gridGap: '.5rem',
-  padding: '3rem',
+  padding: '1rem 3rem',
   border: 'solid 1px rgba(0,0,0,0.1)',
   margin: '.25rem'
 }
