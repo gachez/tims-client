@@ -10,6 +10,7 @@ import email from '../../../assets/email.png';
 import location from '../../../assets/location.png';
 import project from '../../../assets/layers.png';
 import calendar from '../../../assets/calendar.png';
+import submission from '../../../assets/directory.png';
 
 
 const detailCard = {
@@ -131,6 +132,13 @@ function DetailsModal(props) {
                   <h3 style={detailTitle}>Submission Time</h3>
                 </div>
                 <span style={detailText}>{props.collectionTime}</span>
+              </div>
+              <div style={detailCard}>
+                <div style={{display: 'flex',width: 'fit-content', alignItems: 'center'}}>
+                  <img alt="submission time" src={submission} width="24px" height="24px" />
+                  <h3 style={detailTitle}>Submitted By</h3>
+                </div>
+                <span style={detailText}>{props.submittedBy}</span>
               </div>
               </Modal.Body>
          </div>
