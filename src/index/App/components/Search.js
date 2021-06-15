@@ -1,5 +1,7 @@
 import React from "react";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 
+const categoriesOfSearch = ['Organisation', 'Contact Person', 'Designation'];
 export default function Search(props) {
   return (
     <>
@@ -13,12 +15,17 @@ export default function Search(props) {
             marginRight: ".5rem",
             borderRadius: "4px",
           }}
+          onChange={(e) => props.handleInput(e.target.value)}
           spellcheck="false"
         />
         <DropdownButton variant="success" title="Search for">
-          <Dropdown.Item>Organisation</Dropdown.Item>
-          <Dropdown.Item>Contact Person</Dropdown.Item>
-          <Dropdown.Item>Designation</Dropdown.Item>
+            {
+                categoriesOfSearch.map(category => (
+                    <Dropdown.Item onClick={() => props.handleSearchInput(category, props.searchInput)}>
+                        {category}
+                    </Dropdown.Item>
+                ))
+            }
         </DropdownButton>
       </form>
     </>

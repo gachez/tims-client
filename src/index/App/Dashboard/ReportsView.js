@@ -11,7 +11,7 @@ import {categories} from '../shared/lib/categories';
 import XLSX from 'xlsx';
 import { SheetJSFT } from './types';
 import _CONFIG from '../../../config/config';
-import { trimLower } from '../shared/lib/util';
+import { compareStrings, trimLower } from '../shared/lib/util';
 import DetailsModal from '../components/DetailsModal';
 import search from '../../../assets/search.png';
 import Search from '../components/Search';
@@ -20,6 +20,7 @@ import Search from '../components/Search';
 export default class ReportsView extends React.Component{
 
     state = {
+        searchInput: '',
         editSave: 'none',
         users: [],
         isLoaded: false,
@@ -476,6 +477,20 @@ export default class ReportsView extends React.Component{
           this.setState({
               show: show ? false : true
           })
+      }
+
+      handleSearch = (value) => {
+          console.log(value)
+        this.setState({
+            searchInput: value
+        })
+      }
+
+      handleSearchInput = (category, input) => {
+        this.setState({
+            viewBtn: 'Reset',
+            reports: this.state.reports.filter(report => trimLower(report.organization).includes(trimLower(input)) || compareStrings(report.contactPerson, input) || compareStrings(report.designation, input))
+        })
       }
 
     render() {
@@ -1124,7 +1139,7 @@ export default class ReportsView extends React.Component{
                 <div className="container">
                     <div style={{width: '100%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>
                         <h2 style={{fontWeight: 'bold'}} >Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
-                        <Search />
+                        <Search handleInput={this.handleSearch} searchInput={this.state.searchInput} handleSearchInput={this.handleSearchInput} />
                     </div>
                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
                         <Nav.Item>
@@ -1209,10 +1224,11 @@ export default class ReportsView extends React.Component{
                                                 this.state.projects.map(project => {
                                                     return(
                                                         <Dropdown.Item key={project._id} onClick={() => {
-                                                            this.resetFirst(this.setState({
-                                                                viewBtn: 'Reset',
-                                                                reports: this.state.reports.filter(report => trimLower(report.projectName) === trimLower(project))
-                                                            }))
+                                                            this.resetFirst(() => {
+                                                                this.setState({
+                                                                    viewBtn: 'Reset',
+                                                                    reports: this.state.reports.filter(report => trimLower(report.projectName) === trimLower(project.projectName))
+                                                            })})
                                                         }}>{project.projectName}</Dropdown.Item>
                                                     )
                                                 })
