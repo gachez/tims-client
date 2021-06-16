@@ -195,9 +195,9 @@ export default class AnalyticsProjects extends React.Component{
                       
                              </div>  
     
-                 <div className="container">
+                 <div>
                      <h2 id="page-title">Analytics(Projects)</h2>
-                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
+                     <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '4rem'}}>
                         <Nav.Item>
                             <Nav.Link href="#">Projects List</Nav.Link>
                         </Nav.Item>

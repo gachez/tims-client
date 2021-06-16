@@ -5,9 +5,6 @@ import CanvasJSReact from './AnalyticsView/canvasjs.react';
 import axios from 'axios';
 import {Spinner} from 'react-bootstrap';
 import _CONFIG from '../../../config/config';
-var CanvasJS = CanvasJSReact.CanvasJS;
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
-
 
 
 export default class AnalyticsView extends React.Component{
@@ -52,42 +49,15 @@ export default class AnalyticsView extends React.Component{
                 tasks: res.data
             })
           }).catch(err => console.log(err));
-    
-          
-
           localStorage.setItem("page", "analytics")
         }
 
   
       
     render() {
-        const options = {
-			title: {
-				text: "Tasks Analytics"
-			},
-			data: [
-			{
-                type: "column",
-				dataPoints: [
-					{ label: "Mon",  y: 10  },
-					{ label: "Tue", y: 15  },
-					{ label: "Wed", y: 25  },
-					{ label: "Thur",  y: 30  },
-                    { label: "Fri",  y: 28  },
-                    { label: "Sat",  y: 26  },
-                    { label: "Sun",  y: 60  }
-
-				]
-			}
-			]
-        }
         if (this.state.isLoaded) {
-           console.log(this.state.reports);
-           console.log(this.state.tasks);
-        
           const tasksAssignedCount = this.state.tasks.filter(task => task.projectName === this.state.project.projectName);
           const companiesRecorded = this.state.reports.filter(report => report.projectName === this.state.project.projectName);
-
            const KPIs = [
               
                {

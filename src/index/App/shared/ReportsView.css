@@ -2,7 +2,6 @@
 .container{
     padding: 24px;
     width: 100%;
-    overflow: hidden;
 }
 
 .navigation-tab-menu{
@@ -25,7 +24,6 @@
 .section-container{
     width: 110%;
     max-height: 70%;
-    overflow: scroll;
     position: relative;
 }
 
