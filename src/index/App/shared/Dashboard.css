@@ -1,20 +1,16 @@
-
-.Container{
-    position: relative;
-    width: 100%;
-    height: 100%;
+#container{
+    height: auto;
 }
-
-
 /* sidebar styling */
 .sidebar{
     position: relative;
-    width: 240px;
-    height: 100vh;
+    max-width: 240px;
+    height: auto;
     background-color: #151b26;
     opacity: .9;
-    left: 0;
     color: #fff;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar div {
@@ -40,126 +36,58 @@
 }
 
 .body-container{
-    position: absolute;
-    right: 0;
-    width: 120%;
-    height: 100vh;
+    display: grid;
+    grid-template-columns:  repeat( auto-fit, minmax(300px, 1fr) );
+    grid-gap: 5rem;
+    align-items: center;
+    grid-auto-flow: row;
+    margin: auto;
+    height: auto;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    
+}
+
+.card-container{
+    display: grid; 
+    grid-gap: 1rem;
 }
 
 .cards{
-
-    width: 369px;
-    height: 250px;
+    width: 300px;
+    height: 200px;
     border: solid 1px white;
-    position: absolute;
     border-radius: 15px;
     background-size: contain;
     background-repeat: no-repeat;
     cursor: pointer;
+    transition: transform .3s;
 }
 
 .cards:hover{
     transform: scale(1.1);
-    
-  box-shadow: 1px 1px rgba(0,0,0,0.2);
+    box-shadow: 1px 1px rgba(0,0,0,0.2);
 }
 
-
-#user-m{
-    top: 15%;
-}
-
-#user-m::after{
-    content: 'User Management';
-    display: block;
-    position: absolute;
-    top: 100%;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-#tasks{
-    top: 15%;
-    left: 42.5%;
-}
-
-#tasks::after{
-    content: 'Task Management';
-    display: block;
-    position: absolute;
-    top: 100%;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-#reports{
-    top: 55%;
-}
-
-#reports::after{
-    content: 'Database';
-    display: block;
-    position: absolute;
-    top: 100%;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-#analytics{
-    top: 55%;
-    left: 42.5%;
-}
-
-#analytics::after{
-    content: 'Analytics';
-    display: block;
-    position: absolute;
-    top: 100%;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-/* Extra small devices (phones, 600px and down) */
-@media only screen and (max-width: 600px) {
-    .cards{
-        width: 209px;
-        height: 109px;
-    }
-}
-
-/* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
-    .cards{
-        width: 229px;
-        height: 109px;
-    }
-}
-
-/* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {
-    .cards{
-        width: 269px;
-        height: 169px;
-    }
-}
 
 /* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-    .cards{
-        width: 269px;
-        height: 169px;
+@media only screen and (max-width: 1020px) {
+    .body-container{
+        min-width: 100%;
+        grid-template-columns: '1fr 1fr'
     }
+    .card-container{
+        min-width: 300px;
+    }
+
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
-    .cards{
-      
-    width: 369px;
-    height: 250px;
+    .body-container{
+        min-width: 90%;
+    }
+    #container{
+        height: 100vh;
     }
 }
