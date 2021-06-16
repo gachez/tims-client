@@ -1,16 +1,14 @@
 
 .container{
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    right: 20%;
     padding: 24px;
+    width: 100%;
+    overflow: hidden;
 }
 
 .navigation-tab-menu{
-    position: absolute;
-    left: -30px;
-    width: 115%;
+    display: flex;
+    width: 80%;
+    margin-top: 1.2rem;
 }
 #h2-title{
     text-transform: uppercase !important;
@@ -25,5 +23,12 @@
 }
 
 .section-container{
-    width: 100%;
+    width: 110%;
+    max-height: 70%;
+    overflow: scroll;
+    position: relative;
+}
+
+.reports-table{
+    max-height: 100%;    
 }

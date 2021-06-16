@@ -600,7 +600,7 @@ export default class ReportsView extends React.Component{
         ]
 
         return(
-                <>
+            <div>
                 {/* details modal */}
                 <DetailsModal
                     show={this.state.show} 
@@ -1141,7 +1141,7 @@ export default class ReportsView extends React.Component{
                         <h2 style={{fontWeight: 'bold'}} >Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
                         <Search handleInput={this.handleSearch} searchInput={this.state.searchInput} handleSearchInput={this.handleSearchInput} />
                     </div>
-                    <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
+                    <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" >
                         <Nav.Item>
                             <Nav.Link href="#" onClick={() => {this.resetToDefault()}}>{this.state.viewBtn}</Nav.Link>
                         </Nav.Item>
@@ -1151,13 +1151,46 @@ export default class ReportsView extends React.Component{
                                     <img src={excel} alt="add" style={{width: '1.5rem', height: '1.5rem', borderRadius: '50%',marginLeft: '5px'}}/>
                             </Nav.Link>
                         </Nav.Item>
+
+                    <Nav.Item onClick={this.toggleEmailModalDisplay}>
+                            <Nav.Link eventKey="link-4">
+                                Send bulk email
+                            </Nav.Link>
+                        </Nav.Item>
+                        <Nav.Item >
+                        <Nav.Link href="#action"  onClick={
+                            () => {
+                                this.toggleImportModalDisplay()
+                            }}>
+                            Import file
+                            <img src={excel} alt="add" style={{width: '1.5rem', height: '1.5rem', borderRadius: '50%',marginLeft: '5px'}}/>
+                        </Nav.Link>
+                        
+                        </Nav.Item>
+
+                        <Nav.Item >
+                            <Nav.Link href="#"  onClick={
+                                () => {
+                                    this.toggleAddModalDisplay();
+                                }}>
+                                Add entry
+                           </Nav.Link>                        
+                        </Nav.Item>
+                      
+                        <Nav.Item style={{marginLeft: '.5rem'}}>
+                        <Nav.Link href="#" onClick={ () => {
+                            this.toggleIndstryModalDisplay();
+                        }}>
+                          Add Industry
+                       </Nav.Link>                        
+                    </Nav.Item>
                 
-                        <Nav.Item>
-                            <Nav.Link style={{position: 'absolute', right: 0,top: 0, display: 'flex'}}>
+                    <Nav.Item>
+                            <Nav.Link style={{display: 'flex', alignItems: 'center', marginTop: '2rem'}}>
                                 <span style={{ marginRight: '1rem' }}>Filter:</span>
 
-                                        {/* filter according to Confirmed*/}
-                                        <DropdownButton
+                                    {/* filter according to Confirmed*/}
+                                    <DropdownButton
                                         style={{ marginRight: '1rem' }}
                                         variant="outline-primary"
                                         title={this.state.status}
@@ -1258,40 +1291,8 @@ export default class ReportsView extends React.Component{
                                     </DropdownButton>
                             </Nav.Link>
                         </Nav.Item>
-                    <Nav.Item onClick={this.toggleEmailModalDisplay}>
-                            <Nav.Link eventKey="link-4">
-                                Send bulk email
-                            </Nav.Link>
-                        </Nav.Item>
-                        <Nav.Item style={{position: 'absolute', left: '30%'}}>
-                        <Nav.Link href="#action"  onClick={
-                            () => {
-                                this.toggleImportModalDisplay()
-                            }}>
-                            Import file
-                            <img src={excel} alt="add" style={{width: '1.5rem', height: '1.5rem', borderRadius: '50%',marginLeft: '5px'}}/>
-                        </Nav.Link>
-                        
-                        </Nav.Item>
-
-                        <Nav.Item style={{position: 'absolute', left: '42.5%'}}>
-                            <Nav.Link href="#"  onClick={
-                                () => {
-                                    this.toggleAddModalDisplay();
-                                }}>
-                                Add entry
-                           </Nav.Link>                        
-                        </Nav.Item>
-                      
-                        <Nav.Item style={{position: 'absolute', left: '52.5%'}}>
-                        <Nav.Link href="#" onClick={ () => {
-                            this.toggleIndstryModalDisplay();
-                        }}>
-                            Add Industry
-                       </Nav.Link>                        
-                    </Nav.Item>
-                        </Nav>
-                    <section className="section-container" > 
+                    </Nav>
+                    <section className="section-container"> 
                     <Table variant='dark' className="reports-table table-responsive" style={{marginTop: '30px', overflowY: 'scroll'}} striped bordered hover responsive >
                             <thead>
                                 <tr variant="light">
@@ -1316,13 +1317,18 @@ export default class ReportsView extends React.Component{
                                 this.state.reports.map((user,index) => {
                                     return(<>
                                     <div
+                                     style={{
+                                         display: 'flex', 
+                                         position: 'absolute', 
+                                         left: '-80px', 
+                                         width: '70px', 
+                                         justifyContent: 'space-between'}}>
+                                    <div
                                         key={user.organization} 
                                         className="delete-icon" 
-                                        style={{ 
-                                                 position: 'absolute',
-                                                 left: '-105px',
-                                                 width: 'fit-content',
-                                                 height: 'fit-content'
+                                        style={{
+                                                width: 'fit-content',
+                                                height: 'fit-content'
                                                 }}
                                         onClick={() => {
                                             window.scrollTo(0, 0);
@@ -1340,7 +1346,7 @@ export default class ReportsView extends React.Component{
                                                 }}/> 
                                     </div>
                                     
-                                    <img  key={user.password} src={edit} style={{marginLeft: '-5px',}} className="delete-icon" 
+                                    <img  key={user.password} src={edit} className="delete-icon" 
                                         onClick={() => {
                                             window.scrollTo(0, 0);
                                             this.setState({
@@ -1349,7 +1355,7 @@ export default class ReportsView extends React.Component{
                                             });
                                             this.toggleEditModalDisplay()
                                             }}/> 
-                                    <img  key={user.password} src={trash} style={{marginLeft: '30px'}} className="delete-icon" onClick={() => {
+                                    <img  key={user.password} src={trash} className="delete-icon" onClick={() => {
                                         window.scrollTo(0, 0);
                                         this.setState({
                                             editFieldID: user._id
@@ -1357,6 +1363,8 @@ export default class ReportsView extends React.Component{
                                      });
                                         this.toggleDeleteModal();
                                     }}/>
+                                    </div>
+
                                         <tr key={index} className="user-rows" onClick={() => {
                                             window.scrollTo(0, 0)
                                             this.handleDetailModal({
@@ -1397,7 +1405,7 @@ export default class ReportsView extends React.Component{
                         </Table>
                     </section>
                 </div>
-                </>
+            </div>
             )
         }
         return (

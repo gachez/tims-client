@@ -433,7 +433,7 @@ export default class TaskView extends React.Component{
     
                  <div className="container">
                      <h2 id="page-title">Task Management</h2>
-                     <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
+                     <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '5rem'}}>
                         <Nav.Item>
                             <Nav.Link href="#">Assignees List</Nav.Link>
                         </Nav.Item>

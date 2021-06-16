@@ -150,7 +150,7 @@ class Dashboard extends React.Component {
                             </div>
                         </div>
                          </section>
-                        <div style={{flexGrow: 1, display: 'flex', height:'auto'}}>
+                        <div style={{flexGrow: 1, display: 'flex', height:'auto',justifyContent: 'center'}}>
                             <section className="body-container"> 
                             {
                                 this.determineActivePage(this.state.active)

@@ -296,7 +296,7 @@ export default class UserManagement extends React.Component{
                         {!this.state.saveBtnClicked ? saveBtn : loadSave}
                     </Nav.Item>
                 </Nav>
-                <div  style={{position: 'relative'}}>
+                <div className="table-container" >
                 <Table className="user-table" striped bordered hover variant="dark">
                     <thead>
                         <tr>

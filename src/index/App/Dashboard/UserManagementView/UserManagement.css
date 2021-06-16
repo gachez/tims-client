@@ -12,9 +12,12 @@
 
 .user-table{
     margin-top: 2rem;
+    padding-left: 5rem;
+    padding-top: 2rem;
 }
 
 .modal-add-user{
+    margin: auto !important;
 }
 
 .user-rows{
@@ -47,6 +50,8 @@
     width: 100% !important;
     height: 100%;
     background-color: rgba(0,0,0,0.8);
+    display: grid;
+
 }
 
 .spinner-bg{
@@ -62,3 +67,8 @@
 #save{
  
 }
+
+.table-container{
+    position: relative;
+}
+
