@@ -34,14 +34,16 @@
     font-weight: bold;
     text-transform: uppercase;
 }
-
 .body-container{
+    height: auto;
+    margin: auto;
+}
+.home-body-container{
     display: grid;
     grid-template-columns:  repeat( auto-fit, minmax(300px, 1fr) );
     grid-gap: 5rem;
     align-items: center;
     grid-auto-flow: row;
-    margin: auto;
     height: auto;
     padding-left: 3rem;
     padding-right: 3rem;

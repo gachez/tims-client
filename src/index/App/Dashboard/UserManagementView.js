@@ -11,7 +11,7 @@ export default class UserManagement extends React.Component{
     state = {
         modalDisplay: 'none',
         isLoaded: false,
-        deleteModalDisplay: 'none',
+        deleteModalDisplay: 'none', 
         navigation: 'view',
         editSave: 'none',
         users: [],
@@ -32,6 +32,7 @@ export default class UserManagement extends React.Component{
             }
           })
         .then(res => {
+            console.log(res.data)
             this.setState({
                 isLoaded: true,
                 users: res.data
@@ -39,7 +40,6 @@ export default class UserManagement extends React.Component{
         }).catch(err => {
             console.log('error getting users' + err)
         });
-
 
         localStorage.setItem("page", "user-management");
     }
@@ -265,7 +265,7 @@ export default class UserManagement extends React.Component{
             </Button>;
 
             return(
-                <>
+             <div style={{height: '85vh'}} >
                 <h2 className="user-title">USER MANAGEMENT</h2>
                 <Nav variant="pills" className="navigation-tab" defaultActiveKey="#">
                     <Nav.Item >
@@ -296,6 +296,7 @@ export default class UserManagement extends React.Component{
                         {!this.state.saveBtnClicked ? saveBtn : loadSave}
                     </Nav.Item>
                 </Nav>
+                <div  style={{position: 'relative'}}>
                 <Table className="user-table" striped bordered hover variant="dark">
                     <thead>
                         <tr>
@@ -303,6 +304,7 @@ export default class UserManagement extends React.Component{
                         <th>Full Name</th>
                         <th>Username</th>
                         <th>Email</th>
+                        <th>Role</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -310,25 +312,29 @@ export default class UserManagement extends React.Component{
                             this.state.users.map((user,index) => {
                                 return(
                                 <>
-                                 <img  key={index} src={edit} style={{marginLeft: '-15px'}} width="32px" height="32px" className="delete-icon" 
-                                        onClick={() => {
+                                  <div key={index} className="options">
+                                        <img src={edit} width="32px" height="32px" className="delete-icon" 
+                                                onClick={() => {
+                                                    this.setState({
+                                                        editFieldID: user._id,
+                                                        editFieldIndex: index
+                                                    });
+                                                    this.toggleEditModalDisplay()
+                                                    }}/> 
+                                        <img src={trash} className="delete-icon" onClick={() => {
+                                            this.toggleDeleteModal();
                                             this.setState({
-                                                editFieldID: user._id,
-                                                editFieldIndex: index
-                                            });
-                                            this.toggleEditModalDisplay()
-                                            }}/> 
-                                  <img  key={user._id} src={trash} className="delete-icon" onClick={() => {
-                                    this.toggleDeleteModal();
-                                    this.setState({
-                                        deleteUserId: user._id
-                                        });
-                                    }}/>
+                                                deleteUserId: user._id
+                                                });
+                                            }}/>
+                                    </div>
+                                
                                     <tr key={user._id} className="user-rows" identifier={user._id} >
                                     <td>{index + 1}</td>
                                     <td>{this.state.editSave === 'none' ? user.fullname : this.returnEditFields(user.fullname)}</td>
                                     <td>{this.state.editSave === 'none' ? user.username : this.returnEditFields(user.username)}</td>
                                     <td>{this.state.editSave === 'none' ? user.email : this.returnEditFields(user.email)}</td>
+                                    <td>{this.state.editSave === 'none' ? (user.isadmin ? 'Admin' : 'User') : this.returnEditFields(user.isadmin)}</td>
                                     </tr>
                                 </>
                                 )
@@ -336,6 +342,8 @@ export default class UserManagement extends React.Component{
                         }
                     </tbody>
                     </Table>
+                </div>
+
                     <div className="modal-bg" style={{
                         display: this.state.modalDisplay
                     }}>
@@ -443,7 +451,7 @@ export default class UserManagement extends React.Component{
                         </Modal.Footer>
                         </Modal.Dialog>
                 </div> 
-                </>
+                </div>
             )
         }
 

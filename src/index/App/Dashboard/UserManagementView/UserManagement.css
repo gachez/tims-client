@@ -1,28 +1,20 @@
 .user-title{
-    position: absolute;
-    top: 5%;
-    left: -5%;
+    height: fit-content;
     font-size: 24px;
     font-weight: bold;
     border-bottom: solid 1px #000;
 }
 
 .navigation-tab{
-    position: absolute;
     width: 100%;
-    top: 15%;
-    left:-50px !important;
+    margin-top: 5rem;
 }
 
 .user-table{
-    position: absolute;
-    top: 25%;
-    right: 5%;
+    margin-top: 2rem;
 }
 
 .modal-add-user{
-    position: absolute;
-    top: 15%;
 }
 
 .user-rows{
@@ -33,9 +25,6 @@
 .delete-icon{
     width: 16px;
     height: 16px;
-    position: absolute;
-    left: -50px;
-    margin: 15px;
     cursor: pointer;
 }
 
@@ -43,17 +32,24 @@
     transform: scale(1.15);
 }
 
+.options{
+    padding-top: 12px;
+    position: absolute;
+    width: 40px;
+    display: flex;
+    justify-content: space-between;
+    left: -50px;
+}
+
 .modal-bg{
-    position: fixed;
+    position: absolute;
+    top: 0;
     width: 100% !important;
-    left: 0;
-    height: 100vh;
+    height: 100%;
     background-color: rgba(0,0,0,0.8);
 }
 
 .spinner-bg{
-    position: absolute;
-    left: -15%;
     width: 100%;
     height: 100%;
     display: flex;
@@ -64,7 +60,5 @@
 }
 
 #save{
-    position: absolute;
-    right: 20px;
-
+ 
 }
