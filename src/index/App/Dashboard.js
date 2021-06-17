@@ -14,7 +14,8 @@ import { Link } from 'react-router-dom';
 // This is the admin dashboard
 const userAvatar = {
     display: 'grid',
-    gap: '16px'
+    gap: '16px',
+    marginTop: '6.5rem'
   };
   
 class Dashboard extends React.Component {

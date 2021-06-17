@@ -136,8 +136,13 @@ export default class AnalyticsProjects extends React.Component{
                                 </Form.Group>
 
                                 <Form.Group controlId="formDuration">
-                                    <Form.Label>Project Duration</Form.Label>
-                                    <Form.Control name="projectduration" type="textbox" placeholder="e.g 12 Jun - 21 Jul" />
+                                    <Form.Label>Start Date</Form.Label>
+                                    <Form.Control name="projectdurationstart" type="date" />
+                                </Form.Group>
+
+                                <Form.Group controlId="formDuration">
+                                    <Form.Label>End Date</Form.Label>
+                                    <Form.Control name="projectdurationend" type="date" />
                                 </Form.Group>
         
                                 </Form>

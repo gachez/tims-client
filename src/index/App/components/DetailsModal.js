@@ -11,7 +11,9 @@ import location from '../../../assets/location.png';
 import project from '../../../assets/layers.png';
 import calendar from '../../../assets/calendar.png';
 import submission from '../../../assets/directory.png';
-
+import trash from '../Dashboard/shared/trash.png';
+import edit from '../shared/edit.png';
+import comment from '../shared/chatbox.png';
 
 const detailCard = {
   display: 'grid',
@@ -48,6 +50,66 @@ function DetailsModal(props) {
          <div style={{backgroundColor: 'white', margin: 'auto', width: '60%', height: 'auto', borderRadius: 8}}>
          <Modal.Header closeButton onClick={() => props.handleClose()}>
                 <Modal.Title style={{fontSize: '1.35rem', fontWeight: 'bolder', width: '100%',textAlign: 'left'}} > {props.contactPerson}: {props.designation} - {props.organisation}({props.industry}) </Modal.Title>
+                <div
+                                     style={{
+                                         display: 'flex', 
+                                         width: '70%', 
+                                         justifyContent: 'space-around'}}>
+                                    <div
+                                        className="delete-icon" 
+                                        style={{
+                                                width: 'fit-content',
+                                                height: 'fit-content'
+                                                }}
+                                        onClick={() => {
+                                          props.handleComments(props.id)   
+                                        }}        
+                                                >
+                                          <div style={{ display: typeof props.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
+                                            <img   src={comment}   
+                                                style={{width: '20px', 
+                                                        height: '20px'
+                                                }}/>
+                                                <span>Comments</span> 
+                                    </div>
+                                    <div
+                                     className="delete-icon"    
+                                     style={{
+                                        width: 'fit-content',
+                                        height: 'fit-content'
+                                     }}
+                                      
+                                     onClick={() => {
+                                      props.handleEdits(props.id)
+                                      }}
+                                                           >
+                                    <img src={edit} 
+                                      style={{width: '20px', 
+                                      height: '20px'
+                                    }} /> 
+                                            <span>Edit</span>
+                                    </div>
+                                    
+
+                                    <div
+                                     className="delete-icon"    
+                                     style={{
+                                            width: 'fit-content',
+                                            height: 'fit-content'
+                                            }}
+                                      onClick={() => {
+                                        props.handleDelete(props.id)
+                                      }}            
+                                                >
+                                      <img
+                                       src={trash}   
+                                       style={{
+                                         width: '20px', 
+                                         height: '20px'
+                                        }} />
+                                      <span>Delete</span>
+                                    </div>   
+                                  </div>
             </Modal.Header>
             <Modal.Body 
               style={{

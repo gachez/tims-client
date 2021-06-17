@@ -66,6 +66,7 @@ export default class ReportsView extends React.Component{
         viewBtn: 'View',
         show: false,
         userDetails: {
+            id: '',
             industry: '',
             organisation: '',
             website: '',
@@ -78,7 +79,8 @@ export default class ReportsView extends React.Component{
             projectName: '',
             status: false,
             collectionTime: '',
-            submittedBy: ''
+            submittedBy: '',
+            comments: null
         }
         
     }
@@ -136,7 +138,7 @@ export default class ReportsView extends React.Component{
         localStorage.setItem("page", "database");  
     }
 
-    handleDetailModal = ({industry,
+    handleDetailModal = ({id,industry,
     organisation,
     website,
     contacts,
@@ -148,10 +150,13 @@ export default class ReportsView extends React.Component{
     projectName,
     status,
     collectionTime,
-    submittedBy}) => {
+    submittedBy,
+    comments
+    }) => {
         this.setState({
             show: this.state.show ? false : true,
             userDetails: {
+                id: id,
                 industry: industry,
                 organisation: organisation,
                 website: website,
@@ -164,7 +169,8 @@ export default class ReportsView extends React.Component{
                 projectName: projectName,
                 status: status,
                 collectionTime: collectionTime,
-                submittedBy: submittedBy    
+                submittedBy: submittedBy,
+                comments: comments    
             }
         })
     }
@@ -493,6 +499,31 @@ export default class ReportsView extends React.Component{
         })
       }
 
+      handleCommentDisplay = (id) => {
+        window.scrollTo(0, 0);
+        this.setState({
+          editFieldID: id
+        });
+        this.toggleCommentModalDisplay();
+      }
+
+      handleEditDisplay = (id) => {
+            window.scrollTo(0, 0);
+            this.setState({
+                editFieldID: id
+            });
+            this.toggleEditModalDisplay()
+      }
+
+      handleDeleteDisplay = (id) => {
+        window.scrollTo(0, 0);
+        this.setState({
+            editFieldID: id
+          
+      });
+      this.toggleDeleteModal();
+    }
+
     render() {
         if(this.state.isLoaded) {
         const importLoadingBtn =  <Button variant="primary" disabled>
@@ -603,8 +634,12 @@ export default class ReportsView extends React.Component{
             <div>
                 {/* details modal */}
                 <DetailsModal
+                    handleComments={this.handleCommentDisplay}
+                    handleDelete={this.handleDeleteDisplay}
                     show={this.state.show} 
-                    handleClose={this.handleClose} 
+                    handleClose={this.handleClose}
+                    handleEdits={this.handleEditDisplay}
+                    id={this.state.userDetails.id} 
                     industry = {this.state.userDetails.industry}
                     organisation = {this.state.userDetails.organisation}
                     website={this.state.userDetails.website}
@@ -617,7 +652,8 @@ export default class ReportsView extends React.Component{
                     projectName= {this.state.userDetails.projectName}
                     status= {this.state.userDetails.status}
                     collectionTime={this.state.userDetails.collectionTime}
-                    submittedBy= {this.state.userDetails.submittedBy} />
+                    submittedBy= {this.state.userDetails.submittedBy}
+                    comments={this.state.userDetails.comments} />
                 {/* delete modal */}
                 <div className="modal-bg" style={{
                         display: this.state.deleteModalDisplay
@@ -791,9 +827,10 @@ export default class ReportsView extends React.Component{
                 <div className="modal-bg" style={{
                     display: this.state.editReportModal
                 }}>
-                    <Modal.Dialog scrollable={true}  className="modal-add-entry" style={{
-                        display: this.state.editReportModal
-                    }}>
+                    <Modal.Dialog scrollable={true} 
+                    style={{
+                      display: this.state.editReportModal
+                    }} className="modal-add-entry" >
                         <Modal.Header >
                           <Modal.Title>Edit Field</Modal.Title>
                         </Modal.Header>
@@ -1292,7 +1329,7 @@ export default class ReportsView extends React.Component{
                             </Nav.Link>
                         </Nav.Item>
                     </Nav>
-                    <section className="section-container" style={{overflow: 'scroll'}}> 
+                    <section className="section-container" style={{overflowY: 'scroll', overflowX: 'visible'}}> 
                     <Table variant='dark' className="reports-table table-responsive" style={{marginTop: '30px', overflowY: 'scroll'}} striped bordered hover responsive >
                             <thead>
                                 <tr variant="light">
@@ -1316,58 +1353,10 @@ export default class ReportsView extends React.Component{
                             {
                                 this.state.reports.map((user,index) => {
                                     return(<>
-                                    <div
-                                     style={{
-                                         display: 'flex', 
-                                         position: 'absolute', 
-                                         left: '-80px', 
-                                         width: '70px', 
-                                         justifyContent: 'space-between'}}>
-                                    <div
-                                        key={user.organization} 
-                                        className="delete-icon" 
-                                        style={{
-                                                width: 'fit-content',
-                                                height: 'fit-content'
-                                                }}
-                                        onClick={() => {
-                                            window.scrollTo(0, 0);
-                                            this.setState({
-                                                editFieldID: user._id,
-                                                editFieldIndex: index
-                                            });
-                                                    this.toggleCommentModalDisplay();
-                                                    }}        
-                                                >
-                                          <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
-                                            <img   src={comment}   
-                                                style={{width: '20px', 
-                                                        height: '20px'
-                                                }}/> 
-                                    </div>
-                                    
-                                    <img  key={user.password} src={edit} className="delete-icon" 
-                                        onClick={() => {
-                                            window.scrollTo(0, 0);
-                                            this.setState({
-                                                editFieldID: user._id,
-                                                editFieldIndex: index
-                                            });
-                                            this.toggleEditModalDisplay()
-                                            }}/> 
-                                    <img  key={user.password} src={trash} className="delete-icon" onClick={() => {
-                                        window.scrollTo(0, 0);
-                                        this.setState({
-                                            editFieldID: user._id
-                                           
-                                     });
-                                        this.toggleDeleteModal();
-                                    }}/>
-                                    </div>
-
                                         <tr key={index} className="user-rows" onClick={() => {
                                             window.scrollTo(0, 0)
                                             this.handleDetailModal({
+                                            id: user._id,    
                                             organisation: user.organization,
                                             industry: user.industry,
                                             website: user.website,
@@ -1380,7 +1369,8 @@ export default class ReportsView extends React.Component{
                                             projectName: user.projectName,
                                             status: user.status,
                                             collectionTime: user.collectionTime,
-                                            submittedBy: user.submittedBy
+                                            submittedBy: user.submittedBy,
+                                            comments: user.comments
                                         })}}>
                                         <td>{index+1}</td>
                                         <td> {user.industry }</td>
