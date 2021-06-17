@@ -10,6 +10,7 @@ import AnalyticsProjects from './Dashboard/AnalyticsProjects';
 import MessagesView from './Dashboard/MessagesView';
 import avatar from './shared/social-media-white.png';
 import { Link } from 'react-router-dom';
+import TendersView from './Dashboard/TendersView';
 
 // This is the admin dashboard
 const userAvatar = {
@@ -47,6 +48,9 @@ class Dashboard extends React.Component {
                 
             case 'tasks':
                 return <TaskView loadPage={this.setPage} />
+
+            case 'tenders':
+                return <TendersView />
                 
             case 'database':
                 return <ReportsView loadPage={this.setPage} />
