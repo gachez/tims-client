@@ -3,6 +3,7 @@ import '../shared/TaskView.css';
 import {Nav, Modal,Button, Form, ListGroup, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 import users from '../shared/open-menu.png';
+import _CONFIG from '../../../config/config';
 
 
 export default class TaskViewUser extends React.Component{
@@ -24,7 +25,7 @@ export default class TaskViewUser extends React.Component{
     }
 
     componentDidMount() {
-        axios.get("http://localhost:1332/api/v1/admin/assigned_tasks",  {
+        axios.get(_CONFIG.API_URI+"/api/v1/admin/assigned_tasks",  {
             headers: {
               'auth-token': `${localStorage.getItem('auth-token')}`
             }
@@ -48,7 +49,7 @@ export default class TaskViewUser extends React.Component{
     }
 
     markComplete = (id) => {
-        axios.post("http://localhost:1332/api/v1/update_task/" + id,{
+        axios.post(_CONFIG.API_URI+"/api/v1/update_task/" + id,{
             complete: true
         }, {
             headers: {
@@ -135,8 +136,8 @@ export default class TaskViewUser extends React.Component{
                             </Modal.Dialog>
                         </div>
     
-                <h2 id="h2-title" style={{ position: 'relative', top: '20px' }}>Tasks Management</h2>
-                <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:0, top: '150px'}}>
+                <h2 id="h2-title">Tasks Management</h2>
+                <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{marginTop: '5rem'}} >
                             <Nav.Item className="user-tasks-nav"
                                 onClick={() => {
                                     this.setState({
@@ -201,11 +202,11 @@ export default class TaskViewUser extends React.Component{
                             </Nav.Item>
                            
                             </Nav>
-                  <ListGroup style={{minWidth: '50%', maxWidth: '70%', marginTop: '14.5%', cursor: 'pointer'}}>
+                  <ListGroup style={{minWidth: '50%', maxWidth: '70%', cursor: 'pointer', marginTop: '2rem'}}>
                    {
                        determineList().reverse().map(task => {
                           return (
-                          <ListGroup.Item variant={task.complete ? 'success' : 'danger'} style={{marginBottom: '16px'}} key={task._id} onClick={() => {
+                          <ListGroup.Item variant={task.complete ? 'success' : 'danger'} style={{marginBottom: '16px', width: '60%', display: 'flex', justifyContent: 'space-between'}} key={task._id} onClick={() => {
                                 this.setState({
                                     taskAss: task._id,
                                     projectName: task.projectName,
@@ -221,11 +222,7 @@ export default class TaskViewUser extends React.Component{
                             src={users} 
                             alt="user avatar" 
                             width="24px" 
-                            height= "24px" 
-                            style={{
-                                position: 'absolute',
-                                right: '1.75rem'
-                                }} /> 
+                            height= "24px" /> 
                               </ListGroup.Item>
                           )
                       })
