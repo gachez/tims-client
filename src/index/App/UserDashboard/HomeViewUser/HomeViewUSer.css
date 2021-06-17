@@ -2,16 +2,6 @@
     display: block;
 }
 
-#reports-user::after{
-    content: 'Database';
-    display: block;
-    position: absolute;
-    top: 100%;
-    padding: 20px;
-    font-size: 24px;
-    font-weight: bold;
-
-}
 .tasks-count{
     width: 50px;
     height: 50px;
@@ -25,4 +15,11 @@
     justify-content: center;
     align-content: center;
     
+}
+.home-user-container{
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+    justify-content: space-between;
+    padding-left: 5rem;
 }

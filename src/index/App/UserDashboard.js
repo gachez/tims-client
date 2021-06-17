@@ -4,18 +4,15 @@ import {Link} from 'react-router-dom';
 import HomeViewUser from './UserDashboard/HomeViewUser';
 import TaskViewUser from './UserDashboard/TasksViewUser';
 import ReportsViewUser from './UserDashboard/ReportsViewUser';
-import { Col, Container, Row } from 'react-bootstrap';
 import axios from 'axios';
 import avatar from './shared/social-media-white.png';
 import _CONFIG from '../../config/config';
 
 const userAvatar = {
-    position: 'absolute', 
-    top: '30rem',
     display: 'grid',
-    gap: '16px'
+    gap: '16px',
+    marginTop: '6.5rem'
   };
-
 
 class UserDashboard extends React.Component {
     state={
@@ -75,11 +72,10 @@ class UserDashboard extends React.Component {
   
 
     render() {
-        console.log(this.state.loggedInUSer[0] )
+        console.log(this.state.loggedInUSer[0])
         return(
-            <Container className="Container" fluid={true} style={{ padding: 0, margin: 0}}>
-                  <Row style={{ padding: 0, margni: 0}}>
-                    <Col>
+            <div id="container" fluid={true} style={{ padding: 0, margin: 0, display: 'flex', justifyContent: 'space-between'}}>
+                
                     <section className="sidebar">
                         <div id="brand-title">Information System v.1.0.0</div>
                         <div className="navigation">
@@ -95,7 +91,7 @@ class UserDashboard extends React.Component {
                                     localStorage.setItem("page", "home")
                                 }
                             }>Home</div>
-                            <div id="user-management-menu" 
+                            <div id="tasks-management-menu" 
                             style={{
                                 borderBottom: this.state.active === 'tasks' ? 'solid 1px rgba(255,255,255,0.6)' : 'none'
                             }}
@@ -107,7 +103,19 @@ class UserDashboard extends React.Component {
                                     
                                 }
                             }>Task Management</div>
-                            <div id="tasks-menu" 
+                           <div id="tender-management-menu" 
+                            style={{
+                                borderBottom: this.state.active === 'tenders' ? 'solid 1px rgba(255,255,255,0.6)' : 'none'
+                            }}
+                            onClick={
+                                () => {
+                                    this.setState({
+                                        active: "tenders"
+                                    });
+                                    
+                                }
+                            }>Tender Management</div>
+                            <div id="database-menu" 
                             style={{
                                 borderBottom: this.state.active === 'reports' ? 'solid 1px rgba(255,255,255,0.6)' : 'none'
                             }}
@@ -126,18 +134,13 @@ class UserDashboard extends React.Component {
                         
                             </div>
                         </section>
-
-                    </Col>
-                    <Col>
                         <section className="body-container"> 
                             {
                                 this.determineActivePage(this.state.active)
                             }
                     </section>
-                    </Col>
-              
-                </Row>
-            </Container>
+                
+            </div>
         )
     }
 }
