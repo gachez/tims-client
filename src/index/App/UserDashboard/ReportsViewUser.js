@@ -56,7 +56,9 @@ export default class ReportsViewUser extends React.Component{
             projectName: '',
             status: false,
             collectionTime: '',
-            submittedBy: ''
+            submittedBy: '',
+            comments: null,
+            id: ''
         }
     }
 
@@ -173,10 +175,7 @@ export default class ReportsViewUser extends React.Component{
         this.setState({
             editBtnClicked: 1
         })
-       try{
-
-        const edits = await Array.from(document.getElementById('edit-form')).map(node => node)
-       
+       try{       
         const saveEdits = {
             organization:  document.getElementById('edit-organisation').value.length < 1 ? document.getElementById('edit-organisation').getAttribute('placeholder') : document.getElementById('edit-organisation').value, 
             website: document.getElementById('edit-website').value.length < 1 ? document.getElementById('edit-website').getAttribute('placeholder') : document.getElementById('edit-website').value,
@@ -311,44 +310,6 @@ export default class ReportsViewUser extends React.Component{
         }).then(res => {
             console.log('updated status of ' + res)
         }).catch(err => console.log(err));
-
-    }
-
-    sendRecentReportstoAdmin = () => {
-        //get the reports to submit
-        const userReports = this.state.reports.filter(report => report.submittedBy.toLowerCase() === this.props.userLoggedIn.toLowerCase());
-        const reportsToSubmit = userReports.filter(report => !report.submitted);
-
-        //merge to admin report db
-        const sendThis = reportsToSubmit.map(report => {
-              //post to admin reports database
-            axios.post(_CONFIG.API_URI+"/api/v1/admin/add_record", {
-                organization:  report.organization, 
-                website: report.website,
-                contacts:   report.contacts,
-                contactPerson:   report.contactPerson,
-                telephone:   report.telephone,
-                designation:   report.designation,
-                emailAddress:   report.emailAddress,
-                physicalLocation: report.physicalLocation,
-                industry: report.industry,
-                collectionDate: new Date(),
-                collectionTime: new Date(),
-                submittedBy: this.props.userLoggedIn
-            }, {
-                headers: {
-                'auth-token': `${localStorage.getItem('auth-token')}`
-                }
-            }).then(res => {
-                this.updateSubmitStatus(report._id);
-                alert("Succesfully sent to admin");
-                this.toggleAdminModalDisplay();
-                this.reloadPage();
-            }).catch(err => {
-                console.log(err);
-            })
-            
-        });
 
     }
 
@@ -491,7 +452,7 @@ export default class ReportsViewUser extends React.Component{
         return value;
     }
 
-    handleDetailModal = ({industry,
+    handleDetailModal = ({id,industry,
         organisation,
         website,
         contacts,
@@ -503,10 +464,13 @@ export default class ReportsViewUser extends React.Component{
         projectName,
         status,
         collectionTime,
-        submittedBy}) => {
+        submittedBy,
+        comments
+        }) => {
             this.setState({
                 show: this.state.show ? false : true,
                 userDetails: {
+                    id: id,
                     industry: industry,
                     organisation: organisation,
                     website: website,
@@ -519,7 +483,8 @@ export default class ReportsViewUser extends React.Component{
                     projectName: projectName,
                     status: status,
                     collectionTime: collectionTime,
-                    submittedBy: submittedBy    
+                    submittedBy: submittedBy,
+                    comments: comments    
                 }
             })
         }
@@ -546,6 +511,30 @@ export default class ReportsViewUser extends React.Component{
           })
         }
   
+        handleCommentDisplay = (id) => {
+            window.scrollTo(0, 0);
+            this.setState({
+              editFieldID: id
+            });
+            this.toggleCommentModalDisplay();
+          }
+    
+          handleEditDisplay = (id) => {
+                window.scrollTo(0, 0);
+                this.setState({
+                    editFieldID: id
+                });
+                this.toggleEditModalDisplay()
+          }
+    
+          handleDeleteDisplay = (id) => {
+            window.scrollTo(0, 0);
+            this.setState({
+                editFieldID: id
+              
+          });
+          this.toggleDeleteModal();
+        }
 
   render() {
         if(this.state.isLoaded) {  
@@ -624,6 +613,11 @@ export default class ReportsViewUser extends React.Component{
              <DetailsModal
                     show={this.state.show} 
                     handleClose={this.handleClose} 
+                    handleComments={this.handleCommentDisplay}
+                    handleEdits={this.handleEditDisplay}
+                    handleDelete={this.handleDeleteDisplay}
+                    id={this.state.userDetails.id}
+                    comments={this.state.userDetails.comments}
                     industry = {this.state.userDetails.industry}
                     organisation = {this.state.userDetails.organisation}
                     website={this.state.userDetails.website}
@@ -647,11 +641,11 @@ export default class ReportsViewUser extends React.Component{
                         display: this.state.deleteModalDisplay
                             }}>
                         <Modal.Header >
-                            <Modal.Title>Delete User?</Modal.Title>
+                            <Modal.Title>Delete Record?</Modal.Title>
                         </Modal.Header>
     
                         <Modal.Body>
-                            <p>Are you sure you want to delete this user?</p>
+                            <p>Are you sure you want to delete this record?</p>
                         </Modal.Body>
     
                         <Modal.Footer>
@@ -1052,12 +1046,12 @@ export default class ReportsViewUser extends React.Component{
                     </Modal.Dialog>
                 </div>
 
-                <div className="container">
+                <div >
                 <div style={{width: '100%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>
                         <h2 style={{fontWeight: 'bold'}} >Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
                         <Search handleInput={this.handleSearch} searchInput={this.state.searchInput} handleSearchInput={this.handleSearchInput} />
                     </div>
-                    <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{position: 'absolute', left:' 50px'}}>
+                    <Nav variant="pills" defaultActiveKey="#" className="navigation-tab-menu" style={{marginTop: '4.5rem'}} >
                     <Nav.Link href="#action"  onClick={
                             () => {
                                 this.toggleImportModalDisplay()
@@ -1177,54 +1171,10 @@ export default class ReportsViewUser extends React.Component{
                                 this.state.reports.map((user,index) => {
                                     return(
                                     <>
-                                        <div
-                                        key={user.password} 
-                                        className="delete-icon" 
-                                        style={{ 
-                                                 position: 'absolute',
-                                                 left: '-135px',
-                                                 width: 'fit-content',
-                                                 height: 'fit-content'
-                                                }}
-                                        onClick={() => {
-                                            window.scrollTo(0, 0); 
-                                            this.setState({
-                                                editFieldID: user._id,
-                                                editFieldIndex: index
-                                            });
-                                                    this.toggleCommentModalDisplay();
-                                                    }}        
-                                                >
-                                          <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
-                                          <img   src={comment}   
-                                                style={{width: '20px', 
-                                                        height: '20px'
-                                                }}/> 
-
-                                    </div>
-
-                                     <img  key={user} src={tick} style={{marginLeft: '-35px'}} className="delete-icon" onClick={() => {
-                                          window.scrollTo(0, 0);
-                                        this.setState({
-                                            editFieldID: user._id
-                                        });
-                                        if(user.confirmed) {
-                                            alert('This record is already confirmed');
-                                            return 0;
-                                        }
-                                        this.markComplete(user._id);
-                                    }}/>
-
-                                     <img  key={user.password} src={edit} style={{marginLeft: '-5px'}} className="delete-icon" onClick={() => {
-                                         window.scrollTo(0, 0);
-                                        this.setState({
-                                            editFieldID: user._id
-                                        });
-                                        this.toggleEditModalDisplay()
-                                    }}/>
                                         <tr key={index} className="user-rows"  onClick={() => {
                                             window.scrollTo(0, 0)
                                             this.handleDetailModal({
+                                            id: user._id,    
                                             organisation: user.organization,
                                             industry: user.industry,
                                             website: user.website,
@@ -1237,7 +1187,8 @@ export default class ReportsViewUser extends React.Component{
                                             projectName: user.projectName,
                                             status: user.status,
                                             collectionTime: user.collectionTime,
-                                            submittedBy: user.submittedBy
+                                            submittedBy: user.submittedBy,
+                                            comments: user.comments
                                         })}}>
                                         <td>{index+1}</td>
                                         <td>{this.state.editSave === 'none' ? user.organization : this.returnEditFields(user.organization)}</td>

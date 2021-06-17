@@ -14,6 +14,7 @@ import submission from '../../../assets/directory.png';
 import trash from '../Dashboard/shared/trash.png';
 import edit from '../shared/edit.png';
 import comment from '../shared/chatbox.png';
+import tick from '../../App/shared/tick.png';
 
 const detailCard = {
   display: 'grid',
@@ -35,6 +36,54 @@ const detailText = {
   color: '#000',
   lineBreak: 'anywhere'
 }
+
+/*
+                               <div
+                                        key={user.password} 
+                                        className="delete-icon" 
+                                        style={{ 
+                                                 position: 'absolute',
+                                                 left: '-135px',
+                                                 width: 'fit-content',
+                                                 height: 'fit-content'
+                                                }}
+                                        onClick={() => {
+                                            window.scrollTo(0, 0); 
+                                            this.setState({
+                                                editFieldID: user._id,
+                                                editFieldIndex: index
+                                            });
+                                                    this.toggleCommentModalDisplay();
+                                                    }}        
+                                                >
+                                          <div style={{ display: typeof user.comments === "undefined" ? 'none' : 'block', width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'red'}}></div>
+                                          <img   src={comment}   
+                                                style={{width: '20px', 
+                                                        height: '20px'
+                                                }}/> 
+
+                                    </div>
+
+                                     <img  key={user} src={tick} style={{marginLeft: '-35px'}} className="delete-icon" onClick={() => {
+                                          window.scrollTo(0, 0);
+                                        this.setState({
+                                            editFieldID: user._id
+                                        });
+                                        if(user.confirmed) {
+                                            alert('This record is already confirmed');
+                                            return 0;
+                                        }
+                                        this.markComplete(user._id);
+                                    }}/>
+
+                                     <img  key={user.password} src={edit} style={{marginLeft: '-5px'}} className="delete-icon" onClick={() => {
+                                         window.scrollTo(0, 0);
+                                        this.setState({
+                                            editFieldID: user._id
+                                        });
+                                        this.toggleEditModalDisplay()
+                                    }}/>
+*/
 
 function DetailsModal(props) {
     return (
@@ -90,6 +139,17 @@ function DetailsModal(props) {
                                             <span>Edit</span>
                                     </div>
                                     
+                                    <div
+                                     className="delete-icon"
+                                     style={{
+                                       display: !props.handleConfirm ? 'none' : 'block',
+                                       width: 'fit-content',
+                                       height: 'fit-content'
+                                     }}
+                                     > 
+                                    <img  key={user} src={tick} onClick={() => console.log('m')}/>
+                                     <span>Closed</span>
+                                    </div>
 
                                     <div
                                      className="delete-icon"    

@@ -1,9 +1,7 @@
 import React from 'react';
 import '../shared/ReportsView.css';
 import {Spinner,Table, Nav, Dropdown, DropdownButton,Modal, Form, Button} from 'react-bootstrap';
-import trash from './shared/trash.png';
-import edit from '../shared/edit.png';
-import comment from '../shared/chatbox.png';
+
 import excel from '../shared/excelicon.png';
 import axios from 'axios';
 import 'react-dropzone-uploader/dist/styles.css';
@@ -13,7 +11,6 @@ import { SheetJSFT } from './types';
 import _CONFIG from '../../../config/config';
 import { compareStrings, trimLower } from '../shared/lib/util';
 import DetailsModal from '../components/DetailsModal';
-import search from '../../../assets/search.png';
 import Search from '../components/Search';
 
 
