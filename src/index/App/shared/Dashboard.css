@@ -5,7 +5,8 @@
 .sidebar{
     position: relative;
     max-width: 240px;
-    height: auto;
+    min-height: 100vh;
+    max-height: auto;
     background-color: #151b26;
     opacity: .9;
     color: #fff;
@@ -20,8 +21,8 @@
 
 
 .navigation {
-    position: relative;
-    top: 5%;
+    position: sticky;
+    top: 8rem;
 }
 
 .navigation div:hover{
@@ -89,8 +90,5 @@
 @media only screen and (min-width: 1200px) {
     .body-container{
         min-width: 90%;
-    }
-    #container{
-        height: 100vh;
     }
 }

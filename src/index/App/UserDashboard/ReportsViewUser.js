@@ -1046,8 +1046,8 @@ export default class ReportsViewUser extends React.Component{
                     </Modal.Dialog>
                 </div>
 
-                <div >
-                <div style={{width: '100%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style={{width: '90%'}} >
+                <div style={{width: '90%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>
                         <h2 style={{fontWeight: 'bold'}} >Database  <span style={{fontSize: '18px'}}>(Total: {this.state.reports.length} records)</span></h2>
                         <Search handleInput={this.handleSearch} searchInput={this.state.searchInput} handleSearchInput={this.handleSearchInput} />
                     </div>
@@ -1147,7 +1147,7 @@ export default class ReportsViewUser extends React.Component{
                        
 
                         </Nav>
-                    <section className="section-container"> 
+                    <section style={{width: '90%', maxHeight: '90%'}}> 
                     <Table variant='dark' className="reports-table" style={{marginTop: '30px'}} striped bordered hover responsive>
                         <thead>
                             <tr>

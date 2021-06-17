@@ -5,7 +5,7 @@
 
 .navigation-tab-menu{
     display: flex;
-    width: 80%;
+    margin-top: 2.5rem;
 }
 #h2-title{
     text-transform: uppercase !important;
@@ -19,11 +19,6 @@
     margin: 5px;
 }
 
-.section-container{
-    width: 110%;
-    max-height: 70%;
-    position: relative;
-}
 
 .reports-table{
     max-height: 100%;    

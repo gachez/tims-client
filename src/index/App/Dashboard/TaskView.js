@@ -9,8 +9,7 @@ import {Nav,
          InputGroup, 
          DropdownButton, 
          Dropdown, 
-         FormControl,
-         FormGroup} from 'react-bootstrap';
+         FormControl} from 'react-bootstrap';
 import XLSX from 'xlsx';
 import { make_cols } from './MakeColumns';
 import add from './TaskView/add.png';
@@ -431,7 +430,7 @@ export default class TaskView extends React.Component{
                       
                              </div>  
     
-                 <div className="container">
+                 <div>
                      <h2 id="page-title">Task Management</h2>
                      <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '5rem'}}>
                         <Nav.Item>
