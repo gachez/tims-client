@@ -16,7 +16,8 @@ const detailCard = {
     fontSize: '1.25rem',
     fontWeight: 'bolder',
     paddingTop: '1rem',
-    textDecoration: 'underline'
+    textDecoration: 'underline',
+    textTransform: 'uppercase'
   }
   
   const detailText = {

@@ -3,6 +3,7 @@ import {Nav, Table} from 'react-bootstrap';
 import _CONFIG from '../../../config/config';
 import dateFormat from 'dateformat';
 import TenderModal from '../components/TenderModal';
+import AddTender from '../components/AddTender';
 
 export default function TendersView(){
     React.useEffect(() => {
@@ -21,6 +22,10 @@ export default function TendersView(){
 
     const handleClose = () => {
         show === 'none' ? setShow('block') : setShow('none')
+    }
+
+    const handleAddModal = () => {
+        showAdd === 'none' ? setShowAdd('block') : setShowAdd('none')
     }
 
     const handleModal = ({
@@ -49,6 +54,7 @@ export default function TendersView(){
 
     const [tenders, setTenders] = React.useState([])
     const [show, setShow] = React.useState('none')
+    const [showAdd, setShowAdd] = React.useState('none')
     const [tenderName, setTenderName] = React.useState()
     const [organisation, setOrganisation] = React.useState()
     const [tenderNo, setTenderNo] = React.useState()
@@ -72,12 +78,13 @@ export default function TendersView(){
              status={status}
              eligibility={eligibility}
              />
+             <AddTender showAddModal={showAdd} handleAddModal={handleAddModal} />
             <h2 id="h2-title">Tenders Management</h2>
             <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '2.5rem'}}>
                 <Nav.Item>
                     <Nav.Link href="#">Tenders List</Nav.Link>
                 </Nav.Item>
-                <Nav.Item>
+                <Nav.Item onClick={handleAddModal}>
                     <Nav.Link eventKey="link-1">Add tender</Nav.Link>
                 </Nav.Item>
             </Nav>
