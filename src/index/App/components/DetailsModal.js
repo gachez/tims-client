@@ -28,7 +28,8 @@ const detailTitle = {
   fontSize: '1.25rem',
   fontWeight: 'bolder',
   paddingTop: '1rem',
-  paddingLeft: '8px'
+  paddingLeft: '8px',
+  textDecoration: 'underline'
 }
 
 const detailText = {
@@ -91,6 +92,7 @@ function DetailsModal(props) {
         position: 'fixed',
         width: '100%',
         left: 0,
+        top: 0,
         height: '100vh',
         backgroundColor: 'rgba(0,0,0,0.8)',
         zIndex: 99,
