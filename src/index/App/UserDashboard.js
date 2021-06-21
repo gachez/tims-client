@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom';
 import HomeViewUser from './UserDashboard/HomeViewUser';
 import TaskViewUser from './UserDashboard/TasksViewUser';
 import ReportsViewUser from './UserDashboard/ReportsViewUser';
+import TendersView from './Dashboard/TendersView';
 import axios from 'axios';
 import avatar from './shared/social-media-white.png';
 import _CONFIG from '../../config/config';
@@ -63,7 +64,10 @@ class UserDashboard extends React.Component {
                 return <TaskViewUser loadPage={this.setPage} userTasks={this.state.tasks} userLoggedIn={this.state.loggedInUSer[0]} />
 
             case 'reports': 
-                return <ReportsViewUser loadPage={this.setPage} userTasks={this.state.tasks} userLoggedIn={this.state.loggedInUSer[0]}/>    
+                return <ReportsViewUser loadPage={this.setPage} userTasks={this.state.tasks} userLoggedIn={this.state.loggedInUSer[0]}/>   
+                
+            case 'tenders':
+                return <TendersView />
                                 
           
         }
