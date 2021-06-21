@@ -12,6 +12,7 @@ import _CONFIG from '../../../config/config';
 import { compareStrings, trimLower } from '../shared/lib/util';
 import DetailsModal from '../components/DetailsModal';
 import Search from '../components/Search';
+import ImportFileModal from '../components/ImportFileModal';
 
 
 export default class ReportsView extends React.Component{
@@ -383,7 +384,7 @@ export default class ReportsView extends React.Component{
         if (files && files[0]) this.setState({ file: files[0] });
       };
      
-      handleFile = async () => {
+    handleFile = async () => {
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
@@ -701,38 +702,15 @@ export default class ReportsView extends React.Component{
                 </div>
 
                 {/* import file modal */}
-                <div className="modal-bg" style={{
-                    display: this.state.importFileModal
-                }}>
-                <Modal.Dialog scrollable={true}  className="modal-add-entry" style={{
-                    display: this.state.importFileModal
-                }}>
-                    <Modal.Header >
-                        <Modal.Title>Choose file to import</Modal.Title>
-                    </Modal.Header>
-
-                    <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
-                    <label for="avatar">Choose a file:</label>
-
-                        <input type="file"
-                            id="avatar" name="avatar"
-                            accept={SheetJSFT}
-                            onChange={this.handleChange} 
-                            />
-                            <br />
-                        <small style={{color: 'red'}}>
-                         File should be of .xlsx type.
-                        </small>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={this.toggleImportModalDisplay}>Cancel</Button>
-                       {
-                           this.state.importBtnClicked < 1 ? importBtn : importLoadingBtn
-                       }
-                    </Modal.Footer>
-                    </Modal.Dialog>
-                </div>
-
+                <ImportFileModal
+                 importFileModal={this.state.importFileModal} 
+                 SheetJSFT={SheetJSFT}
+                 handleChange={this.handleChange}
+                 toggleImportModalDisplay={this.toggleImportModalDisplay}
+                 importBtnClicked={this.state.importBtnClicked}
+                 importBtn={importBtn}
+                 importLoadingBtn={importLoadingBtn}
+                 />
                 {/* send email modal */}
                 <div className="modal-bg" style={{
                     display: this.state.emailModal
@@ -1166,9 +1144,6 @@ export default class ReportsView extends React.Component{
                     </Modal.Footer>
                     </Modal.Dialog>
                 </div>
-
-   
-
 
                 <div className="container">
                     <div style={{width: '100%', display: 'flex',  justifyContent: 'space-between', alignItems: 'center'}}>

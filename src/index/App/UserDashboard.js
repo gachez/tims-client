@@ -67,7 +67,7 @@ class UserDashboard extends React.Component {
                 return <ReportsViewUser loadPage={this.setPage} userTasks={this.state.tasks} userLoggedIn={this.state.loggedInUSer[0]}/>   
                 
             case 'tenders':
-                return <TendersView />
+                return <TendersView loggedInUSer={this.state.loggedInUSer} />
                                 
           
         }

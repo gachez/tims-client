@@ -8,3 +8,9 @@ export const compareStrings = (str1,str2) => {
    }
    return trimLower(str1).includes(trimLower(str2))
 }
+
+export const formatDate = dateStr => !dateStr ? 'no string' : dateStr.split(' ').join('-') 
+
+export function reverseString(s){
+   return s.split("").reverse().join("");
+}

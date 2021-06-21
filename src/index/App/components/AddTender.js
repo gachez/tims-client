@@ -1,5 +1,7 @@
-import React from 'react'
-import {Modal, Form, Button, Dropdown, DropdownButton} from 'react-bootstrap'
+import React from 'react';
+import {Modal, Form, Button, Dropdown, DropdownButton} from 'react-bootstrap';
+import importFile from '../shared/lib/services/importFile';
+
 
 export default function AddTender(props){
     return(             
@@ -43,7 +45,7 @@ export default function AddTender(props){
 
                                     <Form.Group controlId="formAddChecklist">
                                         <Form.Label>Import checklist</Form.Label>
-                                        <Form.Control type="file" placeholder="checklist upload"  />
+                                        <Form.Control type="file" placeholder="checklist upload" onChange={(e) => importFile(e.target)} />
                                     </Form.Group>
 
                                     <Form.Group controlId="formMandatory">

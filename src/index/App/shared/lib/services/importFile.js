@@ -1,80 +1,52 @@
+/*
+Please note this library cannot handle large files i.e 30k+ rows.
+You will need to replace with XLSX library for better perfomance 
+*/
+import readXlsxFile from 'read-excel-file' 
+import _CONFIG from '../../../../../config/config'
+import { formatDate } from '../util'
 
-import XLSX from 'xlsx';
-import _CONFIG from '../../../config/config';
+const importFileTender = (input, currentUser) => {
+  readXlsxFile(input.files[0]).then((rows) => {
+    //first row is the headers for the file
+    let tenderData = []
+    rows.slice(1).forEach((imports,index) => {
+      tenderData.push({
+        dateSeen: formatDate(imports[0]),
+        organisation: imports[1],
+        tenderName: imports[2],
+        eligibility: imports[3],
+        closingDate: imports[4],
+        status: !imports[5] ? '': imports[5],
+        uploadedBy: currentUser
+      })
+    })
 
-const handleFile = async (this) => {
-    /* Boilerplate to set up FileReader */
-    const reader = new FileReader();
-    const rABS = !!reader.readAsBinaryString;
- 
-    reader.onload = (e) => {
-      /* Parse data */
-      const bstr = e.target.result;
-      const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array', bookVBA : true });
-      /* Get first worksheet */
-      const wsname = wb.SheetNames[0];
-      const ws = wb.Sheets[wsname];
-      /* Convert array of arrays */
-      const data = XLSX.utils.sheet_to_json(ws);
-      /* Update state */
-  
-        this.setState({ 
-            data: data
-         },
-          () => {
-            var dataArr = []
-            console.log(this.state.data.length)
-              this.state.data.forEach( (imports,index) => {
-                 let dataObj = {    
-                    organization: imports['ORGANISATION'],
-                    website: imports['WEBSITE '], 
-                    contacts: imports['CONTACTS'],
-                    contactPerson: imports['CONTACT PERSON'],
-                    telephone: imports['TELEPHONE'],
-                    designation: imports['DESIGNATION'],
-                    emailAddress: imports['EMAIL ADDRESS'],
-                    physicalLocation: imports[' Physical Location'],
-                    industry: !imports['INDUSTRY'] ? wsname : imports['INDUSTRY'],
-                    collectionDate: new Date().toUTCString(),
-                    collectionTime: new Date().toUTCString(),
-                    submittedBy: 'admin'
-                }; 
-                dataArr.push(dataObj)
-            });
-            console.log(dataArr)
-            for(let dataOb of dataArr){
-                try{
-                    fetch(_CONFIG.API_URI+"/api/v1/admin/add_record", {
-                        method: 'POST', 
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'auth-token': `${localStorage.getItem('auth-token')}`
-                        },
-                        body: JSON.stringify(dataOb),
-                        })
-                        .then(response => response.json())
-                        .then(dat => {
-                        console.log('Success uploaded record:', dat);
-                        })
-                        .catch((error) => {
-                        console.error('Error:', error);
-                        });
-                } catch(err) {
-                    console.log(err)
-                    break
-                }
-                
-            }
-            alert('Succesfully imported file data');
-           
-        });
-    };
- 
-    if (rABS) {
-      reader.readAsBinaryString(this.state.file);
-    } else {
-      reader.readAsArrayBuffer(this.state.file);
-    }
+    for(let tender of tenderData.filter(tenderRecord => tenderRecord.closingDate)){
+      try{
+          fetch(_CONFIG.API_URI+"/api/v1/admin/tender", {
+              method: 'POST', 
+              headers: {
+                  'Content-Type': 'application/json',
+                  'auth-token': `${localStorage.getItem('auth-token')}`
+              },
+              body: JSON.stringify(tender),
+              })
+              .then(response => response.json())
+              .then(dat => {
+              console.log('Success uploaded tender:', dat);
+              })
+              .catch((error) => {
+              console.error('Error:', error);
+              });
+      } catch(err) {
+          console.log(err)
+          break
+      }
+      
   }
+  alert('Succesfully imported file data');
+  })
+}
 
-export default handleFile;  
+export default importFileTender

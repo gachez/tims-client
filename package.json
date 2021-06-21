@@ -25,6 +25,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "react-toastify": "^6.0.8",
+    "read-excel-file": "^5.2.2",
     "xlsx": "^0.16.2"
   },
   "scripts": {
