@@ -13,6 +13,7 @@ import { compareStrings, trimLower } from '../shared/lib/util';
 import DetailsModal from '../components/DetailsModal';
 import Search from '../components/Search';
 import ImportFileModal from '../components/ImportFileModal';
+import DeleteModal from '../components/DeleteModal';
 
 
 export default class ReportsView extends React.Component{
@@ -653,30 +654,12 @@ export default class ReportsView extends React.Component{
                     submittedBy= {this.state.userDetails.submittedBy}
                     comments={this.state.userDetails.comments} />
                 {/* delete modal */}
-                <div className="modal-bg" style={{
-                        display: this.state.deleteModalDisplay
-                            }}>
-                         
-                        <Modal.Dialog  className="modal-add-user" style={{
-                        display: this.state.deleteModalDisplay
-                            }}>
-                        <Modal.Header >
-                            <Modal.Title>Delete Record?</Modal.Title>
-                        </Modal.Header>
-    
-                        <Modal.Body>
-                            <p>Are you sure you want to delete this record?</p>
-                        </Modal.Body>
-    
-                        <Modal.Footer>
-                            <Button variant="secondary" onClick={this.toggleDeleteModal}>Cancel</Button>
-                            {
-                               !this.state.deleteBtnClicked ?  deleteBtn : loadingDeleteBtn
-                            }
-                        </Modal.Footer>
-                        </Modal.Dialog>
-                         </div>  
-
+                <DeleteModal
+                    deleteModalDisplay={this.state.deleteModalDisplay}
+                    toggleDeleteModal={this.toggleDeleteModal}
+                    removeUser={this.removeUser}
+                    editFieldID={this.state.editFieldID}
+                />
 
                 {/* export file modal */}
                 <div className="modal-bg" style={{

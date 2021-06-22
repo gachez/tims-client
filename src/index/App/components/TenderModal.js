@@ -3,6 +3,9 @@ import {Modal} from 'react-bootstrap';
 import trash from '../Dashboard/shared/trash.png';
 import edit from '../shared/edit.png';
 import comment from '../shared/chatbox.png';
+import axios from 'axios';
+import _CONFIG from '../../../config/config';
+import DeleteModal from './DeleteModal';
 
 const detailCard = {
     display: 'grid',
@@ -28,18 +31,45 @@ const detailCard = {
   
 
 export default function TenderModal(props){
+  const deleteTender = async (id) => {
+    try{
+        axios.delete(_CONFIG.API_URI+"/api/v1/delete_tender/" + id,  {
+            headers: {
+            'auth-token': `${localStorage.getItem('auth-token')}`
+            }
+        })
+        .then(res => {
+            console.log('succesfully deleted record ' + res)
+            alert('Succesfully deleted record');
+            toggleDeleteModal();
+            window.location.reload()
+        })
+    } catch (err) {console.log('sorry ' + err)}
+}
+  const [showDel,setShowDel] = React.useState('none')
+
+  const toggleDeleteModal = () => {
+    showDel === 'none' ? setShowDel('block') : setShowDel('none')
+  }
+
     return(
         <div style={{
             position: 'fixed',
             width: '100%',
             left: 0,
             top: 0,
-            height: '100vh',
+            height: '200vh',
             backgroundColor: 'rgba(0,0,0,0.8)',
             zIndex: 99,
             display: props.show,
             paddingTop: '2rem' 
         }}>
+          <DeleteModal
+            removeUser={deleteTender}
+            deleteModalDisplay={showDel}
+            toggleDeleteModal={toggleDeleteModal}
+            editFieldID={props.id}
+          />
           <div style={{backgroundColor: 'white', margin: 'auto', width: '60%', height: 'auto',maxHeight: '100vh',overflow: 'scroll', borderRadius: 8}}>
             <Modal.Header closeButton onClick={() => props.handleClose()}>
                 <Modal.Title 
@@ -95,7 +125,9 @@ export default function TenderModal(props){
                                             width: 'fit-content',
                                             height: 'fit-content'
                                             }}
-                                           
+                                      onClick={() => {
+                                       toggleDeleteModal()
+                                      }}     
                                                 >
                                       <img
                                        src={trash}   
@@ -145,14 +177,22 @@ export default function TenderModal(props){
                 <div style={{display: 'flex',width: 'fit-content', alignItems: 'center'}}>
                   <h3 style={detailTitle}>Mandatory Requirements</h3>
                 </div>
-                <span>{props.mandatoryRequirements}</span>
+                {
+                  !props.mandatoryRequirements ? '' : props.mandatoryRequirements.split('\n').map(requirement => {
+                    return (<span>{requirement}</span>)
+                  })
+                }
             </div>
 
             <div style={detailCard}>
                 <div style={{display: 'flex',width: 'fit-content', alignItems: 'center'}}>
                   <h3 style={detailTitle}>Evaluation Criteria</h3>
                 </div>
-                <span>{props.evaluationCriteria}</span>
+                {
+                 !props.evaluationCriteria ? '' : props.evaluationCriteria.split('\n').map(criteria => {
+                    return (<span>{criteria}</span>)
+                  })
+                }
             </div>
 
             <div style={detailCard}>

@@ -50,7 +50,7 @@ class Dashboard extends React.Component {
                 return <TaskView loadPage={this.setPage} />
 
             case 'tenders':
-                return <TendersView />
+                return <TendersView loggedInUSer={this.state.loggedInUSer} />
                 
             case 'database':
                 return <ReportsView loadPage={this.setPage} />

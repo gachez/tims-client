@@ -1,12 +1,12 @@
 import React from 'react';
 import {Nav, Table, Button, Spinner} from 'react-bootstrap';
 import _CONFIG from '../../../config/config';
-import dateFormat from 'dateformat';
 import TenderModal from '../components/TenderModal';
 import AddTender from '../components/AddTender';
 import excel from '../shared/excelicon.png';
 import ImportFileModal from '../components/ImportFileModal';
 import importFileTender from '../shared/lib/services/importFile';
+import DeleteModal from '../components/DeleteModal';
 
 export default function TendersView(props){
     React.useEffect(() => {
@@ -17,7 +17,7 @@ export default function TendersView(props){
           }})
         .then(response => response.json())
         .then(data => {
-            console.log(data)
+            setLoaded(true)
             setTenders(data)})
         .catch(err => console.log(err))
 
@@ -61,7 +61,8 @@ export default function TendersView(props){
         mandatory,
         evaluation,
         status,
-        uploadedBy
+        uploadedBy,
+        id
     }) => {
         setDateClosing(closingDate)
         setEligibility(eligibility)
@@ -73,6 +74,7 @@ export default function TendersView(props){
         setTenderNo(tenderNo)
         setSubmission(submission)
         setUploadedBy(uploadedBy)
+        setID(id)
     }
 
     const handleChange = (e) => {
@@ -91,12 +93,14 @@ export default function TendersView(props){
     const [mandatory, setMandatory] = React.useState()
     const [evaluation, setEvaluation] = React.useState()
     const [status, setStatus] = React.useState()
-    const [uploadedBy, setUploadedBy] = React.useState()
+    const [uploadedBy, setUploadedBy] = React.useState(props.loggedInUSer[0])
     const [importFileModal, setImportFile] = React.useState('none')
     const [file, setFile] = React.useState()
     const [importBtnClicked, setClicked] = React.useState(0)
+    const [isLoaded, setLoaded] = React.useState(false)
+    const [id, setID] = React.useState()
 
-    return(
+    return isLoaded ? (
         <div className="container">
             <TenderModal
              handleClose={handleClose} 
@@ -107,6 +111,11 @@ export default function TendersView(props){
              organisation={organisation}
              status={status}
              eligibility={eligibility}
+             submissionMethod={submission}
+             mandatoryRequirements={mandatory}
+             evaluationCriteria={evaluation}
+             uploadedBy={uploadedBy}
+             id={id}
              />
              <ImportFileModal
               importFileModal={importFileModal}
@@ -116,7 +125,12 @@ export default function TendersView(props){
               importBtn={importBtn}
               importLoadingBtn={importLoadingBtn}
              />
-             <AddTender showAddModal={showAdd} handleAddModal={handleAddModal} />
+             <AddTender
+              showAddModal={showAdd} 
+              handleAddModal={handleAddModal} 
+              currentUser={props.loggedInUSer[0]}
+              />
+            
             <h2 id="h2-title">Tenders Management</h2>
             <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '2.5rem'}}>
                 <Nav.Item>
@@ -148,6 +162,7 @@ export default function TendersView(props){
                                     tenders.reverse().map((tender, index) => {
                                         return(
                                             <tr style={{cursor: 'pointer'}} onClick={() => {
+                                                window.scrollTo(0,0)
                                                 handleClose()
                                                 handleModal({
                                                     tenderName: tender.tenderName,
@@ -159,7 +174,8 @@ export default function TendersView(props){
                                                     mandatory: tender.mandatoryRequirements,
                                                     evaluation: tender.evaluationCriteria,
                                                     status: tender.status,
-                                                    uploadedBy: tender.uploadedBy
+                                                    uploadedBy: tender.uploadedBy,
+                                                    id: tender._id
                                                 })
                                             }}
                                              >
@@ -179,4 +195,12 @@ export default function TendersView(props){
             </Table>
         </div>
     )
+    :
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+    }}>
+        <span>loading.....</span>
+    </div>
 }
