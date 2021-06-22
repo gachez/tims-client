@@ -1,11 +1,12 @@
 import React from 'react';
 import './UserManagementView/UserManagement.css';
-import {Spinner, Table, Nav, Modal, Button,Form} from 'react-bootstrap';
+import {Spinner, Table, Nav, Modal, Button,Form, DropdownButton, Dropdown} from 'react-bootstrap';
 import trash from './shared/trash.png';
 import edit from '../shared/edit.png';
 import add from './UserManagementView/signs.png';
 import axios from 'axios';
 import _CONFIG from '../../../config/config';
+import DropdownItem from 'react-bootstrap/DropdownItem';
 
 export default class UserManagement extends React.Component{
     state = {
@@ -22,7 +23,8 @@ export default class UserManagement extends React.Component{
         editBtnClicked: false,
         editModal: 'none',
         editFieldID: '',
-        editFieldIndex: 0
+        editFieldIndex: 0,
+        roleSelected: 'user'
     }
 
     componentDidMount() {
@@ -85,7 +87,8 @@ export default class UserManagement extends React.Component{
                 fullname: document.getElementsByName('fullname')[0].value, 
                 username: document.getElementsByName('username')[0].value,
                 email: document.getElementsByName('email')[0].value,
-                password: document.getElementsByName('password')[0].value   
+                password: document.getElementsByName('password')[0].value,
+                isadmin: this.state.roleSelected === 'user' ? false : true   
             }
             try{
                 axios.post(_CONFIG.API_URI+"/api/v1/register_user", user)
@@ -114,7 +117,8 @@ export default class UserManagement extends React.Component{
         const saveEdits = {
             fullname:  edits[0].value.length < 1 ? edits[0].getAttribute('placeholder') : edits[0].value, 
             username:  edits[1].value.length < 1 ? edits[1].getAttribute('placeholder') : edits[1].value, 
-            email:  edits[2].value.length < 1 ? edits[2].getAttribute('placeholder') :    edits[2].value
+            email:  edits[2].value.length < 1 ? edits[2].getAttribute('placeholder') :    edits[2].value,
+            isadmin: this.state.roleSelected === 'user' ? false : true
         }
 
         // console.log(saveEdits)
@@ -376,6 +380,16 @@ export default class UserManagement extends React.Component{
                                 <Form.Control name="password" type="password" placeholder="Password" />
                             </Form.Group>
 
+                            <Form.Group controlId="formRole">
+                                <Form.Label>Role</Form.Label>
+                                <DropdownButton
+                                    title={this.state.roleSelected}
+                                >
+                                    <Dropdown.Item onClick={() => {this.setState({roleSelected: 'admin'})}}>Admin</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => {this.setState({roleSelected: 'user'})}}>User</Dropdown.Item>
+                                </DropdownButton>
+                            </Form.Group>
+
                             </Form>
                         </Modal.Body>
     
@@ -414,7 +428,7 @@ export default class UserManagement extends React.Component{
                         </Modal.Dialog>
                          </div>  
 
-                               {/* edit user modal */}
+                {/* edit user modal */}
                 <div className="modal-bg" style={{
                     display: this.state.editModal
                 }}>
@@ -440,7 +454,16 @@ export default class UserManagement extends React.Component{
                             <Form.Group controlId="email">
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="email" placeholder={this.getEditField(this.state.editFieldID).map(field => field.email)}/>
-                            </Form.Group>                       
+                            </Form.Group>  
+                            <Form.Group controlId="formRole">
+                                <Form.Label>Role</Form.Label>
+                                <DropdownButton
+                                    title={this.state.roleSelected}
+                                >
+                                    <Dropdown.Item onClick={() => {this.setState({roleSelected: 'admin'})}}>Admin</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => {this.setState({roleSelected: 'user'})}}>User</Dropdown.Item>
+                                </DropdownButton>
+                            </Form.Group>                     
                             </Form>
                         </Modal.Body>
                         <Modal.Footer>
