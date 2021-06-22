@@ -282,7 +282,7 @@ export default class ReportsView extends React.Component{
 
     getAddEntryFormValues = async () => {
         return {
-                projectName: this.state.projectName,
+                projectName: this.state.projectName === 'Project' ? '' : this.state.projectName,
                 organization: document.getElementsByName('organisation')[0].value, 
                 website: document.getElementsByName('website')[0].value,
                 contacts: document.getElementsByName('contacts')[0].value,
@@ -291,7 +291,7 @@ export default class ReportsView extends React.Component{
                 designation: document.getElementsByName('designation')[0].value,
                 emailAddress: document.getElementsByName('emailAddress')[0].value,
                 physicalLocation: document.getElementsByName('physicalLocation')[0].value,
-                industry: this.state.chosenIndustry,
+                industry: this.state.chosenIndustry === 'Industry' ? '' : this.state.chosenIndustry,
                 comments: document.getElementsByName('comments')[0].value,
                 submittedBy: 'admin'
             }

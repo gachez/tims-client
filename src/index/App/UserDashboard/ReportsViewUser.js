@@ -222,7 +222,7 @@ export default class ReportsViewUser extends React.Component{
                 collectionDate: new Date(),
                 collectionTime: new Date(),
                 submittedBy: this.props.userLoggedIn,
-                projectName: this.state.projectName
+                projectName: this.state.projectName === 'Project' ? '' : this.state.projectName
             }
         try{
             axios.post(_CONFIG.API_URI+"/api/v1/user/add_record", savedReport, {

@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import './shared/Dashboard.css';
 import {Spinner} from 'react-bootstrap';
 import HomeViewAdmin from './Dashboard/HomeViewAdmin';
@@ -11,6 +12,7 @@ import MessagesView from './Dashboard/MessagesView';
 import avatar from './shared/social-media-white.png';
 import { Link } from 'react-router-dom';
 import TendersView from './Dashboard/TendersView';
+import _CONFIG from '../../config/config';
 
 // This is the admin dashboard
 const userAvatar = {
@@ -26,11 +28,20 @@ class Dashboard extends React.Component {
         borderActive: 'none'  }
 
     componentDidMount() {
-        this.setState({
-            isLoaded: true,
-            active: 'home'
-        }); 
-    }
+        axios.get(_CONFIG.API_URI+"/api/v1/admin/get_users",  {
+            headers: {
+              'auth-token': `${localStorage.getItem('auth-token')}`
+            }
+          })
+          .then(res => {
+            this.setState({
+                isLoaded: true,
+                active: 'home',
+                loggedInUSer: res.data.filter(user => user.email.toLowerCase() === localStorage.getItem('userName')).map(user => user.username)
+            }); 
+        
+          })
+        }
 
     setPage = (page) => {
         this.setState({
