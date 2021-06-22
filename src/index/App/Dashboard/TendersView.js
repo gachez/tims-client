@@ -10,7 +10,7 @@ import DeleteModal from '../components/DeleteModal';
 
 export default function TendersView(props){
     React.useEffect(() => {
-        fetch(_CONFIG.API_URI+'/api/v1/tenders', {
+        fetch(_CONFIG.API_URI+'/tenders', {
             headers: {
             'Content-Type': 'application/json',
             'auth-token': localStorage.getItem('auth-token')
