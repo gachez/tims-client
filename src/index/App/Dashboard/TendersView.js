@@ -7,6 +7,9 @@ import excel from '../shared/excelicon.png';
 import ImportFileModal from '../components/ImportFileModal';
 import importFileTender from '../shared/lib/services/importFile';
 import DeleteModal from '../components/DeleteModal';
+import axios from 'axios';
+import EditTender from '../components/EditTender';
+import { chooseColor } from '../shared/lib/util';
 
 export default function TendersView(props){
     React.useEffect(() => {
@@ -39,6 +42,25 @@ export default function TendersView(props){
         setClicked(1)
         }}>Import</Button>;
 
+
+    const toggleDeleteModal = () => {
+      showDel === 'none' ? setShowDel('block') : setShowDel('none')
+    }    
+    const deleteTender = async (ID) => {
+        try{
+            axios.delete(_CONFIG.API_URI+"/api/v1/delete_tender/" + ID,  {
+                headers: {
+                'auth-token': `${localStorage.getItem('auth-token')}`
+                }
+            })
+            .then(res => {
+                console.log('succesfully deleted record ' + res)
+                alert('Succesfully deleted record');
+                toggleDeleteModal();
+                window.location.reload()
+            })
+        } catch (err) {console.log('sorry ' + err)}
+    }
     const handleClose = () => {
         show === 'none' ? setShow('block') : setShow('none')
     }
@@ -80,7 +102,12 @@ export default function TendersView(props){
     const handleChange = (e) => {
         setFile(e.target);
       };
+    
+    const handleEditModal = () => {
+        showEditModal === 'none' ? setEditModal('block') : setEditModal('none')
+    }
 
+    const [showEditModal, setEditModal] = React.useState('none')
     const [tenders, setTenders] = React.useState([])
     const [show, setShow] = React.useState('none')
     const [showAdd, setShowAdd] = React.useState('none')
@@ -99,6 +126,7 @@ export default function TendersView(props){
     const [importBtnClicked, setClicked] = React.useState(0)
     const [isLoaded, setLoaded] = React.useState(false)
     const [id, setID] = React.useState()
+    const [showDel,setShowDel] = React.useState('none')
 
     return isLoaded ? (
         <div className="container">
@@ -116,7 +144,15 @@ export default function TendersView(props){
              evaluationCriteria={evaluation}
              uploadedBy={uploadedBy}
              id={id}
+             toggleDeleteModal={toggleDeleteModal}
+             handleEditModal={handleEditModal}
              />
+            <DeleteModal
+                removeUser={deleteTender}
+                deleteModalDisplay={showDel}
+                toggleDeleteModal={toggleDeleteModal}
+                editFieldID={id}
+            />
              <ImportFileModal
               importFileModal={importFileModal}
               handleChange={handleChange}
@@ -130,7 +166,12 @@ export default function TendersView(props){
               handleAddModal={handleAddModal} 
               currentUser={props.loggedInUSer[0]}
               />
-            
+            <EditTender
+                showEditModal={showEditModal}
+                handleEditModal={handleEditModal}
+                id={id}
+                tenders={tenders.filter(tender => tender._id === id)}
+            />
             <h2 id="h2-title">Tenders Management</h2>
             <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '2.5rem'}}>
                 <Nav.Item>
@@ -185,7 +226,7 @@ export default function TendersView(props){
                                                 <td>{tender.tenderName}</td>
                                                 <td>{tender.eligibility}</td>
                                                 <td>{tender.closingDate}</td>
-                                                <td>{tender.status}</td>
+                                                <td style={{color: chooseColor(tender.status), fontWeight: 'bolder' }} >{tender.status}</td>
                                                 <td>{tender.uploadedBy}</td>
                                             </tr>
                                         )

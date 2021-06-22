@@ -119,7 +119,7 @@ class Dashboard extends React.Component {
                                                 active: "tasks"
                                             })
                                         }
-                                    }>Tasks</div>
+                                    }>Tasks management</div>
 
                                     <div id="tenders-menu" 
                                         style={{
@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
                                                 active: "tenders"
                                             })
                                         }
-                                    }>Tenders</div>
+                                    }>Tenders management</div>
 
                                     <div id="reports-menu" 
                                     style={{

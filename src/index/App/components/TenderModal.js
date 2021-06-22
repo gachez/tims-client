@@ -3,9 +3,8 @@ import {Modal} from 'react-bootstrap';
 import trash from '../Dashboard/shared/trash.png';
 import edit from '../shared/edit.png';
 import comment from '../shared/chatbox.png';
-import axios from 'axios';
 import _CONFIG from '../../../config/config';
-import DeleteModal from './DeleteModal';
+import { chooseColor, trimLower } from '../shared/lib/util';
 
 const detailCard = {
     display: 'grid',
@@ -27,30 +26,10 @@ const detailCard = {
     fontSize: '1rem',
     color: '#000',
     fontWeight: 'normal'
-  }
+  } 
   
 
 export default function TenderModal(props){
-  const deleteTender = async (id) => {
-    try{
-        axios.delete(_CONFIG.API_URI+"/api/v1/delete_tender/" + id,  {
-            headers: {
-            'auth-token': `${localStorage.getItem('auth-token')}`
-            }
-        })
-        .then(res => {
-            console.log('succesfully deleted record ' + res)
-            alert('Succesfully deleted record');
-            toggleDeleteModal();
-            window.location.reload()
-        })
-    } catch (err) {console.log('sorry ' + err)}
-}
-  const [showDel,setShowDel] = React.useState('none')
-
-  const toggleDeleteModal = () => {
-    showDel === 'none' ? setShowDel('block') : setShowDel('none')
-  }
 
     return(
         <div style={{
@@ -64,13 +43,16 @@ export default function TenderModal(props){
             display: props.show,
             paddingTop: '2rem' 
         }}>
-          <DeleteModal
-            removeUser={deleteTender}
-            deleteModalDisplay={showDel}
-            toggleDeleteModal={toggleDeleteModal}
-            editFieldID={props.id}
-          />
-          <div style={{backgroundColor: 'white', margin: 'auto', width: '60%', height: 'auto',maxHeight: '100vh',overflow: 'scroll', borderRadius: 8}}>
+          <div
+           style={{
+             backgroundColor: 'white', 
+             margin: 'auto', 
+             width: '60%', 
+             height: 'auto',
+             maxHeight: '100vh',
+             overflow: 'scroll', 
+             borderRadius: 8
+             }}>
             <Modal.Header closeButton onClick={() => props.handleClose()}>
                 <Modal.Title 
                 style={{
@@ -78,7 +60,7 @@ export default function TenderModal(props){
                   fontWeight: 'bolder',
                   textAlign: 'left',
                   width: '70%', 
-                  padding: '1rem'}} >
+                  padding: '1rem'}}>
                     <span style={detailText}><b style={detailTitle}>Tender Name:</b><br /> {props.tenderName}</span><br /><br />
                     <span style={detailText}><b style={detailTitle}>Tender No:</b><br /> {props.tenderNo}</span><br />
                     <span style={detailText}><b style={detailTitle}>Closing Date:</b><br /> {props.closingDate} </span>
@@ -111,7 +93,9 @@ export default function TenderModal(props){
                                      style={{
                                         width: 'fit-content',
                                         height: 'fit-content'
-                                     }}>
+                                     }}
+                                     onClick={() => props.handleEditModal()}
+                                     >
                                     <img src={edit} 
                                       style={{width: '20px', 
                                       height: '20px'
@@ -126,7 +110,7 @@ export default function TenderModal(props){
                                             height: 'fit-content'
                                             }}
                                       onClick={() => {
-                                       toggleDeleteModal()
+                                       props.toggleDeleteModal()
                                       }}     
                                                 >
                                       <img
@@ -158,7 +142,11 @@ export default function TenderModal(props){
                 <div style={{display: 'flex',width: 'fit-content', alignItems: 'center'}}>
                   <h3 style={detailTitle}>Status</h3>
                 </div>
-                <span>{props.status}</span>
+                <span>
+                  <b
+                   style={{
+                    color: chooseColor(props.status)
+                }}>{props.status}</b></span>
             </div>
             <div style={detailCard}>
                 <div style={{display: 'flex',width: 'fit-content', alignItems: 'center'}}>
