@@ -376,7 +376,7 @@ export default class TaskView extends React.Component{
                                     // await this.handleFile(this.state.assignee, this.state.projectName);
 
                                     const newTask = {
-                                        projectName: this.state.projectName,
+                                        projectName: this.state.projectName === 'Project' ? 'N/A' : this.state.projectName,
                                         userAssigned: this.state.assignee,
                                         description:   document.getElementsByName("taskdetails")[0].value,
                                         dueDate: document.getElementsByName("date")[0].value

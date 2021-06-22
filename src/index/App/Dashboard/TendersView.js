@@ -196,11 +196,7 @@ export default function TendersView(props){
         </div>
     )
     :
-    <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    }}>
-        <span>loading.....</span>
-    </div>
+    <div className="spinner-bg">
+    <Spinner id="spinner" animation="grow" />
+</div>
 }

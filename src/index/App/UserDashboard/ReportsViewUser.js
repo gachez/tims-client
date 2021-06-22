@@ -335,7 +335,7 @@ export default class ReportsViewUser extends React.Component{
 
     removeReport = async (id) => {
         try{
-            axios.delete(_CONFIG.API_URI+"/api/v1/user/delete_record/" + id,  {
+            axios.delete(_CONFIG.API_URI+"/api/v1/admin/delete_record/" + id,  {
                 headers: {
                 'auth-token': `${localStorage.getItem('auth-token')}`
                 }
