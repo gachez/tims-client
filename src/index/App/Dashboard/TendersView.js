@@ -10,6 +10,7 @@ import DeleteModal from '../components/DeleteModal';
 import axios from 'axios';
 import EditTender from '../components/EditTender';
 import { chooseColor } from '../shared/lib/util';
+import CommentTenderModal from '../components/CommentTenderModal';
 
 export default function TendersView(props){
     React.useEffect(() => {
@@ -107,6 +108,28 @@ export default function TendersView(props){
         showEditModal === 'none' ? setEditModal('block') : setEditModal('none')
     }
 
+    const toggleCommentModalDisplay = () => {
+        showComment === 'none' ? setShowComment('block') : setShowComment('none')
+    }
+
+    const  addComment = async (id) => {
+        try{
+            const comments = await document.getElementById('comment-field').value;
+            // added comments
+            axios.post(`${_CONFIG.API_URI}/api/v1/update_tender/${id}`, {comments: comments}, {
+                headers: {
+                    'auth-token': `${localStorage.getItem('auth-token')}`
+                  }
+            }).then(res => {
+                alert("Comment added.");     
+                    console.log(res);
+                    toggleCommentModalDisplay();
+                    window.location.reload()
+            }).catch(err => console.log(err))
+    
+        } catch(err) {console.log(err)}
+    }
+
     const [showEditModal, setEditModal] = React.useState('none')
     const [tenders, setTenders] = React.useState([])
     const [show, setShow] = React.useState('none')
@@ -127,6 +150,7 @@ export default function TendersView(props){
     const [isLoaded, setLoaded] = React.useState(false)
     const [id, setID] = React.useState()
     const [showDel,setShowDel] = React.useState('none')
+    const [showComment, setShowComment] = React.useState('none')
 
     return isLoaded ? (
         <div className="container">
@@ -146,6 +170,7 @@ export default function TendersView(props){
              id={id}
              toggleDeleteModal={toggleDeleteModal}
              handleEditModal={handleEditModal}
+             toggleCommentModalDisplay={toggleCommentModalDisplay}
              />
             <DeleteModal
                 removeUser={deleteTender}
@@ -171,6 +196,13 @@ export default function TendersView(props){
                 handleEditModal={handleEditModal}
                 id={id}
                 tenders={tenders.filter(tender => tender._id === id)}
+            />
+            <CommentTenderModal
+                commentModal={showComment}
+                data={tenders}
+                editFieldID={id}
+                toggleCommentModalDisplay={toggleCommentModalDisplay}
+                addComment={addComment}
             />
             <h2 id="h2-title">Tenders Management</h2>
             <Nav variant="pills" defaultActiveKey="#" style={{marginTop: '2.5rem'}}>

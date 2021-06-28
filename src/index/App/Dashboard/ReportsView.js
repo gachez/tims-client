@@ -14,6 +14,7 @@ import DetailsModal from '../components/DetailsModal';
 import Search from '../components/Search';
 import ImportFileModal from '../components/ImportFileModal';
 import DeleteModal from '../components/DeleteModal';
+import CommentTenderModal from '../components/CommentTenderModal';
 
 
 export default class ReportsView extends React.Component{
@@ -1048,38 +1049,13 @@ export default class ReportsView extends React.Component{
                 </div>
 
                 {/* add comment to report modal*/}
-                <div className="modal-bg" style={{
-                    display: this.state.commentModal
-                }}>
-                <Modal.Dialog scrollable={true}  className="modal-add-entry" style={{
-                    display: this.state.commentModal
-                }}>
-                    <Modal.Header >
-                        <Modal.Title>Comments</Modal.Title>
-                    </Modal.Header>
-                    <ul style={{marginTop: '1.25rem'}}>
-                    {
-                        this.state.reports.filter( report => report._id === this.state.editFieldID ).map(report => {
-                            return(
-                                <li>{report.comments}</li>
-                            )
-                        } )
-                    }
-                    </ul>
-                   
-                    <Modal.Body style={{maxHeight: 'calc(100vh - 210px)', overflowY: 'auto'}}>
-                    <Form>
-                        <Form.Group controlId="formComment">
-                            <Form.Control as="textarea" rows="4" id="comment-field" placeholder="Add a comment..."/>
-                        </Form.Group>
-                        </Form>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={this.toggleCommentModalDisplay}>Cancel</Button>
-                        <Button variant="primary" onClick={ () => {this.addComment(this.state.editFieldID)}}>Add comment</Button>
-                    </Modal.Footer>
-                    </Modal.Dialog>
-                </div>
+                <CommentTenderModal
+                    commentModal={this.state.commentModal}
+                    data={this.state.reports}
+                    editFieldID={this.state.editFieldID}
+                    toggleCommentModalDisplay={this.toggleCommentModalDisplay}
+                    addComment={this.addComment}
+                />
 
                 
                 {/* add a industry modal */}
