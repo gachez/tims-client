@@ -24,6 +24,10 @@ export default class UserManagement extends React.Component{
         editModal: 'none',
         editFieldID: '',
         editFieldIndex: 0,
+        fullName: '',
+        username: '',
+        email: '',
+        password: '',
         roleSelected: 'user'
     }
 
@@ -84,10 +88,10 @@ export default class UserManagement extends React.Component{
 
     addUser = async () => {
             const user = {
-                fullname: document.getElementsByName('fullname')[0].value, 
-                username: document.getElementsByName('username')[0].value,
-                email: document.getElementsByName('email')[0].value,
-                password: document.getElementsByName('password')[0].value,
+                fullname: this.state.fullName, 
+                username: this.state.username,
+                email: this.state.email,
+                password: this.state.password,
                 isadmin: this.state.roleSelected === 'user' ? false : true   
             }
             try{
@@ -362,22 +366,22 @@ export default class UserManagement extends React.Component{
                         <Form>
                             <Form.Group controlId="formFullName">
                                 <Form.Label>Full Name</Form.Label>
-                                <Form.Control name="fullname" type="textbox" placeholder="Enter name" />
+                                <Form.Control name="fullname" type="textbox" placeholder="Enter name" onChange={e => this.setState({fullName: e.target.value})} />
                             </Form.Group>
                             <Form.Group controlId="formUsername">
                                 <Form.Label>Username</Form.Label>
-                                <Form.Control name="username" type="textbox" placeholder="Enter username" />
+                                <Form.Control name="username" type="textbox" placeholder="Enter username" onChange={e => this.setState({username: e.target.value})} />
                             </Form.Group>
     
 
                             <Form.Group controlId="formBasicEmail">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control name="email" type="textbox" placeholder="example@emaple.com" />
+                                <Form.Control name="email" type="textbox" placeholder="example@emaple.com" onChange={e => this.setState({email: e.target.value})} />
                             </Form.Group>
 
                             <Form.Group controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
-                                <Form.Control name="password" type="password" placeholder="Password" />
+                                <Form.Control name="password" type="password" placeholder="Password" onChange={e => this.setState({password: e.target.value})} />
                             </Form.Group>
 
                             <Form.Group controlId="formRole">

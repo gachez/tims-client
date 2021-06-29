@@ -1146,8 +1146,8 @@ export default class ReportsViewUser extends React.Component{
                        
 
                         </Nav>
-                    <section style={{width: '90%', maxHeight: '90%'}}> 
-                    <Table variant='dark' className="reports-table" style={{marginTop: '30px'}} striped bordered hover responsive>
+                    <section style={{width: '90%'}}> 
+                    <Table variant='light' className="reports-table table-responsive" style={{marginTop: '30px', overflow: 'scroll', maxHeight: '65vh'}} striped bordered hover responsive>
                         <thead>
                             <tr>
                                 <th>#</th>
