@@ -27,3 +27,7 @@ export const chooseColor = (status) => {
        return 'green'
    }
  }
+
+export const determineCell = (value) => {
+   return !value ? '' : value
+}

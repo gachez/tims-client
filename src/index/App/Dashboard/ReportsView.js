@@ -408,20 +408,20 @@ export default class ReportsView extends React.Component{
               () => {
                 var dataArr = []
                 console.log(this.state.data.length)
-                  this.state.data.forEach( (imports,index) => {
+                  this.state.data.filter(imports => typeof imports['ORGANISATION'] === 'undefined' || typeof imports['Organisation'] === 'undefined' || typeof imports['Organization'] === 'undefined' || typeof imports['ORGANIZATION'] === 'undefined').forEach( (imports,index) => {
                      let dataObj = {    
-                        organization: imports['ORGANISATION'],
-                        website: imports['WEBSITE '], 
-                        contacts: imports['CONTACTS'],
-                        contactPerson: imports['CONTACT PERSON'],
-                        telephone: imports['TELEPHONE'],
-                        designation: imports['DESIGNATION'],
-                        emailAddress: imports['EMAIL ADDRESS'],
-                        physicalLocation: imports[' Physical Location'],
-                        industry: !imports['INDUSTRY'] ? wsname : imports['INDUSTRY'],
+                        organization: imports['ORGANISATION'] || imports['Organisation'] || imports['Organization'] || imports['ORGANIZATION'],
+                        website: imports['WEBSITE '] || imports['Website'], 
+                        contacts: imports['CONTACTS'] || imports['Contacts'] || imports['Contact'] || imports['CONTACT'],
+                        contactPerson: imports['CONTACT PERSON'] || imports['Contact Person'],
+                        telephone: imports['TELEPHONE'] || imports['Telephone'],
+                        designation: imports['DESIGNATION']|| imports['Desgination'],
+                        emailAddress: imports['EMAIL ADDRESS'] || imports['Email'] || imports['Email Address'] || imports['EMAIL'],
+                        physicalLocation: imports['PHYSICAL LOCATION'] || imports['Physical Location'] || imports['Physical Address'] || imports['PHYSICAL ADDRESS'],
+                        industry: imports['INDUSTRY']|| imports['Industry'],
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
-                        submittedBy: 'admin'
+                        submittedBy: this.props.userLoggedIn
                     }; 
                     dataArr.push(dataObj)
                 });
