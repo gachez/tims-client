@@ -386,7 +386,7 @@ export default class ReportsViewUser extends React.Component{
                         designation: imports['DESIGNATION']|| imports['Desgination'],
                         emailAddress: imports['EMAIL ADDRESS'] || imports['Email'] || imports['Email Address'] || imports['EMAIL'],
                         physicalLocation: imports['PHYSICAL LOCATION'] || imports['Physical Location'] || imports['Physical Address'] || imports['PHYSICAL ADDRESS'],
-                        industry: trimLower(wsname.split('')[0]) === 's' && trimLower(wsname.split('')[1]) === 'h' ? imports['INDUSTRY']|| imports['Industry'] : wsname,
+                        industry: imports['INDUSTRY']|| imports['Industry'],
                         collectionDate: new Date().toUTCString(),
                         collectionTime: new Date().toUTCString(),
                         submittedBy: this.props.userLoggedIn
