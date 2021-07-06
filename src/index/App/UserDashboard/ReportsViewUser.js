@@ -355,79 +355,113 @@ export default class ReportsViewUser extends React.Component{
       };
      
 
-    handleFile = async () => {
+      handleFile = async () => {
         /* Boilerplate to set up FileReader */
         const reader = new FileReader();
         const rABS = !!reader.readAsBinaryString;
-     
+    
         reader.onload = (e) => {
           /* Parse data */
           const bstr = e.target.result;
-          const wb = XLSX.read(bstr, { type: rABS ? 'binary' : 'array', bookVBA : true });
+          const wb = XLSX.read(bstr, {
+            type: rABS ? "binary" : "array",
+            bookVBA: true,
+          });
           /* Get first worksheet */
           const wsname = wb.SheetNames[0];
           const ws = wb.Sheets[wsname];
           /* Convert array of arrays */
           const data = XLSX.utils.sheet_to_json(ws);
           /* Update state */
-      
-            this.setState({ 
-                data: data
-             },
-              () => {
-                var dataArr = []
-                  this.state.data.filter(imports => typeof imports['ORGANISATION'] === 'undefined' || typeof imports['Organisation'] === 'undefined' || typeof imports['Organization'] === 'undefined' || typeof imports['ORGANIZATION'] === 'undefined').forEach( (imports,index) => {
-                     let dataObj = {    
-                        organization: imports['ORGANISATION'] || imports['Organisation'] || imports['Organization'] || imports['ORGANIZATION'],
-                        website: imports['WEBSITE '] || imports['Website'], 
-                        contacts: imports['CONTACTS'] || imports['Contacts'] || imports['Contact'] || imports['CONTACT'],
-                        contactPerson: imports['CONTACT PERSON'] || imports['Contact Person'],
-                        telephone: imports['TELEPHONE'] || imports['Telephone'],
-                        designation: imports['DESIGNATION']|| imports['Desgination'],
-                        emailAddress: imports['EMAIL ADDRESS'] || imports['Email'] || imports['Email Address'] || imports['EMAIL'],
-                        physicalLocation: imports['PHYSICAL LOCATION'] || imports['Physical Location'] || imports['Physical Address'] || imports['PHYSICAL ADDRESS'],
-                        industry: imports['INDUSTRY']|| imports['Industry'],
-                        collectionDate: new Date().toUTCString(),
-                        collectionTime: new Date().toUTCString(),
-                        submittedBy: this.props.userLoggedIn
-                    }; 
-                    dataArr.push(dataObj)
+    
+          this.setState(
+            {
+              data: data,
+            },
+            () => {
+              var dataArr = [];
+              console.log(this.state.data.length);
+              this.state.data
+                .filter(
+                  (imports) =>
+                    typeof imports["ORGANISATION"] === "undefined" ||
+                    typeof imports["Organisation"] === "undefined" ||
+                    typeof imports["Organization"] === "undefined" ||
+                    typeof imports["ORGANIZATION"] === "undefined"
+                )
+                .forEach((imports, index) => {
+                  let dataObj = {
+                    organization:
+                      imports["ORGANISATION"] ||
+                      imports["Organisation"] ||
+                      imports["Organization"] ||
+                      imports["ORGANIZATION"],
+                    website: imports["WEBSITE "] || imports["Website"],
+                    contacts:
+                      imports["CONTACTS"] ||
+                      imports["Contacts"] ||
+                      imports["Contact"] ||
+                      imports["CONTACT"],
+                    contactPerson:
+                      imports["CONTACT PERSON"] || imports["Contact Person"],
+                    telephone: imports["TELEPHONE"] || imports["Telephone"],
+                    designation: imports["DESIGNATION"] || imports["Desgination"],
+                    emailAddress:
+                      imports["EMAIL ADDRESS"] ||
+                      imports["Email"] ||
+                      imports["Email Address"] ||
+                      imports["EMAIL"],
+                    physicalLocation:
+                      imports["PHYSICAL LOCATION"] ||
+                      imports["Physical Location"] ||
+                      imports["Physical Address"] ||
+                      imports["PHYSICAL ADDRESS"],
+                    comments: imports['COMMENTS'] || 
+                      imports['Comments'] ||
+                      imports['COMMENT'] ||
+                      imports['Comment'],  
+                    industry: imports["INDUSTRY"] || imports["Industry"],
+                    collectionDate: new Date().toUTCString(),
+                    collectionTime: new Date().toUTCString(),
+                    submittedBy: this.props.userLoggedIn,
+                  };
+                  dataArr.push(dataObj);
                 });
-                console.log(dataArr)
-                for(let dataOb of dataArr){
-                    try{
-                        fetch(_CONFIG.API_URI+"/api/v1/admin/add_record", {
-                            method: 'POST', 
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'auth-token': `${localStorage.getItem('auth-token')}`
-                            },
-                            body: JSON.stringify(dataOb),
-                            })
-                            .then(response => response.json())
-                            .then(dat => {
-                            console.log('Success uploaded record:', dat);
-                            })
-                            .catch((error) => {
-                            console.error('Error:', error);
-                            });
-                    } catch(err) {
-                        console.log(err)
-                        break
-                    }
-                    
+              console.log(dataArr);
+              for (let dataOb of dataArr) {
+                try {
+                  fetch(_CONFIG.API_URI + "/api/v1/admin/add_record", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "auth-token": `${localStorage.getItem("auth-token")}`,
+                    },
+                    body: JSON.stringify(dataOb),
+                  })
+                    .then((response) => response.json())
+                    .then((dat) => {
+                      console.log("Success uploaded record:", dat);
+                    })
+                    .catch((error) => {
+                      console.error("Error:", error);
+                    });
+                } catch (err) {
+                  console.log(err);
+                  break;
                 }
-                alert('Succesfully imported file data');
-                this.reloadPage()
-            });
+              }
+              alert("Succesfully imported file data");
+              this.reloadPage()
+            }
+          );
         };
-     
+    
         if (rABS) {
           reader.readAsBinaryString(this.state.file);
         } else {
           reader.readAsArrayBuffer(this.state.file);
         }
-      }
+      };
 
     resetToDefault = async() => {
         if(this.state.chosenIndustry !== "Industry" || this.state.projectName !=="Project" || this.state.searchState !== "Search"){
@@ -1151,6 +1185,7 @@ export default class ReportsViewUser extends React.Component{
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Industry</th>
                                 <th>Organisation</th>
                                 <th>Website</th>
                                 <th>Contacts</th>
@@ -1159,7 +1194,7 @@ export default class ReportsViewUser extends React.Component{
                                 <th>Designation</th>
                                 <th>Email Address</th>
                                 <th>Physical Location</th>
-                                <th>Industry</th>
+                                <th>Comments</th>
                                 <th>Project</th>
                                 <th>Date Updated</th>
                                 <th>Confirmed</th>
@@ -1190,6 +1225,7 @@ export default class ReportsViewUser extends React.Component{
                                             comments: user.comments
                                         })}}>
                                         <td>{index+1}</td>
+                                        <td>{this.state.editSave === 'none' ? user.industry : this.returnEditFields(user.industry)}</td>
                                         <td>{this.state.editSave === 'none' ? user.organization : this.returnEditFields(user.organization)}</td>
                                         <td>{this.state.editSave === 'none' ? user.website : this.returnEditFields(user.website)}</td>
                                         <td>{this.state.editSave === 'none' ? user.contacts : this.returnEditFields(user.contacts)}</td>
@@ -1198,7 +1234,7 @@ export default class ReportsViewUser extends React.Component{
                                         <td>{this.state.editSave === 'none' ? user.designation : this.returnEditFields(user.designation)}</td>
                                         <td>{this.state.editSave === 'none' ? user.emailAddress : this.returnEditFields(user.emailAddress)}</td>
                                         <td>{this.state.editSave === 'none' ? user.physicalLocation : this.returnEditFields(user.physicalLocation)}</td>
-                                        <td>{this.state.editSave === 'none' ? user.industry : this.returnEditFields(user.industry)}</td>
+                                        <td>{this.state.editSave === 'none' ? user.comments : this.returnEditFields(user.comments)}</td>
                                         <td>{this.state.editSave === 'none' ? user.project : this.returnEditFields(user.project)}</td>
                                         <td>{this.state.editSave === 'none' ? user.collectionDate : this.returnEditFields(user.collectionDate)}</td>
                                         <td>{ user.confirmed ? 'Confirmed' : 'Pending'}</td>
