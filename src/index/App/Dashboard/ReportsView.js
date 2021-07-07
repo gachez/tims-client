@@ -73,6 +73,7 @@ export default class ReportsView extends React.Component {
     status: "Status",
     viewBtn: "View",
     show: false,
+    tableTheme: 'light',
     userDetails: {
       id: "",
       industry: "",
@@ -1720,10 +1721,30 @@ export default class ReportsView extends React.Component {
                   </DropdownButton>
                 </Nav.Link>
               </Nav.Item>
+
+              {/* toggle table theme */}
+              <div style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                    }}> 
+                  <input
+                   onChange={
+                     ()=>{
+                        document.body.classList.toggle('dark');
+                            this.setState({tableTheme: this.state.tableTheme === 'light' ? 'dark' : 'light'})
+                            }} type="checkbox" class="checkbox" id="checkbox" />
+                  <label for="checkbox" class="label" >
+                    <span class="fas fa-moon"></span>
+                    <span class='fas fa-sun'></span>
+                    <div class='ball'></div>
+                  </label>    
+              </div>
+
             </Nav>
             <section>
               <Table
-                variant="light"
+                variant={this.state.tableTheme}
                 className="reports-table table-responsive"
                 style={{
                   marginTop: "30px",
