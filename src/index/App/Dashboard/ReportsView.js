@@ -24,6 +24,7 @@ import Search from "../components/Search";
 import ImportFileModal from "../components/ImportFileModal";
 import DeleteModal from "../components/DeleteModal";
 import CommentTenderModal from "../components/CommentTenderModal";
+import TableComponent from "../components/TableComponent";
 
 export default class ReportsView extends React.Component {
   state = {
@@ -1722,7 +1723,7 @@ export default class ReportsView extends React.Component {
             </Nav>
             <section>
               <Table
-                variant="dark"
+                variant="light"
                 className="reports-table table-responsive"
                 style={{
                   marginTop: "30px",
@@ -1746,6 +1747,7 @@ export default class ReportsView extends React.Component {
                     <th>Designation</th>
                     <th>Email address</th>
                     <th>Physical location</th>
+                    <th>Comments</th>
                     <th>Project</th>
                     <th>Status</th>
                     <th>Collection Time</th>
@@ -1790,6 +1792,7 @@ export default class ReportsView extends React.Component {
                           <td>{user.designation}</td>
                           <td>{user.emailAddress}</td>
                           <td>{user.physicalLocation}</td>
+                          <td>{user.comments}</td>
                           <td>{user.projectName}</td>
                           <td style={{ color: "yellow" }}>
                             {user.status ? "Confirmed" : "Pending"}
@@ -1802,6 +1805,7 @@ export default class ReportsView extends React.Component {
                   })}
                 </tbody>
               </Table>
+              {/* <TableComponent data={this.state.reports} /> */}
             </section>
           </div>
         </div>

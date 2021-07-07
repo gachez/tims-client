@@ -450,7 +450,7 @@ export default class ReportsViewUser extends React.Component{
                   break;
                 }
               }
-              alert("Succesfully imported file data");
+              alert("Succesfully imported file data")
               this.reloadPage()
             }
           );
@@ -1127,7 +1127,7 @@ export default class ReportsViewUser extends React.Component{
                                                         onClick={() => {
                                                             this.setState({
                                                                 chosenIndustry: category.industry,
-                                                                reports: this.state.reports.filter(report => report.industry === category.industry)
+                                                                reports: this.state.reports.filter(report => trimLower(report.industry) === trimLower(category.industry))
                                                             })
                                                         }}
                                                         >
@@ -1152,7 +1152,7 @@ export default class ReportsViewUser extends React.Component{
                                                     return(
                                                         <Dropdown.Item key={project._id} onClick={() => {
                                                             this.setState({
-                                                                reports: this.state.reports.filter(report => report.projectName === project.projectName),
+                                                                reports: this.state.reports.filter(report => trimLower(report.projectName) === trimLower(project.projectName)),
                                                                 projectName: project.projectName
                                                             });
                                                         }}>{project.projectName}</Dropdown.Item>
