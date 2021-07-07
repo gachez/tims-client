@@ -43,6 +43,7 @@ export default class ReportsViewUser extends React.Component{
         industries: [],
         defaultReports: [],
         searchState: 'Search',
+        tableTheme: 'light',
         userDetails: {
             industry: '',
             organisation: '',
@@ -1175,13 +1176,28 @@ export default class ReportsViewUser extends React.Component{
 
                             </Nav.Link>
                         </Nav.Item>
-
-
+                        
+                        {/* toggle table theme */}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}> 
+                            <input onChange={()=>{
+                                document.body.classList.toggle('dark');
+                                this.setState({tableTheme: this.state.tableTheme === 'light' ? 'dark' : 'light'})
+                                }} type="checkbox" class="checkbox" id="checkbox" />
+                        <label for="checkbox" class="label" >
+                            <span class="fas fa-moon"></span>
+                            <span class='fas fa-sun'></span>
+                            <div class='ball'></div>
+                        </label>    
+                        </div>
                        
 
                         </Nav>
                     <section style={{width: '90%'}}> 
-                    <Table variant='light' className="reports-table table-responsive" style={{marginTop: '30px', overflow: 'scroll', maxHeight: '65vh'}} striped bordered hover responsive>
+                    <Table variant={this.state.tableTheme} className="reports-table table-responsive" style={{marginTop: '30px', overflow: 'scroll', maxHeight: '65vh'}} striped bordered hover responsive>
                         <thead>
                             <tr>
                                 <th>#</th>
