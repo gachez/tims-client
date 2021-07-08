@@ -345,7 +345,7 @@ export default class ReportsViewUser extends React.Component{
             })
             .then(res => {
                 console.log('succesfully deleted user ' + res)
-                alert('Succesfully deleted user');
+                alert('Succesfully deleted record');
                 this.toggleDeleteModal();
                 this.reloadPage();
             }).catch (err => { console.log(err)})
