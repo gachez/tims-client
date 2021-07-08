@@ -312,9 +312,9 @@ export default class ReportsView extends React.Component {
             : document.getElementById("physicalLocation").value,
         industry:
           trimLower(this.state.chosenIndustry) === trimLower("Industry")
-            ? document
-                .getElementsByName("industryEdit")[0]
-                .getAttribute("title")
+            ? this.getEditField(this.state.editFieldID).map(
+              (field) => field.industry
+            )[0]
             : this.state.chosenIndustry,
         projectName:
           trimLower(this.state.chosenProject) === trimLower("Project")

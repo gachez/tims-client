@@ -186,7 +186,9 @@ export default class ReportsViewUser extends React.Component{
             designation:   document.getElementById('edit-designation').value.length < 1 ? document.getElementById('edit-designation').getAttribute('placeholder') : document.getElementById('edit-designation').value,
             emailAddress:   document.getElementById('edit-emailAddress').value.length < 1 ? document.getElementById('edit-emailAddress').getAttribute('placeholder'): document.getElementById('edit-emailAddress').value,
             physicalLocation: document.getElementById('edit-physicalLocation').value.length < 1 ? document.getElementById('edit-physicalLocation').getAttribute('placeholder') : document.getElementById('edit-physicalLocation').value,
-            industry: trimLower(this.state.determinedIndustry) === trimLower('Industry') ? document.getElementsByName('industryEdit')[0].getAttribute('title') : this.state.determinedIndustry
+            industry: trimLower(this.state.determinedIndustry) === trimLower('Industry') ? this.getEditField(this.state.editFieldID).map(
+                field => field.industry
+            )[0] : this.state.determinedIndustry
         }
 
         // console.log(saveEdits)
@@ -748,7 +750,14 @@ export default class ReportsViewUser extends React.Component{
                                     <DropdownButton
                                         style={{ marginRight: '1rem', width: '100%'}}
                                         variant="outline-primary"
-                                        title={this.state.determinedIndustry}
+                                        title={
+                                            trimLower(this.state.determinedIndustry) ===
+                                            trimLower('industry')
+                                        ? this.getEditField(this.state.editFieldID).map(
+                                            field => field.industry
+                                        )
+                                        : this.state.determinedIndustry     
+                                        }
                                         id="input-group-dropdown-2"
                                         name="industryEdit"
                                         >
