@@ -41,6 +41,7 @@
     padding: 4rem;
 }
 .home-body-container{
+    padding-top: 5rem;
     display: grid;
     grid-template-columns:  repeat( auto-fit, minmax(300px, 1fr) );
     grid-gap: 5rem;
@@ -49,12 +50,14 @@
     height: auto;
     padding-left: 3rem;
     padding-right: 3rem;
+    justify-content: center;
     
 }
 
 .card-container{
     display: grid; 
     grid-gap: 1rem;
+    width: 300px;
 }
 
 .cards{
@@ -81,7 +84,7 @@
         grid-template-columns: '1fr 1fr'
     }
     .card-container{
-        min-width: 300px;
+        max-width: 300px;
     }
 
 }

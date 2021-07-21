@@ -1,13 +1,14 @@
 import React from 'react';
 import './UserManagementView/UserManagement.css';
-import {Spinner, Table, Nav, Modal, Button,Form, DropdownButton, Dropdown} from 'react-bootstrap';
+import {Spinner, Form, DropdownButton, Dropdown} from 'react-bootstrap';
 import trash from './shared/trash.png';
 import edit from '../shared/edit.png';
 import add from './UserManagementView/signs.png';
 import axios from 'axios';
 import _CONFIG from '../../../config/config';
-import DropdownItem from 'react-bootstrap/DropdownItem';
-
+import { Table, Button, Space, Modal, Select, Layout } from 'antd';
+const { Content } = Layout
+const { Option } = Select
 export default class UserManagement extends React.Component{
     state = {
         modalDisplay: 'none',
@@ -28,7 +29,10 @@ export default class UserManagement extends React.Component{
         username: '',
         email: '',
         password: '',
-        roleSelected: 'user'
+        roleSelected: 'user',
+        addUserModal: false,
+        editUserModal: false,
+        deleteUserModal: false
     }
 
     componentDidMount() {
@@ -100,7 +104,8 @@ export default class UserManagement extends React.Component{
                     console.log('succesfully created user ' + res)
                     alert('Succesfully added a new user');
                     this.setState({
-                        modalDisplay: 'none'
+                        modalDisplay: 'none',
+                        addUserModal: false
                     });
                     this.reloadPage();
                 }).catch (err => { console.log(err)})
@@ -272,10 +277,59 @@ export default class UserManagement extends React.Component{
             Save
             </Button>;
 
+            const columns = [
+                {
+                title: 'Fullname',
+                dataIndex: 'fullname',
+                key: 'fullname',
+                ellipsis: true,
+                },
+                {
+                title: 'Username',
+                dataIndex: 'username',
+                key: 'username',
+                ellipsis: true,
+                },
+                {
+                title: 'Email',
+                dataIndex: 'email',
+                key: 'email',
+                ellipsis: true,
+                },
+                {
+                title: 'Role',
+                dataIndex: 'role',
+                key: 'role',
+                ellipsis: true,
+                }
+            ];
+
             return(
-             <div style={{height: '85vh'}} >
+             <Content style={{ width: '100%', margin: 'auto', padding: '5rem' }} >
                 <h2 className="user-title">USER MANAGEMENT</h2>
-                <Nav variant="pills" className="navigation-tab" defaultActiveKey="#">
+                <br />
+                <br />
+                <Space style={{ marginBottom: 16 }}>
+                    <Button onClick={() => this.setState({ addUserModal: true })}>Add User</Button>
+                </Space>
+                <Table
+                 columns={columns} 
+                 dataSource={this.state.users}
+                 onRow={(record, rowIndex) => {
+                    return {
+                      onClick: event => { 
+                          this.setState({
+                            editFieldID: record._id,
+                            editFieldIndex: rowIndex,
+                            editUserModal: true
+                        });
+                        this.toggleEditModalDisplay()
+                        }, // click row
+                    };
+                  }}
+                 />
+
+                {/* <Nav variant="pills" className="navigation-tab" defaultActiveKey="#">
                     <Nav.Item >
                         <Nav.Link href="#" onClick={ () => {
                                 this.setState({
@@ -304,8 +358,8 @@ export default class UserManagement extends React.Component{
                         {!this.state.saveBtnClicked ? saveBtn : loadSave}
                     </Nav.Item>
                 </Nav>
-                <div className="table-container" >
-                <Table className="user-table" striped bordered hover variant="dark">
+                <div>
+                <Table striped bordered hover variant="dark">
                     <thead>
                         <tr>
                         <th>#</th>
@@ -350,9 +404,85 @@ export default class UserManagement extends React.Component{
                         }
                     </tbody>
                     </Table>
-                </div>
+                </div> */}
 
-                    <div className="modal-bg" style={{
+                <Modal 
+                 title="Add User"
+                 visible={this.state.addUserModal}
+                 onOk={() => this.addUser()}
+                 onCancel={() => this.setState({ addUserModal: false })}                
+                >
+                        <Form>
+                            <Form.Group controlId="formFullName">
+                                <Form.Label>Full Name</Form.Label>
+                                <Form.Control name="fullname" type="textbox" placeholder="Enter name" onChange={e => this.setState({fullName: e.target.value})} />
+                            </Form.Group>
+                            <Form.Group controlId="formUsername">
+                                <Form.Label>Username</Form.Label>
+                                <Form.Control name="username" type="textbox" placeholder="Enter username" onChange={e => this.setState({username: e.target.value})} />
+                            </Form.Group>
+    
+
+                            <Form.Group controlId="formBasicEmail">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control name="email" type="textbox" placeholder="example@emaple.com" onChange={e => this.setState({email: e.target.value})} />
+                            </Form.Group>
+
+                            <Form.Group controlId="formBasicPassword">
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control name="password" type="password" placeholder="Password" onChange={e => this.setState({password: e.target.value})} />
+                            </Form.Group>
+                            <br />
+                            <Form.Group controlId="formRole">
+                                <Form.Label>Role</Form.Label><br />
+                                <Select onChange={(e) => this.setState({ roleSelected: e })} defaultValue={this.state.roleSelected} className="select-after">
+                                    <Option value="admin">Admin</Option>
+                                    <Option value="user">User</Option>
+                                </Select>
+                            </Form.Group>
+
+                            </Form>
+
+                </Modal>
+
+                <Modal
+                    title={`Edit User - ${this.getEditField(this.state.editFieldID).map(field => field.fullname)}`}
+                    visible={this.state.editUserModal}
+                    onOk={() => this.saveEditedFied(this.state.editFieldID)}
+                    onCancel={() => this.setState({ editUserModal: false })}    
+                >
+                    <div style={{ display: 'flex', width: '100%', justifyContent: 'flex-end' }}>
+                        <img src={trash} style={{ cursor: 'pointer' }} onClick={() => this.setState({ deleteUserModal: true })} width="24px" height="24px" />
+                    </div>
+                    <br />
+                        <Form className="edit-forms">
+                            <Form.Group controlId="fullname">
+                                <Form.Label>Full Name</Form.Label>
+                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.fullname)} />
+                            </Form.Group>    
+
+                            <Form.Group controlId="username">
+                                <Form.Label>Username</Form.Label>
+                                <Form.Control type="textbox" placeholder={this.getEditField(this.state.editFieldID).map(field => field.username)} />
+                            </Form.Group>    
+
+                            <Form.Group controlId="email">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control type="email" placeholder={this.getEditField(this.state.editFieldID).map(field => field.email)}/>
+                            </Form.Group>  
+                            <Form.Group controlId="formRole">
+                                <Form.Label>Role</Form.Label>
+                                <DropdownButton
+                                    title={this.state.roleSelected}
+                                >
+                                    <Dropdown.Item onClick={() => {this.setState({roleSelected: 'admin'})}}>Admin</Dropdown.Item>
+                                    <Dropdown.Item onClick={() => {this.setState({roleSelected: 'user'})}}>User</Dropdown.Item>
+                                </DropdownButton>
+                            </Form.Group>                     
+                        </Form>
+                </Modal>
+
+                    {/* <div className="modal-bg" style={{
                         display: this.state.modalDisplay
                     }}>
                     <Modal.Dialog className="modal-add-user" style={{
@@ -405,9 +535,20 @@ export default class UserManagement extends React.Component{
                         </Modal.Footer>
                         </Modal.Dialog>
 
-                    </div>
+                    </div> */}
+
+                    <Modal
+                        title="Delete User?"
+                        visible={this.state.deleteUserModal}
+                        onCancel={() => this.setState({ deleteUserModal: false })}
+                        onOk={() => this.removeUser(this.state.deleteUserId)}
+                    >
+                        <p>
+                            Are you sure you want to delete this user?
+                            </p>
+                    </Modal>
                     
-                       
+{/*                        
                      <div className="modal-bg" style={{
                         display: this.state.deleteModalDisplay
                             }}>
@@ -430,10 +571,10 @@ export default class UserManagement extends React.Component{
                             }
                         </Modal.Footer>
                         </Modal.Dialog>
-                         </div>  
+                         </div>   */}
 
                 {/* edit user modal */}
-                <div className="modal-bg" style={{
+                {/* <div className="modal-bg" style={{
                     display: this.state.editModal
                 }}>
                     <Modal.Dialog scrollable={true}  className="modal-add-entry" style={{
@@ -477,8 +618,8 @@ export default class UserManagement extends React.Component{
                             }
                         </Modal.Footer>
                         </Modal.Dialog>
-                </div> 
-                </div>
+                </div>  */}
+                </Content>
             )
         }
 

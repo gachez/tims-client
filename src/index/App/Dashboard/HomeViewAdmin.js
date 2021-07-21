@@ -20,7 +20,7 @@ export default class HomeViewAdmin extends React.Component{
     render(){
         return(
             <div className="home-body-container">
-                <div className="card-container">
+            <div className="card-container">
                   <div className="cards" id="user-m" style={{
                             backgroundImage: `url(${users})`
                         }}
